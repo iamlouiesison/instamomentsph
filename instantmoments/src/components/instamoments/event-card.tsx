@@ -1,144 +1,206 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Calendar, MapPin, Users, Camera } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import Image from 'next/image';
+'use client'
 
-interface EventCardProps {
-  title: string;
-  date: string;
-  location: string;
-  guestCount: number;
-  photoCount: number;
-  eventType: 'birthday' | 'wedding' | 'graduation' | 'fiesta' | 'other';
-  imageUrl?: string;
-  className?: string;
-  onClick?: () => void;
+import React from 'react'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { 
+  Calendar, 
+  MapPin, 
+  Users, 
+  Camera, 
+  Video, 
+  Settings, 
+  ExternalLink,
+  QrCode,
+  Clock
+} from 'lucide-react'
+import { FILIPINO_EVENT_TYPES, type EventType } from '@/lib/validations/event'
+import { formatDistanceToNow, format } from 'date-fns'
+import { cn } from '@/lib/utils'
+
+export interface Event {
+  id: string
+  name: string
+  description?: string
+  eventType: EventType
+  eventDate?: string
+  location?: string
+  gallerySlug: string
+  subscriptionTier: string
+  totalPhotos: number
+  totalVideos: number
+  totalContributors: number
+  status: 'active' | 'expired' | 'archived'
+  createdAt: string
+  expiresAt?: string
+  hasVideoAddon: boolean
+  requiresModeration: boolean
 }
 
-const eventTypeConfig = {
-  birthday: {
-    gradient: 'gradient-golden',
-    shadow: 'shadow-golden',
-    icon: '🎂',
-    label: 'Birthday',
-  },
-  wedding: {
-    gradient: 'gradient-celebration',
-    shadow: 'shadow-celebration',
-    icon: '💒',
-    label: 'Wedding',
-  },
-  graduation: {
-    gradient: 'gradient-coral',
-    shadow: 'shadow-coral',
-    icon: '🎓',
-    label: 'Graduation',
-  },
-  fiesta: {
-    gradient: 'gradient-fiesta',
-    shadow: 'shadow-celebration',
-    icon: '🎉',
-    label: 'Fiesta',
-  },
-  other: {
-    gradient: 'gradient-sunset',
-    shadow: 'shadow-golden',
-    icon: '🎊',
-    label: 'Celebration',
-  },
-};
+interface EventCardProps {
+  event: Event
+  onEdit?: (eventId: string) => void
+  onView?: (eventId: string) => void
+  onShare?: (eventId: string) => void
+  onSettings?: (eventId: string) => void
+  showActions?: boolean
+  className?: string
+}
 
-export function EventCard({
-  title,
-  date,
-  location,
-  guestCount,
-  photoCount,
-  eventType,
-  imageUrl,
-  className,
-  onClick,
-}: EventCardProps) {
-  const config = eventTypeConfig[eventType];
+export const EventCard: React.FC<EventCardProps> = ({
+  event,
+  onEdit,
+  onView,
+  onShare,
+  onSettings,
+  showActions = true,
+  className
+}) => {
+  const eventTypeInfo = FILIPINO_EVENT_TYPES[event.eventType]
+  const isExpired = event.status === 'expired' || (event.expiresAt && new Date(event.expiresAt) < new Date())
+  const isExpiringSoon = event.expiresAt && new Date(event.expiresAt) < new Date(Date.now() + 24 * 60 * 60 * 1000)
+
+  const getStatusBadge = () => {
+    if (isExpired) {
+      return <Badge variant="destructive">Expired</Badge>
+    }
+    if (isExpiringSoon) {
+      return <Badge variant="secondary">Expiring Soon</Badge>
+    }
+    return <Badge variant="default">Active</Badge>
+  }
+
+  const getTierBadge = () => {
+    const tierColors = {
+      free: 'bg-gray-100 text-gray-800',
+      basic: 'bg-blue-100 text-blue-800',
+      standard: 'bg-green-100 text-green-800',
+      premium: 'bg-purple-100 text-purple-800',
+      pro: 'bg-yellow-100 text-yellow-800'
+    }
+    
+    return (
+      <Badge 
+        variant="outline" 
+        className={cn('text-xs', tierColors[event.subscriptionTier as keyof typeof tierColors] || 'bg-gray-100 text-gray-800')}
+      >
+        {event.subscriptionTier.charAt(0).toUpperCase() + event.subscriptionTier.slice(1)}
+      </Badge>
+    )
+  }
 
   return (
-    <Card
-      className={cn(
-        'group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-lg',
-        'border-2 border-transparent hover:border-golden/20',
-        config.shadow,
-        className
-      )}
-      onClick={onClick}
-    >
-      {/* Event Image */}
-      {imageUrl && (
-        <div className="relative h-48 w-full overflow-hidden rounded-t-lg">
-          <Image
-            src={imageUrl}
-            alt={`${title} event image`}
-            fill
-            className="object-cover transition-transform duration-300 group-hover:scale-105"
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
-        </div>
-      )}
-
+    <Card className={cn('hover:shadow-md transition-shadow duration-200', className)}>
       <CardHeader className="pb-3">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <span className="text-2xl">{config.icon}</span>
-            <Badge
-              variant="secondary"
-              className={cn(
-                'text-xs font-medium',
-                config.gradient,
-                'text-golden-foreground'
+        <div className="flex items-start justify-between">
+          <div className="flex-1">
+            <CardTitle className="text-lg flex items-center gap-2">
+              <span className="text-xl">{eventTypeInfo.icon}</span>
+              {event.name}
+            </CardTitle>
+            <div className="flex items-center gap-2 mt-1">
+              {getStatusBadge()}
+              {getTierBadge()}
+              {event.hasVideoAddon && (
+                <Badge variant="outline" className="text-xs">
+                  🎥 Video
+                </Badge>
               )}
-            >
-              {config.label}
-            </Badge>
+            </div>
           </div>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="opacity-0 group-hover:opacity-100 transition-opacity"
-          >
-            <Camera className="h-4 w-4" />
-          </Button>
         </div>
-        <CardTitle className="mobile-heading text-left line-clamp-2">
-          {title}
-        </CardTitle>
       </CardHeader>
 
-      <CardContent className="space-y-3">
-        <div className="flex items-center gap-2 text-muted-foreground">
-          <Calendar className="h-4 w-4" />
-          <span className="mobile-text">{date}</span>
-        </div>
-
-        <div className="flex items-center gap-2 text-muted-foreground">
-          <MapPin className="h-4 w-4" />
-          <span className="mobile-text line-clamp-1">{location}</span>
-        </div>
-
-        <div className="flex items-center justify-between pt-2">
-          <div className="flex items-center gap-4 text-sm text-muted-foreground">
-            <div className="flex items-center gap-1">
-              <Users className="h-4 w-4" />
-              <span>{guestCount} guests</span>
+      <CardContent className="space-y-4">
+        {/* Event Details */}
+        <div className="space-y-2 text-sm text-muted-foreground">
+          {event.eventDate && (
+            <div className="flex items-center gap-2">
+              <Calendar className="w-4 h-4" />
+              <span>{format(new Date(event.eventDate), 'MMM dd, yyyy')}</span>
             </div>
-            <div className="flex items-center gap-1">
-              <Camera className="h-4 w-4" />
-              <span>{photoCount} photos</span>
+          )}
+          {event.location && (
+            <div className="flex items-center gap-2">
+              <MapPin className="w-4 h-4" />
+              <span className="truncate">{event.location}</span>
             </div>
+          )}
+          <div className="flex items-center gap-2">
+            <Clock className="w-4 h-4" />
+            <span>Created {formatDistanceToNow(new Date(event.createdAt), { addSuffix: true })}</span>
           </div>
         </div>
+
+        {/* Statistics */}
+        <div className="grid grid-cols-3 gap-4 py-3 border-y">
+          <div className="text-center">
+            <div className="flex items-center justify-center gap-1 text-muted-foreground">
+              <Camera className="w-4 h-4" />
+              <span className="text-sm">Photos</span>
+            </div>
+            <div className="font-semibold text-lg">{event.totalPhotos}</div>
+          </div>
+          <div className="text-center">
+            <div className="flex items-center justify-center gap-1 text-muted-foreground">
+              <Video className="w-4 h-4" />
+              <span className="text-sm">Videos</span>
+            </div>
+            <div className="font-semibold text-lg">{event.totalVideos}</div>
+          </div>
+          <div className="text-center">
+            <div className="flex items-center justify-center gap-1 text-muted-foreground">
+              <Users className="w-4 h-4" />
+              <span className="text-sm">Contributors</span>
+            </div>
+            <div className="font-semibold text-lg">{event.totalContributors}</div>
+          </div>
+        </div>
+
+        {/* Actions */}
+        {showActions && (
+          <div className="flex gap-2 pt-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => onShare?.(event.id)}
+              className="flex-1"
+            >
+              <QrCode className="w-4 h-4 mr-1" />
+              Share QR
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => onView?.(event.id)}
+              className="flex-1"
+            >
+              <ExternalLink className="w-4 h-4 mr-1" />
+              View
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => onSettings?.(event.id)}
+            >
+              <Settings className="w-4 h-4" />
+            </Button>
+          </div>
+        )}
+
+        {/* Expiration Warning */}
+        {isExpiringSoon && !isExpired && (
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-yellow-800">
+              <Clock className="w-4 h-4" />
+              <span className="text-sm font-medium">
+                Event expires {formatDistanceToNow(new Date(event.expiresAt!), { addSuffix: true })}
+              </span>
+            </div>
+          </div>
+        )}
       </CardContent>
     </Card>
-  );
+  )
 }

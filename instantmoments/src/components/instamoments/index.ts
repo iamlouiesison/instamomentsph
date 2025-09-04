@@ -3,6 +3,9 @@
 
 // Core Components
 export { EventCard } from './event-card';
+export { EventStats } from './event-stats';
+export { EventTypeSelector } from './event-type-selector';
+export { PackageSelector } from './package-selector';
 export { PaymentSelector } from './payment-selector';
 export { QRDisplay } from './qr-display';
 export { GalleryLayout } from './gallery-layout';
