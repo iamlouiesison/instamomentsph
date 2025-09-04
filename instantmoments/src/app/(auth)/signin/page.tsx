@@ -47,16 +47,15 @@ export default function SignInPage() {
           error instanceof Error ? error.message : String(error);
         if (errorMessage.includes('Invalid login credentials')) {
           setError('root', {
-            message: 'Mali ang email o password. Pakisuyo, subukan ulit.',
+            message: 'Invalid email or password. Please try again.',
           });
         } else if (errorMessage.includes('Email not confirmed')) {
           setError('root', {
-            message:
-              'Pakisuyo, i-confirm muna ang inyong email bago mag-sign in.',
+            message: 'Please confirm your email before signing in.',
           });
         } else {
           setError('root', {
-            message: 'May problema sa pag-sign in. Pakisuyo, subukan ulit.',
+            message: 'Something went wrong. Please try again.',
           });
         }
       } else {
@@ -64,7 +63,7 @@ export default function SignInPage() {
       }
     } catch {
       setError('root', {
-        message: 'May hindi inaasahang error. Pakisuyo, subukan ulit.',
+        message: 'Something went wrong. Please try again.',
       });
     } finally {
       setIsLoading(false);
@@ -79,12 +78,12 @@ export default function SignInPage() {
 
       if (error) {
         setError('root', {
-          message: `May problema sa ${provider} sign in. Pakisuyo, subukan ulit.`,
+          message: `Problem with ${provider} sign in. Please try again.`,
         });
       }
     } catch {
       setError('root', {
-        message: 'May hindi inaasahang error. Pakisuyo, subukan ulit.',
+        message: 'Something went wrong. Please try again.',
       });
     } finally {
       setIsLoading(false);
@@ -127,7 +126,7 @@ export default function SignInPage() {
                   Welcome Back!
                 </CardTitle>
                 <CardDescription className="text-muted-foreground">
-                  Mag-sign in para sa inyong InstaMoments account
+                  Sign in to your InstaMoments account
                 </CardDescription>
               </div>
             </CardHeader>
@@ -147,7 +146,7 @@ export default function SignInPage() {
                     <Input
                       id="email"
                       type="email"
-                      placeholder="inyong.email@example.com"
+                      placeholder="your.email@example.com"
                       className="pl-10 h-12"
                       {...register('email')}
                     />
@@ -166,7 +165,7 @@ export default function SignInPage() {
                     <Input
                       id="password"
                       type={showPassword ? 'text' : 'password'}
-                      placeholder="Inyong password"
+                      placeholder="Your password"
                       className="pl-10 pr-10 h-12"
                       {...register('password')}
                     />
@@ -194,7 +193,7 @@ export default function SignInPage() {
                     href="/reset-password"
                     className="text-sm text-primary hover:text-primary/80 hover:underline"
                   >
-                    Nakalimutan ang password?
+                    Forgot Password?
                   </Link>
                 </div>
 
@@ -203,7 +202,7 @@ export default function SignInPage() {
                   className="w-full h-12 bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-primary-foreground font-semibold"
                   disabled={isLoading}
                 >
-                  {isLoading ? 'Nag-sign in...' : 'Sign In'}
+                  {isLoading ? 'Signing in...' : 'Sign In'}
                 </Button>
               </form>
 
@@ -213,7 +212,7 @@ export default function SignInPage() {
                 </div>
                 <div className="relative flex justify-center text-sm">
                   <span className="px-2 bg-card text-muted-foreground">
-                    O mag-sign in gamit ang
+                    Or sign in with
                   </span>
                 </div>
               </div>
@@ -265,12 +264,12 @@ export default function SignInPage() {
 
               <div className="text-center">
                 <p className="text-sm text-muted-foreground">
-                  Wala pa kayong account?{' '}
+                  Don't have an account?{' '}
                   <Link
                     href="/signup"
                     className="text-primary hover:text-primary/80 hover:underline font-medium"
                   >
-                    Mag-sign up dito
+                    Sign Up
                   </Link>
                 </p>
               </div>

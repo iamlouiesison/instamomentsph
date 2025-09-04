@@ -54,15 +54,15 @@ export default function SignUpPage() {
           error instanceof Error ? error.message : String(error);
         if (errorMessage.includes('User already registered')) {
           setError('root', {
-            message: 'May account na sa email na ito. Pakisuyo, mag-sign in na lang.',
+            message: 'Email already exists. Please sign in instead.',
           });
         } else if (errorMessage.includes('Password should be at least')) {
           setError('root', {
-            message: 'Ang password ay dapat hindi bababa sa 6 na character.',
+            message: 'Password must be at least 6 characters long.',
           });
         } else {
           setError('root', {
-            message: 'May problema sa pag-sign up. Pakisuyo, subukan ulit.',
+            message: 'Something went wrong. Please try again.',
           });
         }
       } else {
@@ -70,7 +70,7 @@ export default function SignUpPage() {
       }
     } catch {
       setError('root', {
-        message: 'May hindi inaasahang error. Pakisuyo, subukan ulit.',
+        message: 'Something went wrong. Please try again.',
       });
     } finally {
       setIsLoading(false);
@@ -85,12 +85,12 @@ export default function SignUpPage() {
 
       if (error) {
         setError('root', {
-          message: `May problema sa ${provider} sign up. Pakisuyo, subukan ulit.`,
+          message: `Problem with ${provider} sign up. Please try again.`,
         });
       }
     } catch {
       setError('root', {
-        message: 'May hindi inaasahang error. Pakisuyo, subukan ulit.',
+        message: 'Something went wrong. Please try again.',
       });
     } finally {
       setIsLoading(false);
@@ -126,10 +126,10 @@ export default function SignUpPage() {
                 </div>
                 <div className="space-y-2">
                   <CardTitle className="text-2xl font-bold text-green-600">
-                    Success!
+                    {'Success!'}
                   </CardTitle>
                   <CardDescription className="text-muted-foreground">
-                    Na-create na ang inyong account! Pakisuyo, i-check ang inyong email para sa verification link.
+                    {'Your account has been created successfully!'}
                   </CardDescription>
                 </div>
               </CardHeader>
@@ -137,7 +137,7 @@ export default function SignUpPage() {
               <CardContent className="space-y-6">
                 <div className="text-center space-y-4">
                   <p className="text-sm text-muted-foreground">
-                    Nag-send kami ng verification link sa inyong email. I-click ang link para ma-activate ang inyong account.
+                    We sent a verification link to your email. Click the link to activate your account.
                   </p>
                   
                   <div className="space-y-2">
@@ -145,7 +145,7 @@ export default function SignUpPage() {
                       onClick={() => router.push('/signin')}
                       className="w-full h-12 bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-primary-foreground font-semibold"
                     >
-                      Mag-sign in na
+                      {'Sign In'}
                     </Button>
                     
                     <Button
@@ -153,7 +153,7 @@ export default function SignUpPage() {
                       onClick={() => setIsSuccess(false)}
                       className="w-full h-12 border-border hover:bg-muted"
                     >
-                      Mag-sign up ulit
+                      {'Sign Up'} Again
                     </Button>
                   </div>
                 </div>
@@ -181,7 +181,7 @@ export default function SignUpPage() {
             </div>
             <div className="flex items-center space-x-4">
               <Button asChild variant="outline" size="sm">
-                <Link href="/signin">Sign In</Link>
+                <Link href="/signin">{'Sign In'}</Link>
               </Button>
             </div>
           </div>
@@ -198,10 +198,10 @@ export default function SignUpPage() {
               </div>
               <div className="space-y-2">
                 <CardTitle className="text-2xl font-bold">
-                  Join InstaMoments!
+                  {'Join InstaMoments!'}
                 </CardTitle>
                 <CardDescription className="text-muted-foreground">
-                  Mag-sign up para sa inyong InstaMoments account
+                  {'Create your account to start sharing Filipino celebration moments'}
                 </CardDescription>
               </div>
             </CardHeader>
@@ -214,14 +214,14 @@ export default function SignUpPage() {
 
                 <div className="space-y-2">
                   <Label htmlFor="fullName" className="text-sm font-medium">
-                    Full Name
+                    {'Full Name'}
                   </Label>
                   <div className="relative">
                     <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
                     <Input
                       id="fullName"
                       type="text"
-                      placeholder="Inyong buong pangalan"
+                      placeholder="Your full name"
                       className="pl-10 h-12"
                       {...register('fullName')}
                     />
@@ -233,14 +233,14 @@ export default function SignUpPage() {
 
                 <div className="space-y-2">
                   <Label htmlFor="email" className="text-sm font-medium">
-                    Email Address
+                    {'Email Address'}
                   </Label>
                   <div className="relative">
                     <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
                     <Input
                       id="email"
                       type="email"
-                      placeholder="inyong.email@example.com"
+                      placeholder="your.email@example.com"
                       className="pl-10 h-12"
                       {...register('email')}
                     />
@@ -252,14 +252,14 @@ export default function SignUpPage() {
 
                 <div className="space-y-2">
                   <Label htmlFor="password" className="text-sm font-medium">
-                    Password
+                    {'Password'}
                   </Label>
                   <div className="relative">
                     <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
                     <Input
                       id="password"
                       type={showPassword ? 'text' : 'password'}
-                      placeholder="Inyong password"
+                      placeholder="Your password"
                       className="pl-10 pr-10 h-12"
                       {...register('password')}
                     />
@@ -284,14 +284,14 @@ export default function SignUpPage() {
 
                 <div className="space-y-2">
                   <Label htmlFor="confirmPassword" className="text-sm font-medium">
-                    Confirm Password
+                    {'Confirm Password'}
                   </Label>
                   <div className="relative">
                     <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
                     <Input
                       id="confirmPassword"
                       type={showConfirmPassword ? 'text' : 'password'}
-                      placeholder="I-confirm ang inyong password"
+                      placeholder="Confirm your password"
                       className="pl-10 pr-10 h-12"
                       {...register('confirmPassword')}
                     />
@@ -319,7 +319,7 @@ export default function SignUpPage() {
                   className="w-full h-12 bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-primary-foreground font-semibold"
                   disabled={isLoading}
                 >
-                  {isLoading ? 'Nag-sign up...' : 'Sign Up'}
+                  {isLoading ? 'Creating account...' : 'Sign Up'}
                 </Button>
               </form>
 
@@ -329,7 +329,7 @@ export default function SignUpPage() {
                 </div>
                 <div className="relative flex justify-center text-sm">
                   <span className="px-2 bg-card text-muted-foreground">
-                    O mag-sign up gamit ang
+                    Or sign up with
                   </span>
                 </div>
               </div>
@@ -381,12 +381,12 @@ export default function SignUpPage() {
 
               <div className="text-center">
                 <p className="text-sm text-muted-foreground">
-                  May account na kayo?{' '}
+                  {'Already have an account?'}{' '}
                   <Link
                     href="/signin"
                     className="text-primary hover:text-primary/80 hover:underline font-medium"
                   >
-                    Mag-sign in dito
+                    {'Sign In'}
                   </Link>
                 </p>
               </div>

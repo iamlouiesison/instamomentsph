@@ -45,15 +45,14 @@ export default function ResetPasswordPage() {
 
       if (error) {
         setError('root', {
-          message:
-            'May problema sa pag-send ng reset email. Pakisuyo, subukan ulit.',
+          message: 'Something went wrong. Please try again.',
         });
       } else {
         setIsSuccess(true);
       }
     } catch {
       setError('root', {
-        message: 'May hindi inaasahang error. Pakisuyo, subukan ulit.',
+        message: 'Something went wrong. Please try again.',
       });
     } finally {
       setIsLoading(false);
@@ -70,11 +69,10 @@ export default function ResetPasswordPage() {
                 <CheckCircle className="w-8 h-8 text-white" />
               </div>
               <CardTitle className="text-2xl font-bold text-gray-900">
-                Na-send na ang email!
+                {'Email sent!'}
               </CardTitle>
               <CardDescription className="text-gray-600">
-                Nag-send kami ng password reset link sa inyong email. Pakisuyo,
-                i-check ang inyong inbox.
+                {'We sent a password reset link to your email. Please check your inbox.'}
               </CardDescription>
             </CardHeader>
 
@@ -82,10 +80,9 @@ export default function ResetPasswordPage() {
               <Alert>
                 <Mail className="h-4 w-4" />
                 <div>
-                  <p className="font-medium">Check ang inyong email</p>
+                  <p className="font-medium">Check your email</p>
                   <p className="text-sm">
-                    Hindi ninyo nakita ang email? I-check ang spam folder o
-                    mag-try ulit.
+                    Can't find the email? Check your spam folder or try again.
                   </p>
                 </div>
               </Alert>
@@ -96,7 +93,7 @@ export default function ResetPasswordPage() {
                   variant="outline"
                   className="w-full h-12"
                 >
-                  Mag-try ulit
+                  {'Try Again'}
                 </Button>
 
                 <div className="text-center">
@@ -104,7 +101,7 @@ export default function ResetPasswordPage() {
                     href="/signin"
                     className="text-blue-600 hover:text-blue-800 hover:underline font-medium"
                   >
-                    Bumalik sa Sign In
+                    {'Back'} to {'Sign In'}
                   </Link>
                 </div>
               </div>
@@ -124,11 +121,10 @@ export default function ResetPasswordPage() {
               <Mail className="w-8 h-8 text-white" />
             </div>
             <CardTitle className="text-2xl font-bold text-gray-900">
-              Reset Password
+              {'Reset Password'}
             </CardTitle>
             <CardDescription className="text-gray-600">
-              Ilagay ang inyong email address at mag-send kami ng link para sa
-              bagong password
+              Enter your email address and we'll send you a link to reset your password
             </CardDescription>
           </CardHeader>
 
@@ -140,14 +136,14 @@ export default function ResetPasswordPage() {
 
               <div className="space-y-2">
                 <Label htmlFor="email" className="text-sm font-medium">
-                  Email Address
+                  {'Email Address'}
                 </Label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                   <Input
                     id="email"
                     type="email"
-                    placeholder="inyong.email@example.com"
+                    placeholder="your.email@example.com"
                     className="pl-10 h-12"
                     {...register('email')}
                   />
@@ -162,7 +158,7 @@ export default function ResetPasswordPage() {
                 className="w-full h-12 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-semibold"
                 disabled={isLoading}
               >
-                {isLoading ? 'Nag-send ng email...' : 'Send Reset Link'}
+                {isLoading ? 'Sending email...' : 'Send Reset Link'}
               </Button>
             </form>
 
@@ -172,7 +168,7 @@ export default function ResetPasswordPage() {
                 className="inline-flex items-center text-blue-600 hover:text-blue-800 hover:underline font-medium"
               >
                 <ArrowLeft className="w-4 h-4 mr-1" />
-                Bumalik sa Sign In
+                {'Back'} to {'Sign In'}
               </Link>
             </div>
           </CardContent>

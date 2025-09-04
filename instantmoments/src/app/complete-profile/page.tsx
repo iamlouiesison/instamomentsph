@@ -52,15 +52,14 @@ export default function CompleteProfilePage() {
 
       if (error) {
         setError('root', {
-          message:
-            'May problema sa pag-update ng profile. Pakisuyo, subukan ulit.',
+          message: 'Something went wrong. Please try again.',
         });
       } else {
         router.push('/dashboard');
       }
     } catch {
       setError('root', {
-        message: 'May hindi inaasahang error. Pakisuyo, subukan ulit.',
+        message: 'Something went wrong. Please try again.',
       });
     } finally {
       setIsLoading(false);
@@ -95,11 +94,10 @@ export default function CompleteProfilePage() {
               </div>
               <div className="space-y-2">
                 <CardTitle className="text-2xl font-bold">
-                  Kumpletuhin ang Profile
+                  Complete Your Profile
                 </CardTitle>
                 <CardDescription className="text-muted-foreground">
-                  Ilagay ang inyong impormasyon para makapag-start na kayo sa
-                  InstaMoments
+                  Add your information to get started with InstaMoments
                 </CardDescription>
               </div>
             </CardHeader>
