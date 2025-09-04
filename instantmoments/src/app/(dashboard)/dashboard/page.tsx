@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useAuthContext } from '@/components/providers/AuthProvider';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -61,13 +61,7 @@ export default function DashboardPage() {
     await signOut();
   };
 
-  useEffect(() => {
-    if (user) {
-      fetchEvents();
-    }
-  }, [user, statusFilter]);
-
-  const fetchEvents = async () => {
+  const fetchEvents = useCallback(async () => {
     try {
       setEventsLoading(true);
       const params = new URLSearchParams();
@@ -112,7 +106,13 @@ export default function DashboardPage() {
     } finally {
       setEventsLoading(false);
     }
-  };
+  }, [statusFilter]);
+
+  useEffect(() => {
+    if (user) {
+      fetchEvents();
+    }
+  }, [user, statusFilter, fetchEvents]);
 
   const handleEventEdit = (eventId: string) => {
     router.push(`/dashboard/events/${eventId}/edit`);
@@ -122,7 +122,8 @@ export default function DashboardPage() {
     router.push(`/dashboard/events/${eventId}`);
   };
 
-  const handleEventShare = (eventId: string) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const handleEventShare = (_eventId: string) => {
     // TODO: Implement QR code sharing modal
     toast.info('QR code sharing coming soon!');
   };

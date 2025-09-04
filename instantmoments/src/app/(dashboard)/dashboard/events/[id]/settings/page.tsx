@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -56,13 +56,7 @@ export default function EventSettingsPage() {
   } = form;
   const watchedValues = watch();
 
-  useEffect(() => {
-    if (eventId) {
-      fetchEventSettings();
-    }
-  }, [eventId]);
-
-  const fetchEventSettings = async () => {
+  const fetchEventSettings = useCallback(async () => {
     try {
       setLoading(true);
       const response = await fetch(`/api/events/${eventId}`);
@@ -87,7 +81,13 @@ export default function EventSettingsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [eventId, router, setValue]);
+
+  useEffect(() => {
+    if (eventId) {
+      fetchEventSettings();
+    }
+  }, [eventId, fetchEventSettings]);
 
   const onSubmit = async (data: EventSettingsData) => {
     try {

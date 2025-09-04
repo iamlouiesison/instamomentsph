@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -72,13 +72,7 @@ export default function EventDetailsPage() {
 
   const eventId = params.id as string;
 
-  useEffect(() => {
-    if (eventId) {
-      fetchEventDetails();
-    }
-  }, [eventId]);
-
-  const fetchEventDetails = async () => {
+  const fetchEventDetails = useCallback(async () => {
     try {
       setLoading(true);
       const response = await fetch(`/api/events/${eventId}`);
@@ -96,7 +90,13 @@ export default function EventDetailsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [eventId, router]);
+
+  useEffect(() => {
+    if (eventId) {
+      fetchEventDetails();
+    }
+  }, [eventId, fetchEventDetails]);
 
   const handleEdit = () => {
     router.push(`/dashboard/events/${eventId}/edit`);

@@ -1,6 +1,7 @@
 'use client';
 
 import { notFound } from 'next/navigation';
+import Image from 'next/image';
 import { createClient } from '@/lib/supabase/client';
 import { Event } from '@/types/database';
 import { FILIPINO_EVENT_TYPES } from '@/lib/validations/event';
@@ -151,7 +152,7 @@ export default function PrintQRPage({
 
             {/* QR Code */}
             <div className="mb-6">
-              <img
+              <Image
                 src={qrCodeUrl}
                 alt={`QR Code for ${event.name}`}
                 width={currentSize.qrSize}
@@ -223,7 +224,7 @@ export default function PrintQRPage({
 
             {/* QR Code */}
             <div className="text-center mb-8">
-              <img
+              <Image
                 src={qrCodeUrl}
                 alt={`QR Code for ${event.name}`}
                 width={400}
@@ -298,7 +299,7 @@ export default function PrintQRPage({
                   Scan QR code to upload
                 </p>
 
-                <img
+                <Image
                   src={qrCodeUrl}
                   alt={`QR Code for ${event.name}`}
                   width={200}
@@ -368,7 +369,7 @@ export default function PrintQRPage({
                 <h3 className="font-semibold text-lg mb-4">
                   Share Your Memories!
                 </h3>
-                <img
+                <Image
                   src={qrCodeUrl}
                   alt={`QR Code for ${event.name}`}
                   width={250}

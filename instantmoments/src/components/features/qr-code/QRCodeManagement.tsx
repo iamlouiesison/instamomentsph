@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Card,
   CardContent,
@@ -49,7 +49,7 @@ export function QRCodeManagement({
   const [activeTab, setActiveTab] = useState('display');
 
   // Fetch QR code analytics
-  const fetchAnalytics = async () => {
+  const fetchAnalytics = useCallback(async () => {
     try {
       setIsLoadingAnalytics(true);
 
@@ -64,11 +64,11 @@ export function QRCodeManagement({
     } finally {
       setIsLoadingAnalytics(false);
     }
-  };
+  }, [event.id]);
 
   useEffect(() => {
     fetchAnalytics();
-  }, [event.id]);
+  }, [event.id, fetchAnalytics]);
 
   // Regenerate QR code
   const handleRegenerateQR = async () => {

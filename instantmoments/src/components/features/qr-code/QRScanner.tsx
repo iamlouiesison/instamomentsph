@@ -63,6 +63,58 @@ export function QRScanner({
     checkSupport();
   }, []);
 
+  // Stop QR code scanning
+  const stopScanning = useCallback(() => {
+    try {
+      if (qrCodeScannerRef.current) {
+        (qrCodeScannerRef.current as { clear: () => void }).clear();
+        qrCodeScannerRef.current = null;
+      }
+      setIsScanning(false);
+    } catch (err) {
+      console.error('Error stopping scanner:', err);
+    }
+  }, []);
+
+  // Handle scan result
+  const handleScanResult = useCallback(
+    (result: string) => {
+      try {
+        // Validate QR code content
+        if (!validateQRCodeContent(result)) {
+          toast.error(
+            'Invalid QR code. Please scan a valid InstaMoments QR code.'
+          );
+          return;
+        }
+
+        // Extract event slug
+        const eventSlug = extractEventSlugFromQR(result);
+        if (!eventSlug) {
+          toast.error(
+            'Invalid QR code format. Please scan a valid InstaMoments QR code.'
+          );
+          return;
+        }
+
+        // Stop scanning
+        stopScanning();
+
+        // Call onScan callback if provided
+        onScan?.(result);
+
+        // Navigate to gallery
+        router.push(`/gallery/${eventSlug}`);
+
+        toast.success('QR code scanned successfully!');
+      } catch (err) {
+        console.error('Error processing scan result:', err);
+        toast.error('Failed to process QR code. Please try again.');
+      }
+    },
+    [onScan, stopScanning, router]
+  );
+
   // Start QR code scanning
   const startScanning = useCallback(async () => {
     try {
@@ -149,59 +201,7 @@ export function QRScanner({
       setIsScanning(false);
       onError?.(err instanceof Error ? err.message : 'Unknown error');
     }
-  }, [onError]);
-
-  // Stop QR code scanning
-  const stopScanning = useCallback(() => {
-    try {
-      if (qrCodeScannerRef.current) {
-        (qrCodeScannerRef.current as { clear: () => void }).clear();
-        qrCodeScannerRef.current = null;
-      }
-      setIsScanning(false);
-    } catch (err) {
-      console.error('Error stopping scanner:', err);
-    }
-  }, []);
-
-  // Handle scan result
-  const handleScanResult = useCallback(
-    (result: string) => {
-      try {
-        // Validate QR code content
-        if (!validateQRCodeContent(result)) {
-          toast.error(
-            'Invalid QR code. Please scan a valid InstaMoments QR code.'
-          );
-          return;
-        }
-
-        // Extract event slug
-        const eventSlug = extractEventSlugFromQR(result);
-        if (!eventSlug) {
-          toast.error(
-            'Invalid QR code format. Please scan a valid InstaMoments QR code.'
-          );
-          return;
-        }
-
-        // Stop scanning
-        stopScanning();
-
-        // Call onScan callback if provided
-        onScan?.(result);
-
-        // Navigate to gallery
-        router.push(`/gallery/${eventSlug}`);
-
-        toast.success('QR code scanned successfully!');
-      } catch (err) {
-        console.error('Error processing scan result:', err);
-        toast.error('Failed to process QR code. Please try again.');
-      }
-    },
-    [onScan, stopScanning, router]
-  );
+  }, [onError, handleScanResult]);
 
   // Handle manual URL entry
   const handleManualSubmit = useCallback(
