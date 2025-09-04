@@ -16,6 +16,8 @@
     --foreground: oklch(0.1469 0.0041 49.2499);   /* Deep charcoal */
     --card: oklch(1.0000 0 0);                    /* White cards */
     --card-foreground: oklch(0.1469 0.0041 49.2499);
+    --popover: oklch(1.0000 0 0);
+    --popover-foreground: oklch(0.1469 0.0041 49.2499);
     
     /* Brand Colors - Filipino Celebration Inspired */
     --primary: oklch(0.8803 0.1348 86.0616);      /* Warm golden yellow - joy/celebration */
@@ -30,29 +32,52 @@
     --accent-foreground: oklch(0.2161 0.0061 56.0434);
     
     /* Semantic Colors */
-    --success: oklch(0.7775 0.1595 166.5719);     /* Success green */
-    --warning: oklch(0.7484 0.1384 37.9119);      /* Warning orange */
     --destructive: oklch(0.6368 0.2078 25.3313);  /* Error red */
     --destructive-foreground: oklch(0.9851 0 0);
-    --info: oklch(0.5923 0.1120 227.9733);        /* Info blue */
     
     /* Interface Elements */
     --border: oklch(0.9232 0.0026 48.7171);
     --input: oklch(0.9232 0.0026 48.7171);
     --ring: oklch(0.8803 0.1348 86.0616);
     
+    /* Chart Colors */
+    --chart-1: oklch(0.8803 0.1348 86.0616);
+    --chart-2: oklch(0.7116 0.1812 22.8389);
+    --chart-3: oklch(0.7775 0.1595 166.5719);
+    --chart-4: oklch(0.5923 0.1120 227.9733);
+    --chart-5: oklch(0.7484 0.1384 37.9119);
+    
+    /* Sidebar Colors */
+    --sidebar: oklch(0.9699 0.0013 106.4238);
+    --sidebar-foreground: oklch(0.2161 0.0061 56.0434);
+    --sidebar-primary: oklch(0.8803 0.1348 86.0616);
+    --sidebar-primary-foreground: oklch(1.0000 0 0);
+    --sidebar-accent: oklch(1.0000 0 0);
+    --sidebar-accent-foreground: oklch(0.2161 0.0061 56.0434);
+    --sidebar-border: oklch(0.9232 0.0026 48.7171);
+    --sidebar-ring: oklch(0.8803 0.1348 86.0616);
+    
     /* Typography */
     --font-sans: ABeeZee, ui-sans-serif, sans-serif, system-ui;
-    --font-serif: Lora, serif;
-    --font-mono: "Fira Code", monospace;
+    --font-serif: Lora;
+    --font-mono: Fira Code;
     
     /* Spacing & Radius */
     --radius: 0.75rem;                            /* Rounded corners for modern feel */
     --spacing: 0.25rem;
     
     /* Shadows - Elevated UI */
+    --shadow-2xs: 0px 4px 10px 0px hsl(0 0% 0% / 0.05);
+    --shadow-xs: 0px 4px 10px 0px hsl(0 0% 0% / 0.05);
+    --shadow-sm: 0px 4px 10px 0px hsl(0 0% 0% / 0.10), 0px 1px 2px -1px hsl(0 0% 0% / 0.10);
     --shadow: 0px 4px 10px 0px hsl(0 0% 0% / 0.10), 0px 1px 2px -1px hsl(0 0% 0% / 0.10);
+    --shadow-md: 0px 4px 10px 0px hsl(0 0% 0% / 0.10), 0px 2px 4px -1px hsl(0 0% 0% / 0.10);
     --shadow-lg: 0px 4px 10px 0px hsl(0 0% 0% / 0.10), 0px 4px 6px -1px hsl(0 0% 0% / 0.10);
+    --shadow-xl: 0px 4px 10px 0px hsl(0 0% 0% / 0.10), 0px 8px 10px -1px hsl(0 0% 0% / 0.10);
+    --shadow-2xl: 0px 4px 10px 0px hsl(0 0% 0% / 0.25);
+    
+    /* Typography */
+    --tracking-normal: normal;
   }
   
   .dark {
@@ -60,6 +85,8 @@
     --foreground: oklch(0.9851 0 0);              /* Near white */
     --card: oklch(0.2685 0.0063 34.2976);         /* Elevated dark cards */
     --card-foreground: oklch(0.9851 0 0);
+    --popover: oklch(0.2685 0.0063 34.2976);
+    --popover-foreground: oklch(0.9851 0 0);
     
     --primary: oklch(0.7685 0.1369 20.7298);      /* Warm gold in dark */
     --primary-foreground: oklch(0.2161 0.0061 56.0434);
@@ -71,12 +98,36 @@
     --accent: oklch(0.3741 0.0087 67.5582);
     --accent-foreground: oklch(0.9851 0 0);
     
+    --destructive: oklch(0.7106 0.1661 22.2162);
+    --destructive-foreground: oklch(0.2161 0.0061 56.0434);
+    
     --border: oklch(0.3741 0.0087 67.5582);
     --input: oklch(0.3741 0.0087 67.5582);
     --ring: oklch(0.7685 0.1369 20.7298);
     
+    --chart-1: oklch(0.7685 0.1369 20.7298);
+    --chart-2: oklch(0.8803 0.1348 86.0616);
+    --chart-3: oklch(0.7729 0.1535 163.2231);
+    --chart-4: oklch(0.7535 0.1390 232.6615);
+    --chart-5: oklch(0.8369 0.1644 84.4286);
+    
+    --sidebar: oklch(0.2685 0.0063 34.2976);
+    --sidebar-foreground: oklch(0.9851 0 0);
+    --sidebar-primary: oklch(0.7685 0.1369 20.7298);
+    --sidebar-primary-foreground: oklch(0.2161 0.0061 56.0434);
+    --sidebar-accent: oklch(0.3741 0.0087 67.5582);
+    --sidebar-accent-foreground: oklch(0.9851 0 0);
+    --sidebar-border: oklch(0.3741 0.0087 67.5582);
+    --sidebar-ring: oklch(0.7685 0.1369 20.7298);
+    
+    --shadow-2xs: 0px 5px 15px 0px hsl(0 0% 0% / 0.13);
+    --shadow-xs: 0px 5px 15px 0px hsl(0 0% 0% / 0.13);
+    --shadow-sm: 0px 5px 15px 0px hsl(0 0% 0% / 0.25), 0px 1px 2px -1px hsl(0 0% 0% / 0.25);
     --shadow: 0px 5px 15px 0px hsl(0 0% 0% / 0.25), 0px 1px 2px -1px hsl(0 0% 0% / 0.25);
+    --shadow-md: 0px 5px 15px 0px hsl(0 0% 0% / 0.25), 0px 2px 4px -1px hsl(0 0% 0% / 0.25);
     --shadow-lg: 0px 5px 15px 0px hsl(0 0% 0% / 0.25), 0px 4px 6px -1px hsl(0 0% 0% / 0.25);
+    --shadow-xl: 0px 5px 15px 0px hsl(0 0% 0% / 0.25), 0px 8px 10px -1px hsl(0 0% 0% / 0.25);
+    --shadow-2xl: 0px 5px 15px 0px hsl(0 0% 0% / 0.63);
   }
 }
 
