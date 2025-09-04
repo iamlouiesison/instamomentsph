@@ -17,6 +17,7 @@ const eslintConfig = [
     },
     rules: {
       'prettier/prettier': 'error',
+      '@typescript-eslint/no-explicit-any': 'warn',
     },
     ignores: [
       'node_modules/**',
