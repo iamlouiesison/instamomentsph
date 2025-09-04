@@ -76,28 +76,45 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-background via-muted/20 to-background">
+      {/* Navigation */}
+      <nav className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <div className="flex items-center">
-              <h1 className="text-xl font-semibold text-gray-900">
-                Profile Settings
-              </h1>
+            <div className="flex items-center space-x-2">
+              <div className="w-8 h-8 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center">
+                <User className="w-5 h-5 text-primary-foreground" />
+              </div>
+              <span className="text-xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                InstaMoments
+              </span>
+            </div>
+            <div className="flex items-center space-x-4">
+              <Button asChild variant="outline" size="sm">
+                <Link href="/dashboard">Back to Dashboard</Link>
+              </Button>
             </div>
           </div>
         </div>
-      </header>
+      </nav>
 
       {/* Main Content */}
-      <main className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold mb-2">Profile Settings</h1>
+          <p className="text-muted-foreground text-lg">
+            Manage your account information and preferences
+          </p>
+        </div>
+
         <div className="space-y-6">
           {/* Profile Picture Section */}
-          <Card>
+          <Card className="border-0 bg-card/95 backdrop-blur">
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Camera className="w-5 h-5 mr-2" />
+                <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center mr-3">
+                  <Camera className="w-4 h-4 text-primary" />
+                </div>
                 Profile Picture
               </CardTitle>
               <CardDescription>Update your profile picture</CardDescription>
@@ -117,7 +134,7 @@ export default function ProfilePage() {
                   <Button variant="outline" disabled>
                     Upload New Photo
                   </Button>
-                  <p className="text-sm text-gray-500 mt-2">
+                  <p className="text-sm text-muted-foreground mt-2">
                     Avatar upload coming soon
                   </p>
                 </div>
@@ -126,10 +143,12 @@ export default function ProfilePage() {
           </Card>
 
           {/* Profile Information */}
-          <Card>
+          <Card className="border-0 bg-card/95 backdrop-blur">
             <CardHeader>
               <CardTitle className="flex items-center">
-                <User className="w-5 h-5 mr-2" />
+                <div className="w-8 h-8 bg-secondary/10 rounded-lg flex items-center justify-center mr-3">
+                  <User className="w-4 h-4 text-secondary" />
+                </div>
                 Profile Information
               </CardTitle>
               <CardDescription>
@@ -148,7 +167,7 @@ export default function ProfilePage() {
                       Full Name *
                     </Label>
                     <div className="relative">
-                      <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                      <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
                       <Input
                         id="fullName"
                         type="text"
@@ -158,7 +177,7 @@ export default function ProfilePage() {
                       />
                     </div>
                     {errors.fullName && (
-                      <p className="text-sm text-red-600">
+                      <p className="text-sm text-destructive">
                         {errors.fullName.message}
                       </p>
                     )}
@@ -172,7 +191,7 @@ export default function ProfilePage() {
                       Phone Number
                     </Label>
                     <div className="relative">
-                      <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                      <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
                       <Input
                         id="phoneNumber"
                         type="tel"
@@ -182,7 +201,7 @@ export default function ProfilePage() {
                       />
                     </div>
                     {errors.phoneNumber && (
-                      <p className="text-sm text-red-600">
+                      <p className="text-sm text-destructive">
                         {errors.phoneNumber.message}
                       </p>
                     )}
@@ -194,16 +213,16 @@ export default function ProfilePage() {
                     Email Address
                   </Label>
                   <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
                     <Input
                       id="email"
                       type="email"
                       value={profile?.email || ''}
                       disabled
-                      className="pl-10 h-12 bg-gray-50"
+                      className="pl-10 h-12 bg-muted"
                     />
                   </div>
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-muted-foreground">
                     Email address cannot be changed
                   </p>
                 </div>
@@ -211,7 +230,7 @@ export default function ProfilePage() {
                 <div className="flex justify-end">
                   <Button
                     type="submit"
-                    className="h-12 px-8 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-semibold"
+                    className="h-12 px-8 bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-primary-foreground font-semibold"
                     disabled={isLoading}
                   >
                     <Save className="w-4 h-4 mr-2" />
@@ -223,9 +242,14 @@ export default function ProfilePage() {
           </Card>
 
           {/* Account Information */}
-          <Card>
+          <Card className="border-0 bg-card/95 backdrop-blur">
             <CardHeader>
-              <CardTitle>Account Information</CardTitle>
+              <CardTitle className="flex items-center">
+                <div className="w-8 h-8 bg-accent/10 rounded-lg flex items-center justify-center mr-3">
+                  <Mail className="w-4 h-4 text-accent-foreground" />
+                </div>
+                Account Information
+              </CardTitle>
               <CardDescription>
                 Your account details and subscription information
               </CardDescription>
@@ -233,18 +257,18 @@ export default function ProfilePage() {
             <CardContent>
               <div className="space-y-4">
                 <div className="flex justify-between items-center py-2">
-                  <span className="text-sm font-medium text-gray-700">
+                  <span className="text-sm font-medium text-foreground">
                     Account Type
                   </span>
-                  <span className="text-sm text-gray-600 capitalize">
+                  <span className="text-sm text-muted-foreground capitalize">
                     {profile?.subscription_tier || 'Free'}
                   </span>
                 </div>
                 <div className="flex justify-between items-center py-2">
-                  <span className="text-sm font-medium text-gray-700">
+                  <span className="text-sm font-medium text-foreground">
                     Member Since
                   </span>
-                  <span className="text-sm text-gray-600">
+                  <span className="text-sm text-muted-foreground">
                     {profile?.created_at
                       ? new Date(profile.created_at).toLocaleDateString()
                       : 'N/A'}

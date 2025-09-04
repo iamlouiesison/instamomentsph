@@ -68,21 +68,41 @@ export default function CompleteProfilePage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
-      <div className="w-full max-w-md">
-        <Card className="shadow-lg">
-          <CardHeader className="text-center space-y-2">
-            <div className="mx-auto w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center">
-              <Smartphone className="w-8 h-8 text-white" />
+    <div className="min-h-screen bg-gradient-to-br from-background via-muted/20 to-background">
+      {/* Navigation */}
+      <nav className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <div className="flex items-center space-x-2">
+              <div className="w-8 h-8 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center">
+                <Smartphone className="w-5 h-5 text-primary-foreground" />
+              </div>
+              <span className="text-xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                InstaMoments
+              </span>
             </div>
-            <CardTitle className="text-2xl font-bold text-gray-900">
-              Kumpletuhin ang Profile
-            </CardTitle>
-            <CardDescription className="text-gray-600">
-              Ilagay ang inyong impormasyon para makapag-start na kayo sa
-              InstaMoments
-            </CardDescription>
-          </CardHeader>
+          </div>
+        </div>
+      </nav>
+
+      {/* Main Content */}
+      <div className="flex items-center justify-center min-h-[calc(100vh-4rem)] p-4">
+        <div className="w-full max-w-md">
+          <Card className="shadow-lg border-0 bg-card/95 backdrop-blur">
+            <CardHeader className="text-center space-y-4">
+              <div className="mx-auto w-16 h-16 bg-gradient-to-br from-primary to-secondary rounded-full flex items-center justify-center">
+                <Smartphone className="w-8 h-8 text-primary-foreground" />
+              </div>
+              <div className="space-y-2">
+                <CardTitle className="text-2xl font-bold">
+                  Kumpletuhin ang Profile
+                </CardTitle>
+                <CardDescription className="text-muted-foreground">
+                  Ilagay ang inyong impormasyon para makapag-start na kayo sa
+                  InstaMoments
+                </CardDescription>
+              </div>
+            </CardHeader>
 
           <CardContent className="space-y-6">
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -95,7 +115,7 @@ export default function CompleteProfilePage() {
                   Buong Pangalan *
                 </Label>
                 <div className="relative">
-                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
                   <Input
                     id="fullName"
                     type="text"
@@ -105,7 +125,7 @@ export default function CompleteProfilePage() {
                   />
                 </div>
                 {errors.fullName && (
-                  <p className="text-sm text-red-600">
+                  <p className="text-sm text-destructive">
                     {errors.fullName.message}
                   </p>
                 )}
@@ -116,7 +136,7 @@ export default function CompleteProfilePage() {
                   Phone Number (Optional)
                 </Label>
                 <div className="relative">
-                  <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                  <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
                   <Input
                     id="phoneNumber"
                     type="tel"
@@ -126,18 +146,18 @@ export default function CompleteProfilePage() {
                   />
                 </div>
                 {errors.phoneNumber && (
-                  <p className="text-sm text-red-600">
+                  <p className="text-sm text-destructive">
                     {errors.phoneNumber.message}
                   </p>
                 )}
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-muted-foreground">
                   Para sa mga importanteng updates at notifications
                 </p>
               </div>
 
               <Button
                 type="submit"
-                className="w-full h-12 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-semibold"
+                className="w-full h-12 bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-primary-foreground font-semibold"
                 disabled={isLoading}
               >
                 {isLoading ? 'Sinusave...' : 'Tapusin ang Setup'}
@@ -145,7 +165,7 @@ export default function CompleteProfilePage() {
             </form>
 
             <div className="text-center">
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-muted-foreground">
                 Pwede ninyong i-update ang impormasyon na ito sa settings page
               </p>
             </div>
