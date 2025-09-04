@@ -29,6 +29,7 @@ import {
 import { Event } from '@/types/database';
 import { FILIPINO_EVENT_TYPES } from '@/lib/validations/event';
 import { QRScanner } from '@/components/features/qr-code/QRScanner';
+import { PhotoGallery } from './PhotoGallery';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
 
@@ -374,6 +375,26 @@ export function GalleryPage({ event }: GalleryPageProps) {
                 </Button>
               </div>
             </form>
+          </CardContent>
+        </Card>
+
+        {/* Live Gallery */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Camera className="h-5 w-5" />
+              Live Gallery
+            </CardTitle>
+            <CardDescription>
+              View all photos and videos shared by guests in real-time
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <PhotoGallery
+              eventId={event.id}
+              allowDownloads={event.allow_downloads}
+              maxPhotos={event.max_photos}
+            />
           </CardContent>
         </Card>
 

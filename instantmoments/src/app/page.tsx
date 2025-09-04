@@ -117,6 +117,10 @@ export default function Home() {
                 </div>
                 <div className="flex items-center space-x-2">
                   <CheckCircle className="w-4 h-4 text-success" />
+                  <span>From ₱699 per event</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <CheckCircle className="w-4 h-4 text-success" />
                   <span>GCash payments</span>
                 </div>
                 <div className="flex items-center space-x-2">
@@ -416,7 +420,7 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 max-w-8xl mx-auto">
             <Card className="celebration-card">
               <CardHeader className="text-center">
                 <CardTitle className="text-2xl">Free</CardTitle>
@@ -430,11 +434,15 @@ export default function Home() {
                 <div className="space-y-2">
                   <div className="flex items-center space-x-2">
                     <CheckCircle className="w-4 h-4 text-success" />
-                    <span className="text-sm">Up to 50 photos</span>
+                    <span className="text-sm">30 photos per event</span>
                   </div>
                   <div className="flex items-center space-x-2">
                     <CheckCircle className="w-4 h-4 text-success" />
-                    <span className="text-sm">Up to 10 video greetings</span>
+                    <span className="text-sm">3-day storage</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <CheckCircle className="w-4 h-4 text-success" />
+                    <span className="text-sm">Basic gallery</span>
                   </div>
                   <div className="flex items-center space-x-2">
                     <CheckCircle className="w-4 h-4 text-success" />
@@ -442,93 +450,209 @@ export default function Home() {
                   </div>
                   <div className="flex items-center space-x-2">
                     <CheckCircle className="w-4 h-4 text-success" />
-                    <span className="text-sm">Basic gallery</span>
+                    <span className="text-sm">WebP compression</span>
                   </div>
                 </div>
-                <Button asChild className="w-full">
+                <Button asChild variant="outline" className="w-full">
                   <Link href="/signup">Get Started Free</Link>
-                </Button>
-              </div>
-            </Card>
-
-            <Card className="celebration-card border-primary relative">
-              <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                <Badge className="bg-primary text-primary-foreground">
-                  Most Popular
-                </Badge>
-              </div>
-              <CardHeader className="text-center">
-                <CardTitle className="text-2xl">Premium</CardTitle>
-                <CardDescription>
-                  Ideal for weddings and special events
-                </CardDescription>
-                <div className="text-4xl font-bold text-primary mt-4">₱299</div>
-                <div className="text-muted-foreground">per event</div>
-              </CardHeader>
-              <div className="px-6 pb-6 space-y-4">
-                <div className="space-y-2">
-                  <div className="flex items-center space-x-2">
-                    <CheckCircle className="w-4 h-4 text-success" />
-                    <span className="text-sm">Up to 500 photos</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <CheckCircle className="w-4 h-4 text-success" />
-                    <span className="text-sm">Up to 50 video greetings</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <CheckCircle className="w-4 h-4 text-success" />
-                    <span className="text-sm">Custom QR code design</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <CheckCircle className="w-4 h-4 text-success" />
-                    <span className="text-sm">Advanced gallery features</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <CheckCircle className="w-4 h-4 text-success" />
-                    <span className="text-sm">Download all photos</span>
-                  </div>
-                </div>
-                <Button asChild className="w-full">
-                  <Link href="/signup">Choose Premium</Link>
                 </Button>
               </div>
             </Card>
 
             <Card className="celebration-card">
               <CardHeader className="text-center">
-                <CardTitle className="text-2xl">Professional</CardTitle>
+                <CardTitle className="text-2xl">Basic</CardTitle>
                 <CardDescription>
-                  For event planners and businesses
+                  Small gatherings and intimate celebrations
                 </CardDescription>
-                <div className="text-4xl font-bold text-primary mt-4">₱999</div>
-                <div className="text-muted-foreground">per month</div>
+                <div className="text-4xl font-bold text-primary mt-4">₱699</div>
+                <div className="text-muted-foreground">per event</div>
               </CardHeader>
               <div className="px-6 pb-6 space-y-4">
                 <div className="space-y-2">
                   <div className="flex items-center space-x-2">
                     <CheckCircle className="w-4 h-4 text-success" />
-                    <span className="text-sm">Unlimited events</span>
+                    <span className="text-sm">50 photos per event</span>
                   </div>
                   <div className="flex items-center space-x-2">
                     <CheckCircle className="w-4 h-4 text-success" />
-                    <span className="text-sm">Unlimited photos & videos</span>
+                    <span className="text-sm">7-day storage</span>
                   </div>
                   <div className="flex items-center space-x-2">
                     <CheckCircle className="w-4 h-4 text-success" />
-                    <span className="text-sm">White-label options</span>
+                    <span className="text-sm">Photo messages/captions</span>
                   </div>
                   <div className="flex items-center space-x-2">
                     <CheckCircle className="w-4 h-4 text-success" />
-                    <span className="text-sm">Priority support</span>
+                    <span className="text-sm">No watermarks</span>
                   </div>
                   <div className="flex items-center space-x-2">
                     <CheckCircle className="w-4 h-4 text-success" />
-                    <span className="text-sm">Analytics dashboard</span>
+                    <span className="text-sm">Basic customer support</span>
                   </div>
                 </div>
                 <Button asChild variant="outline" className="w-full">
-                  <Link href="/signup">Go Professional</Link>
+                  <Link href="/signup">Choose Basic</Link>
                 </Button>
+              </div>
+            </Card>
+
+            <Card className="celebration-card border-primary relative transform scale-105 shadow-xl bg-gradient-to-br from-primary/5 to-secondary/5">
+              <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                <Badge className="bg-primary text-primary-foreground">
+                  Most Popular
+                </Badge>
+              </div>
+              <CardHeader className="text-center">
+                <CardTitle className="text-2xl">Standard</CardTitle>
+                <CardDescription>
+                  Wedding receptions, birthday parties, corporate events
+                </CardDescription>
+                <div className="text-4xl font-bold text-primary mt-4">₱999</div>
+                <div className="text-muted-foreground">per event</div>
+              </CardHeader>
+              <div className="px-6 pb-6 space-y-4">
+                <div className="space-y-2">
+                  <div className="flex items-center space-x-2">
+                    <CheckCircle className="w-4 h-4 text-success" />
+                    <span className="text-sm">100 photos per event</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <CheckCircle className="w-4 h-4 text-success" />
+                    <span className="text-sm">14-day storage</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <CheckCircle className="w-4 h-4 text-success" />
+                    <span className="text-sm">Email gallery sharing</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <CheckCircle className="w-4 h-4 text-success" />
+                    <span className="text-sm">Social media integration</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <CheckCircle className="w-4 h-4 text-success" />
+                    <span className="text-sm">Custom event themes</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <CheckCircle className="w-4 h-4 text-success" />
+                    <span className="text-sm">Priority customer support</span>
+                  </div>
+                </div>
+                <Button asChild size="lg" className="w-full">
+                  <Link href="/signup">Choose Standard</Link>
+                </Button>
+                <div className="text-center">
+                  <div className="text-sm text-muted-foreground">
+                    Video Add-on: +₱600
+                  </div>
+                </div>
+              </div>
+            </Card>
+
+            <Card className="celebration-card">
+              <CardHeader className="text-center">
+                <CardTitle className="text-2xl">Premium</CardTitle>
+                <CardDescription>
+                  Large weddings, major corporate celebrations
+                </CardDescription>
+                <div className="text-4xl font-bold text-primary mt-4">
+                  ₱1,999
+                </div>
+                <div className="text-muted-foreground">per event</div>
+              </CardHeader>
+              <div className="px-6 pb-6 space-y-4">
+                <div className="space-y-2">
+                  <div className="flex items-center space-x-2">
+                    <CheckCircle className="w-4 h-4 text-success" />
+                    <span className="text-sm">250 photos per event</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <CheckCircle className="w-4 h-4 text-success" />
+                    <span className="text-sm">30-day storage</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <CheckCircle className="w-4 h-4 text-success" />
+                    <span className="text-sm">
+                      Advanced moderation controls
+                    </span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <CheckCircle className="w-4 h-4 text-success" />
+                    <span className="text-sm">
+                      Professional gallery layouts
+                    </span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <CheckCircle className="w-4 h-4 text-success" />
+                    <span className="text-sm">Photo album export</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <CheckCircle className="w-4 h-4 text-success" />
+                    <span className="text-sm">Dedicated customer support</span>
+                  </div>
+                </div>
+                <Button asChild className="w-full">
+                  <Link href="/signup">Choose Premium</Link>
+                </Button>
+                <div className="text-center">
+                  <div className="text-sm text-muted-foreground">
+                    Video Add-on: +₱1,200
+                  </div>
+                </div>
+              </div>
+            </Card>
+
+            <Card className="celebration-card border-2 border-primary/20">
+              <CardHeader className="text-center">
+                <CardTitle className="text-2xl">Pro</CardTitle>
+                <CardDescription>
+                  For wedding planners, major corporate events, multi-day
+                  celebrations
+                </CardDescription>
+                <div className="text-4xl font-bold text-primary mt-4">
+                  ₱3,499
+                </div>
+                <div className="text-muted-foreground">per event</div>
+              </CardHeader>
+              <div className="px-6 pb-6 space-y-4">
+                <div className="space-y-2">
+                  <div className="flex items-center space-x-2">
+                    <CheckCircle className="w-4 h-4 text-success" />
+                    <span className="text-sm">500 photos per event</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <CheckCircle className="w-4 h-4 text-success" />
+                    <span className="text-sm">30-day storage</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <CheckCircle className="w-4 h-4 text-success" />
+                    <span className="text-sm">Custom event branding</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <CheckCircle className="w-4 h-4 text-success" />
+                    <span className="text-sm">Advanced analytics</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <CheckCircle className="w-4 h-4 text-success" />
+                    <span className="text-sm">Dedicated event coordinator</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <CheckCircle className="w-4 h-4 text-success" />
+                    <span className="text-sm">Priority processing</span>
+                  </div>
+                </div>
+                <Button
+                  asChild
+                  size="lg"
+                  className="w-full bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90"
+                >
+                  <Link href="/signup">Go Pro</Link>
+                </Button>
+                <div className="text-center">
+                  <div className="text-sm text-muted-foreground">
+                    Video Add-on: +₱2,100
+                  </div>
+                </div>
               </div>
             </Card>
           </div>
