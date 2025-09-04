@@ -1,45 +1,56 @@
-'use client'
+'use client';
 
-import React, { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
-import { Progress } from '@/components/ui/progress'
-import { 
-  EventTypeSelector, 
-  PackageSelector, 
-  LoadingSpinner 
-} from '@/components/instamoments'
-import { 
-  EventCreateSchema, 
-  type EventCreateData, 
-  type EventType, 
-  type SubscriptionTier 
-} from '@/lib/validations/event'
-import { ArrowLeft, ArrowRight, Check } from 'lucide-react'
-import { toast } from 'sonner'
+import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Progress } from '@/components/ui/progress';
+import {
+  EventTypeSelector,
+  PackageSelector,
+  LoadingSpinner,
+} from '@/components/instamoments';
+import {
+  EventCreateSchema,
+  type EventType,
+  type SubscriptionTier,
+} from '@/lib/validations/event';
+import { ArrowLeft, ArrowRight, Check } from 'lucide-react';
+import { toast } from 'sonner';
 
 const STEPS = [
-  { id: 1, title: 'Event Details', description: 'Basic information about your event' },
+  {
+    id: 1,
+    title: 'Event Details',
+    description: 'Basic information about your event',
+  },
   { id: 2, title: 'Event Type', description: 'Choose the type of celebration' },
-  { id: 3, title: 'Package Selection', description: 'Select your event package' },
-  { id: 4, title: 'Review & Create', description: 'Review and create your event' }
-] as const
+  {
+    id: 3,
+    title: 'Package Selection',
+    description: 'Select your event package',
+  },
+  {
+    id: 4,
+    title: 'Review & Create',
+    description: 'Review and create your event',
+  },
+] as const;
 
 export default function CreateEventPage() {
-  const router = useRouter()
-  const [currentStep, setCurrentStep] = useState(1)
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [selectedEventType, setSelectedEventType] = useState<EventType>()
-  const [selectedTier, setSelectedTier] = useState<SubscriptionTier>('free')
-  const [hasVideoAddon, setHasVideoAddon] = useState(false)
+  const router = useRouter();
+  const [currentStep, setCurrentStep] = useState(1);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [selectedEventType, setSelectedEventType] = useState<EventType>();
+  const [selectedTier, setSelectedTier] = useState<SubscriptionTier>('free');
+  const [hasVideoAddon, setHasVideoAddon] = useState(false);
 
-  const form = useForm<EventCreateData>({
+  const form = useForm({
     resolver: zodResolver(EventCreateSchema),
     defaultValues: {
       name: '',
@@ -52,28 +63,33 @@ export default function CreateEventPage() {
       requiresModeration: false,
       allowDownloads: true,
       isPublic: true,
-      customMessage: ''
-    }
-  })
+      customMessage: '',
+    },
+  });
 
-  const { handleSubmit, watch, setValue, formState: { errors } } = form
-  const watchedValues = watch()
+  const {
+    handleSubmit,
+    watch,
+    setValue,
+    formState: { errors },
+  } = form;
+  const watchedValues = watch();
 
   const nextStep = () => {
     if (currentStep < STEPS.length) {
-      setCurrentStep(currentStep + 1)
+      setCurrentStep(currentStep + 1);
     }
-  }
+  };
 
   const prevStep = () => {
     if (currentStep > 1) {
-      setCurrentStep(currentStep - 1)
+      setCurrentStep(currentStep - 1);
     }
-  }
+  };
 
-  const onSubmit = async (data: EventCreateData) => {
-    setIsSubmitting(true)
-    
+  const onSubmit = async (data: Record<string, unknown>) => {
+    setIsSubmitting(true);
+
     try {
       const response = await fetch('/api/events', {
         method: 'POST',
@@ -81,41 +97,42 @@ export default function CreateEventPage() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(data),
-      })
+      });
 
-      const result = await response.json()
+      const result = await response.json();
 
       if (!result.success) {
-        throw new Error(result.error.message || 'Failed to create event')
+        throw new Error(result.error.message || 'Failed to create event');
       }
 
-      toast.success('Event created successfully!')
-      router.push(`/dashboard/events/${result.data.id}`)
-      
+      toast.success('Event created successfully!');
+      router.push(`/dashboard/events/${result.data.id}`);
     } catch (error) {
-      console.error('Error creating event:', error)
-      toast.error(error instanceof Error ? error.message : 'Failed to create event')
+      console.error('Error creating event:', error);
+      toast.error(
+        error instanceof Error ? error.message : 'Failed to create event'
+      );
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
   const handleEventTypeSelect = (type: EventType) => {
-    setSelectedEventType(type)
-    setValue('eventType', type)
-  }
+    setSelectedEventType(type);
+    setValue('eventType', type);
+  };
 
   const handleTierSelect = (tier: SubscriptionTier) => {
-    setSelectedTier(tier)
-    setValue('subscriptionTier', tier)
-  }
+    setSelectedTier(tier);
+    setValue('subscriptionTier', tier);
+  };
 
   const handleVideoAddonToggle = (enabled: boolean) => {
-    setHasVideoAddon(enabled)
-    setValue('hasVideoAddon', enabled)
-  }
+    setHasVideoAddon(enabled);
+    setValue('hasVideoAddon', enabled);
+  };
 
-  const progress = (currentStep / STEPS.length) * 100
+  const progress = (currentStep / STEPS.length) * 100;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-50 via-white to-blue-50">
@@ -130,7 +147,7 @@ export default function CreateEventPage() {
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back
           </Button>
-          
+
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
             Create New Event
           </h1>
@@ -205,7 +222,9 @@ export default function CreateEventPage() {
                         {...form.register('name')}
                       />
                       {errors.name && (
-                        <p className="text-sm text-red-500">{errors.name.message}</p>
+                        <p className="text-sm text-red-500">
+                          {errors.name.message}
+                        </p>
                       )}
                     </div>
 
@@ -217,7 +236,9 @@ export default function CreateEventPage() {
                         {...form.register('eventDate')}
                       />
                       {errors.eventDate && (
-                        <p className="text-sm text-red-500">{errors.eventDate.message}</p>
+                        <p className="text-sm text-red-500">
+                          {errors.eventDate.message}
+                        </p>
                       )}
                     </div>
                   </div>
@@ -230,7 +251,9 @@ export default function CreateEventPage() {
                       {...form.register('location')}
                     />
                     {errors.location && (
-                      <p className="text-sm text-red-500">{errors.location.message}</p>
+                      <p className="text-sm text-red-500">
+                        {errors.location.message}
+                      </p>
                     )}
                   </div>
 
@@ -243,7 +266,9 @@ export default function CreateEventPage() {
                       {...form.register('description')}
                     />
                     {errors.description && (
-                      <p className="text-sm text-red-500">{errors.description.message}</p>
+                      <p className="text-sm text-red-500">
+                        {errors.description.message}
+                      </p>
                     )}
                   </div>
                 </div>
@@ -257,7 +282,9 @@ export default function CreateEventPage() {
                     onSelect={handleEventTypeSelect}
                   />
                   {errors.eventType && (
-                    <p className="text-sm text-red-500 mt-2">{errors.eventType.message}</p>
+                    <p className="text-sm text-red-500 mt-2">
+                      {errors.eventType.message}
+                    </p>
                   )}
                 </div>
               )}
@@ -278,7 +305,9 @@ export default function CreateEventPage() {
               {currentStep === 4 && (
                 <div className="space-y-6">
                   <div className="bg-gray-50 rounded-lg p-6">
-                    <h3 className="font-semibold text-lg mb-4">Event Summary</h3>
+                    <h3 className="font-semibold text-lg mb-4">
+                      Event Summary
+                    </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <p className="text-sm text-gray-600">Event Name</p>
@@ -287,27 +316,33 @@ export default function CreateEventPage() {
                       <div>
                         <p className="text-sm text-gray-600">Event Type</p>
                         <p className="font-medium">
-                          {selectedEventType && `🎉 ${selectedEventType.charAt(0).toUpperCase() + selectedEventType.slice(1)}`}
+                          {selectedEventType &&
+                            `🎉 ${selectedEventType.charAt(0).toUpperCase() + selectedEventType.slice(1)}`}
                         </p>
                       </div>
                       {watchedValues.eventDate && (
                         <div>
                           <p className="text-sm text-gray-600">Event Date</p>
                           <p className="font-medium">
-                            {new Date(watchedValues.eventDate).toLocaleDateString('en-PH')}
+                            {new Date(
+                              watchedValues.eventDate
+                            ).toLocaleDateString('en-PH')}
                           </p>
                         </div>
                       )}
                       {watchedValues.location && (
                         <div>
                           <p className="text-sm text-gray-600">Location</p>
-                          <p className="font-medium">{watchedValues.location}</p>
+                          <p className="font-medium">
+                            {watchedValues.location}
+                          </p>
                         </div>
                       )}
                       <div>
                         <p className="text-sm text-gray-600">Package</p>
                         <p className="font-medium">
-                          {selectedTier.charAt(0).toUpperCase() + selectedTier.slice(1)}
+                          {selectedTier.charAt(0).toUpperCase() +
+                            selectedTier.slice(1)}
                           {hasVideoAddon && ' + Video Add-on'}
                         </p>
                       </div>
@@ -341,10 +376,7 @@ export default function CreateEventPage() {
                     <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>
                 ) : (
-                  <Button
-                    type="submit"
-                    disabled={isSubmitting}
-                  >
+                  <Button type="submit" disabled={isSubmitting}>
                     {isSubmitting ? (
                       <>
                         <LoadingSpinner className="w-4 h-4 mr-2" />
@@ -361,5 +393,5 @@ export default function CreateEventPage() {
         </form>
       </div>
     </div>
-  )
+  );
 }

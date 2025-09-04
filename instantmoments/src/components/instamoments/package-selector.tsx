@@ -1,19 +1,24 @@
-'use client'
+'use client';
 
-import React from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Check, Star } from 'lucide-react'
-import { SUBSCRIPTION_TIERS, VIDEO_ADDON_PRICING, calculateEventPrice, type SubscriptionTier } from '@/lib/validations/event'
-import { cn } from '@/lib/utils'
+import React from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Check, Star } from 'lucide-react';
+import {
+  SUBSCRIPTION_TIERS,
+  VIDEO_ADDON_PRICING,
+  calculateEventPrice,
+  type SubscriptionTier,
+} from '@/lib/validations/event';
+import { cn } from '@/lib/utils';
 
 interface PackageSelectorProps {
-  selectedTier?: SubscriptionTier
-  hasVideoAddon?: boolean
-  onSelectTier: (tier: SubscriptionTier) => void
-  onToggleVideoAddon: (enabled: boolean) => void
-  className?: string
+  selectedTier?: SubscriptionTier;
+  hasVideoAddon?: boolean;
+  onSelectTier: (tier: SubscriptionTier) => void;
+  onToggleVideoAddon: (enabled: boolean) => void;
+  className?: string;
 }
 
 export const PackageSelector: React.FC<PackageSelectorProps> = ({
@@ -21,25 +26,24 @@ export const PackageSelector: React.FC<PackageSelectorProps> = ({
   hasVideoAddon = false,
   onSelectTier,
   onToggleVideoAddon,
-  className
+  className,
 }) => {
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('en-PH', {
       style: 'currency',
       currency: 'PHP',
-      minimumFractionDigits: 0
-    }).format(price)
-  }
+      minimumFractionDigits: 0,
+    }).format(price);
+  };
 
   return (
     <div className={cn('space-y-6', className)}>
       {/* Package Tiers */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {Object.entries(SUBSCRIPTION_TIERS).map(([key, tier]) => {
-          const isSelected = selectedTier === key
-          const isPopular = key === 'standard'
-          const totalPrice = calculateEventPrice(key as SubscriptionTier, hasVideoAddon)
-          
+          const isSelected = selectedTier === key;
+          const isPopular = key === 'standard';
+
           return (
             <Card
               key={key}
@@ -60,7 +64,7 @@ export const PackageSelector: React.FC<PackageSelectorProps> = ({
                   </Badge>
                 </div>
               )}
-              
+
               <CardHeader className="text-center pb-3">
                 <CardTitle className="text-lg">{tier.label}</CardTitle>
                 <div className="text-2xl font-bold text-primary">
@@ -72,7 +76,7 @@ export const PackageSelector: React.FC<PackageSelectorProps> = ({
                   </Badge>
                 )}
               </CardHeader>
-              
+
               <CardContent className="space-y-3">
                 <div className="space-y-2">
                   {tier.features.map((feature, index) => (
@@ -82,7 +86,7 @@ export const PackageSelector: React.FC<PackageSelectorProps> = ({
                     </div>
                   ))}
                 </div>
-                
+
                 <div className="pt-3 border-t">
                   <div className="text-xs text-muted-foreground space-y-1">
                     <div>• {tier.maxPhotos} photos total</div>
@@ -90,7 +94,7 @@ export const PackageSelector: React.FC<PackageSelectorProps> = ({
                     <div>• {tier.storageDays} days storage</div>
                   </div>
                 </div>
-                
+
                 {isSelected && (
                   <Button className="w-full mt-3" size="sm">
                     Selected
@@ -98,7 +102,7 @@ export const PackageSelector: React.FC<PackageSelectorProps> = ({
                 )}
               </CardContent>
             </Card>
-          )
+          );
         })}
       </div>
 
@@ -119,7 +123,7 @@ export const PackageSelector: React.FC<PackageSelectorProps> = ({
                 </p>
               </div>
               <Button
-                variant={hasVideoAddon ? "default" : "outline"}
+                variant={hasVideoAddon ? 'default' : 'outline'}
                 size="sm"
                 onClick={() => onToggleVideoAddon(!hasVideoAddon)}
               >
@@ -149,5 +153,5 @@ export const PackageSelector: React.FC<PackageSelectorProps> = ({
         </Card>
       )}
     </div>
-  )
-}
+  );
+};

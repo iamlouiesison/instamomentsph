@@ -1,32 +1,41 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
-import { EventUpdateSchema } from '@/lib/validations/event'
-import { z } from 'zod'
+import { NextRequest, NextResponse } from 'next/server';
+import { createClient } from '@/lib/supabase/server';
+import { EventUpdateSchema } from '@/lib/validations/event';
+import { z } from 'zod';
 
 // GET /api/events/[id] - Get specific event
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const supabase = await createClient()
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    const supabase = await createClient();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
 
     if (authError || !user) {
       return NextResponse.json(
-        { success: false, error: { code: 'UNAUTHORIZED', message: 'Authentication required' } },
+        {
+          success: false,
+          error: { code: 'UNAUTHORIZED', message: 'Authentication required' },
+        },
         { status: 401 }
-      )
+      );
     }
 
-    const eventId = params.id
+    const { id: eventId } = await params;
 
     // Validate UUID
     if (!z.string().uuid().safeParse(eventId).success) {
       return NextResponse.json(
-        { success: false, error: { code: 'INVALID_ID', message: 'Invalid event ID' } },
+        {
+          success: false,
+          error: { code: 'INVALID_ID', message: 'Invalid event ID' },
+        },
         { status: 400 }
-      )
+      );
     }
 
     const { data: event, error } = await supabase
@@ -34,67 +43,84 @@ export async function GET(
       .select('*')
       .eq('id', eventId)
       .eq('host_id', user.id) // Ensure user owns the event
-      .single()
+      .single();
 
     if (error) {
       if (error.code === 'PGRST116') {
         return NextResponse.json(
-          { success: false, error: { code: 'NOT_FOUND', message: 'Event not found' } },
+          {
+            success: false,
+            error: { code: 'NOT_FOUND', message: 'Event not found' },
+          },
           { status: 404 }
-        )
+        );
       }
-      
-      console.error('Error fetching event:', error)
+
+      console.error('Error fetching event:', error);
       return NextResponse.json(
-        { success: false, error: { code: 'DATABASE_ERROR', message: 'Failed to fetch event' } },
+        {
+          success: false,
+          error: { code: 'DATABASE_ERROR', message: 'Failed to fetch event' },
+        },
         { status: 500 }
-      )
+      );
     }
 
     return NextResponse.json({
       success: true,
-      data: event
-    })
-
+      data: event,
+    });
   } catch (error) {
-    console.error('Unexpected error in GET /api/events/[id]:', error)
+    console.error('Unexpected error in GET /api/events/[id]:', error);
     return NextResponse.json(
-      { success: false, error: { code: 'INTERNAL_ERROR', message: 'Something went wrong' } },
+      {
+        success: false,
+        error: { code: 'INTERNAL_ERROR', message: 'Something went wrong' },
+      },
       { status: 500 }
-    )
+    );
   }
 }
 
 // PUT /api/events/[id] - Update event
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const supabase = await createClient()
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    const supabase = await createClient();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
 
     if (authError || !user) {
       return NextResponse.json(
-        { success: false, error: { code: 'UNAUTHORIZED', message: 'Authentication required' } },
+        {
+          success: false,
+          error: { code: 'UNAUTHORIZED', message: 'Authentication required' },
+        },
         { status: 401 }
-      )
+      );
     }
 
-    const eventId = params.id
-    const body = await request.json()
+    const { id: eventId } = await params;
+    const body = await request.json();
 
     // Validate UUID
     if (!z.string().uuid().safeParse(eventId).success) {
       return NextResponse.json(
-        { success: false, error: { code: 'INVALID_ID', message: 'Invalid event ID' } },
+        {
+          success: false,
+          error: { code: 'INVALID_ID', message: 'Invalid event ID' },
+        },
         { status: 400 }
-      )
+      );
     }
 
     // Validate input (partial update)
-    const updateSchema = EventUpdateSchema.omit({ id: true })
-    const validatedData = updateSchema.parse(body)
+    const updateSchema = EventUpdateSchema.omit({ id: true });
+    const validatedData = updateSchema.parse(body);
 
     // Check if event exists and user owns it
     const { data: existingEvent, error: fetchError } = await supabase
@@ -102,40 +128,54 @@ export async function PUT(
       .select('id, status')
       .eq('id', eventId)
       .eq('host_id', user.id)
-      .single()
+      .single();
 
     if (fetchError) {
       if (fetchError.code === 'PGRST116') {
         return NextResponse.json(
-          { success: false, error: { code: 'NOT_FOUND', message: 'Event not found' } },
+          {
+            success: false,
+            error: { code: 'NOT_FOUND', message: 'Event not found' },
+          },
           { status: 404 }
-        )
+        );
       }
-      
-      console.error('Error fetching event for update:', fetchError)
+
+      console.error('Error fetching event for update:', fetchError);
       return NextResponse.json(
-        { success: false, error: { code: 'DATABASE_ERROR', message: 'Failed to fetch event' } },
+        {
+          success: false,
+          error: { code: 'DATABASE_ERROR', message: 'Failed to fetch event' },
+        },
         { status: 500 }
-      )
+      );
     }
 
     // Don't allow updates to expired events
     if (existingEvent.status === 'expired') {
       return NextResponse.json(
-        { success: false, error: { code: 'EVENT_EXPIRED', message: 'Cannot update expired events' } },
+        {
+          success: false,
+          error: {
+            code: 'EVENT_EXPIRED',
+            message: 'Cannot update expired events',
+          },
+        },
         { status: 400 }
-      )
+      );
     }
 
     // Prepare update data
-    const updateData: any = {
+    const updateData: Record<string, unknown> = {
       ...validatedData,
-      updated_at: new Date().toISOString()
-    }
+      updated_at: new Date().toISOString(),
+    };
 
     // Convert event date if provided
     if (validatedData.eventDate) {
-      updateData.event_date = new Date(validatedData.eventDate).toISOString().split('T')[0]
+      updateData.event_date = new Date(validatedData.eventDate)
+        .toISOString()
+        .split('T')[0];
     }
 
     const { data: event, error } = await supabase
@@ -144,68 +184,82 @@ export async function PUT(
       .eq('id', eventId)
       .eq('host_id', user.id)
       .select()
-      .single()
+      .single();
 
     if (error) {
-      console.error('Error updating event:', error)
+      console.error('Error updating event:', error);
       return NextResponse.json(
-        { success: false, error: { code: 'DATABASE_ERROR', message: 'Failed to update event' } },
+        {
+          success: false,
+          error: { code: 'DATABASE_ERROR', message: 'Failed to update event' },
+        },
         { status: 500 }
-      )
+      );
     }
 
     return NextResponse.json({
       success: true,
-      data: event
-    })
-
+      data: event,
+    });
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { 
-          success: false, 
-          error: { 
-            code: 'VALIDATION_ERROR', 
+        {
+          success: false,
+          error: {
+            code: 'VALIDATION_ERROR',
             message: 'Invalid input data',
-            details: error.errors
-          } 
+            details: error.issues,
+          },
         },
         { status: 400 }
-      )
+      );
     }
 
-    console.error('Unexpected error in PUT /api/events/[id]:', error)
+    console.error('Unexpected error in PUT /api/events/[id]:', error);
     return NextResponse.json(
-      { success: false, error: { code: 'INTERNAL_ERROR', message: 'Something went wrong' } },
+      {
+        success: false,
+        error: { code: 'INTERNAL_ERROR', message: 'Something went wrong' },
+      },
       { status: 500 }
-    )
+    );
   }
 }
 
 // DELETE /api/events/[id] - Delete event
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const supabase = await createClient()
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    const supabase = await createClient();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
 
     if (authError || !user) {
       return NextResponse.json(
-        { success: false, error: { code: 'UNAUTHORIZED', message: 'Authentication required' } },
+        {
+          success: false,
+          error: { code: 'UNAUTHORIZED', message: 'Authentication required' },
+        },
         { status: 401 }
-      )
+      );
     }
 
-    const eventId = params.id
+    const { id: eventId } = await params;
 
     // Validate UUID
     if (!z.string().uuid().safeParse(eventId).success) {
       return NextResponse.json(
-        { success: false, error: { code: 'INVALID_ID', message: 'Invalid event ID' } },
+        {
+          success: false,
+          error: { code: 'INVALID_ID', message: 'Invalid event ID' },
+        },
         { status: 400 }
-      )
+      );
     }
 
     // Check if event exists and user owns it
@@ -214,39 +268,46 @@ export async function DELETE(
       .select('id, status, total_photos, total_videos')
       .eq('id', eventId)
       .eq('host_id', user.id)
-      .single()
+      .single();
 
     if (fetchError) {
       if (fetchError.code === 'PGRST116') {
         return NextResponse.json(
-          { success: false, error: { code: 'NOT_FOUND', message: 'Event not found' } },
+          {
+            success: false,
+            error: { code: 'NOT_FOUND', message: 'Event not found' },
+          },
           { status: 404 }
-        )
+        );
       }
-      
-      console.error('Error fetching event for deletion:', fetchError)
+
+      console.error('Error fetching event for deletion:', fetchError);
       return NextResponse.json(
-        { success: false, error: { code: 'DATABASE_ERROR', message: 'Failed to fetch event' } },
+        {
+          success: false,
+          error: { code: 'DATABASE_ERROR', message: 'Failed to fetch event' },
+        },
         { status: 500 }
-      )
+      );
     }
 
     // Warn if event has content
     if (existingEvent.total_photos > 0 || existingEvent.total_videos > 0) {
       return NextResponse.json(
-        { 
-          success: false, 
-          error: { 
-            code: 'EVENT_HAS_CONTENT', 
-            message: 'Cannot delete event with photos or videos. Archive instead.',
+        {
+          success: false,
+          error: {
+            code: 'EVENT_HAS_CONTENT',
+            message:
+              'Cannot delete event with photos or videos. Archive instead.',
             details: {
               photos: existingEvent.total_photos,
-              videos: existingEvent.total_videos
-            }
-          } 
+              videos: existingEvent.total_videos,
+            },
+          },
         },
         { status: 400 }
-      )
+      );
     }
 
     // Delete event (cascade will handle related records)
@@ -254,26 +315,31 @@ export async function DELETE(
       .from('events')
       .delete()
       .eq('id', eventId)
-      .eq('host_id', user.id)
+      .eq('host_id', user.id);
 
     if (error) {
-      console.error('Error deleting event:', error)
+      console.error('Error deleting event:', error);
       return NextResponse.json(
-        { success: false, error: { code: 'DATABASE_ERROR', message: 'Failed to delete event' } },
+        {
+          success: false,
+          error: { code: 'DATABASE_ERROR', message: 'Failed to delete event' },
+        },
         { status: 500 }
-      )
+      );
     }
 
     return NextResponse.json({
       success: true,
-      data: { message: 'Event deleted successfully' }
-    })
-
+      data: { message: 'Event deleted successfully' },
+    });
   } catch (error) {
-    console.error('Unexpected error in DELETE /api/events/[id]:', error)
+    console.error('Unexpected error in DELETE /api/events/[id]:', error);
     return NextResponse.json(
-      { success: false, error: { code: 'INTERNAL_ERROR', message: 'Something went wrong' } },
+      {
+        success: false,
+        error: { code: 'INTERNAL_ERROR', message: 'Something went wrong' },
+      },
       { status: 500 }
-    )
+    );
   }
 }

@@ -249,7 +249,8 @@ export default function Home() {
               How InstaMoments Works
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Creating amazing celebration memories is simple. Just follow these 4 easy steps.
+              Creating amazing celebration memories is simple. Just follow these
+              4 easy steps.
             </p>
           </div>
 
@@ -260,7 +261,8 @@ export default function Home() {
               </div>
               <h3 className="text-xl font-semibold">Create Your Event</h3>
               <p className="text-muted-foreground">
-                Set up your celebration details and get a unique QR code in seconds.
+                Set up your celebration details and get a unique QR code in
+                seconds.
               </p>
             </div>
 
@@ -270,17 +272,21 @@ export default function Home() {
               </div>
               <h3 className="text-xl font-semibold">Guests Scan & Share</h3>
               <p className="text-muted-foreground">
-                No app downloads needed! Guests scan your QR code and instantly start sharing.
+                No app downloads needed! Guests scan your QR code and instantly
+                start sharing.
               </p>
             </div>
 
             <div className="text-center space-y-4">
               <div className="w-16 h-16 bg-accent/10 rounded-full flex items-center justify-center mx-auto">
-                <span className="text-2xl font-bold text-accent-foreground">3</span>
+                <span className="text-2xl font-bold text-accent-foreground">
+                  3
+                </span>
               </div>
               <h3 className="text-xl font-semibold">Real-time Gallery</h3>
               <p className="text-muted-foreground">
-                Photos and video greetings appear live in your gallery during the event.
+                Photos and video greetings appear live in your gallery during
+                the event.
               </p>
             </div>
 
@@ -290,7 +296,8 @@ export default function Home() {
               </div>
               <h3 className="text-xl font-semibold">Download Memories</h3>
               <p className="text-muted-foreground">
-                Get all your celebration photos and videos in one beautiful collection.
+                Get all your celebration photos and videos in one beautiful
+                collection.
               </p>
             </div>
           </div>
@@ -305,7 +312,8 @@ export default function Home() {
               Loved by Filipino Families
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Join thousands of families who trust InstaMoments for their special celebrations.
+              Join thousands of families who trust InstaMoments for their
+              special celebrations.
             </p>
           </div>
 
@@ -318,11 +326,15 @@ export default function Home() {
                   </div>
                   <div>
                     <h4 className="font-semibold">Maria Santos</h4>
-                    <p className="text-sm text-muted-foreground">Wedding Planner, Manila</p>
+                    <p className="text-sm text-muted-foreground">
+                      Wedding Planner, Manila
+                    </p>
                   </div>
                 </div>
                 <CardDescription>
-                  "InstaMoments made our wedding unforgettable! All our guests could easily share photos without downloading any app. The real-time gallery was magical."
+                  &quot;InstaMoments made our wedding unforgettable! All our
+                  guests could easily share photos without downloading any app.
+                  The real-time gallery was magical.&quot;
                 </CardDescription>
               </CardHeader>
             </Card>
@@ -335,11 +347,15 @@ export default function Home() {
                   </div>
                   <div>
                     <h4 className="font-semibold">Roberto Cruz</h4>
-                    <p className="text-sm text-muted-foreground">Father, Cebu</p>
+                    <p className="text-sm text-muted-foreground">
+                      Father, Cebu
+                    </p>
                   </div>
                 </div>
                 <CardDescription>
-                  "Perfect for my daughter's 18th birthday! Even my parents could easily share photos. The video greetings from family abroad were so touching."
+                  &quot;Perfect for my daughter&apos;s 18th birthday! Even my
+                  parents could easily share photos. The video greetings from
+                  family abroad were so touching.&quot;
                 </CardDescription>
               </CardHeader>
             </Card>
@@ -352,11 +368,15 @@ export default function Home() {
                   </div>
                   <div>
                     <h4 className="font-semibold">Ana Dela Cruz</h4>
-                    <p className="text-sm text-muted-foreground">Graduate, Davao</p>
+                    <p className="text-sm text-muted-foreground">
+                      Graduate, Davao
+                    </p>
                   </div>
                 </div>
                 <CardDescription>
-                  "My graduation ceremony was captured beautifully by everyone! The QR code made it so easy for all my classmates and family to share memories."
+                  &quot;My graduation ceremony was captured beautifully by
+                  everyone! The QR code made it so easy for all my classmates
+                  and family to share memories.&quot;
                 </CardDescription>
               </CardHeader>
             </Card>
@@ -391,7 +411,8 @@ export default function Home() {
               Simple, Transparent Pricing
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Choose the perfect plan for your celebration. All plans include GCash payment options.
+              Choose the perfect plan for your celebration. All plans include
+              GCash payment options.
             </p>
           </div>
 
@@ -399,7 +420,9 @@ export default function Home() {
             <Card className="celebration-card">
               <CardHeader className="text-center">
                 <CardTitle className="text-2xl">Free</CardTitle>
-                <CardDescription>Perfect for small family gatherings</CardDescription>
+                <CardDescription>
+                  Perfect for small family gatherings
+                </CardDescription>
                 <div className="text-4xl font-bold text-primary mt-4">₱0</div>
                 <div className="text-muted-foreground">per event</div>
               </CardHeader>
@@ -430,11 +453,15 @@ export default function Home() {
 
             <Card className="celebration-card border-primary relative">
               <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                <Badge className="bg-primary text-primary-foreground">Most Popular</Badge>
+                <Badge className="bg-primary text-primary-foreground">
+                  Most Popular
+                </Badge>
               </div>
               <CardHeader className="text-center">
                 <CardTitle className="text-2xl">Premium</CardTitle>
-                <CardDescription>Ideal for weddings and special events</CardDescription>
+                <CardDescription>
+                  Ideal for weddings and special events
+                </CardDescription>
                 <div className="text-4xl font-bold text-primary mt-4">₱299</div>
                 <div className="text-muted-foreground">per event</div>
               </CardHeader>
@@ -470,7 +497,9 @@ export default function Home() {
             <Card className="celebration-card">
               <CardHeader className="text-center">
                 <CardTitle className="text-2xl">Professional</CardTitle>
-                <CardDescription>For event planners and businesses</CardDescription>
+                <CardDescription>
+                  For event planners and businesses
+                </CardDescription>
                 <div className="text-4xl font-bold text-primary mt-4">₱999</div>
                 <div className="text-muted-foreground">per month</div>
               </CardHeader>

@@ -20,7 +20,8 @@ const firaCode = Fira_Code({
 });
 
 export const metadata: Metadata = {
-  title: 'InstaMoments - QR Code Photo Sharing for Filipino Celebrations | Weddings, Birthdays, Debuts',
+  title:
+    'InstaMoments - QR Code Photo Sharing for Filipino Celebrations | Weddings, Birthdays, Debuts',
   description:
     'Create instant photo galleries for Filipino celebrations. No app downloads needed! Guests scan QR code and share photos instantly. Perfect for weddings, birthdays, debuts, graduations. GCash payments accepted.',
   keywords: [
@@ -39,7 +40,7 @@ export const metadata: Metadata = {
     'video greetings',
     'Metro Manila',
     'Cebu events',
-    'Davao celebrations'
+    'Davao celebrations',
   ],
   authors: [{ name: 'InstaMoments Team' }],
   creator: 'InstaMoments',
@@ -55,7 +56,8 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: 'InstaMoments - QR Code Photo Sharing for Filipino Celebrations',
-    description: 'Create instant photo galleries for Filipino celebrations. No app downloads needed! Perfect for weddings, birthdays, debuts, graduations.',
+    description:
+      'Create instant photo galleries for Filipino celebrations. No app downloads needed! Perfect for weddings, birthdays, debuts, graduations.',
     url: 'https://instamoments.ph',
     siteName: 'InstaMoments',
     images: [
@@ -72,7 +74,8 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'InstaMoments - QR Code Photo Sharing for Filipino Celebrations',
-    description: 'Create instant photo galleries for Filipino celebrations. No app downloads needed!',
+    description:
+      'Create instant photo galleries for Filipino celebrations. No app downloads needed!',
     images: ['/og-image.jpg'],
   },
   robots: {

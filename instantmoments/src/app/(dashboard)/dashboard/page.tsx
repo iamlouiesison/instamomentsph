@@ -1,119 +1,141 @@
-'use client'
+'use client';
 
-import React, { useState, useEffect } from 'react'
-import { useAuthContext } from '@/components/providers/AuthProvider'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { EventCard, LoadingSpinner, EmptyEvents } from '@/components/instamoments'
-import { LogOut, User, Calendar, Camera, Plus, Search, Filter, Users, Video, TrendingUp } from 'lucide-react'
-import Link from 'next/link'
-import { useRouter } from 'next/navigation'
-import { toast } from 'sonner'
-import type { Event } from '@/components/instamoments/event-card'
+import React, { useState, useEffect } from 'react';
+import { useAuthContext } from '@/components/providers/AuthProvider';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
+  EventCard,
+  LoadingSpinner,
+  EmptyEvents,
+} from '@/components/instamoments';
+import {
+  LogOut,
+  User,
+  Calendar,
+  Camera,
+  Search,
+  Filter,
+  Users,
+  Video,
+} from 'lucide-react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
+import type { Event } from '@/components/instamoments/event-card';
 
 interface DashboardStats {
-  totalEvents: number
-  totalContributors: number
-  totalPhotos: number
-  totalVideos: number
-  activeEvents: number
-  expiredEvents: number
+  totalEvents: number;
+  totalContributors: number;
+  totalPhotos: number;
+  totalVideos: number;
+  activeEvents: number;
+  expiredEvents: number;
 }
 
 export default function DashboardPage() {
-  const { user, profile, signOut, loading } = useAuthContext()
-  const router = useRouter()
-  const [events, setEvents] = useState<Event[]>([])
+  const { user, profile, signOut, loading } = useAuthContext();
+  const router = useRouter();
+  const [events, setEvents] = useState<Event[]>([]);
   const [stats, setStats] = useState<DashboardStats>({
     totalEvents: 0,
     totalContributors: 0,
     totalPhotos: 0,
     totalVideos: 0,
     activeEvents: 0,
-    expiredEvents: 0
-  })
-  const [eventsLoading, setEventsLoading] = useState(true)
-  const [searchQuery, setSearchQuery] = useState('')
-  const [statusFilter, setStatusFilter] = useState<string>('all')
+    expiredEvents: 0,
+  });
+  const [eventsLoading, setEventsLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState<string>('all');
 
   const handleSignOut = async () => {
-    await signOut()
-  }
+    await signOut();
+  };
 
   useEffect(() => {
     if (user) {
-      fetchEvents()
+      fetchEvents();
     }
-  }, [user, statusFilter])
+  }, [user, statusFilter]);
 
   const fetchEvents = async () => {
     try {
-      setEventsLoading(true)
-      const params = new URLSearchParams()
+      setEventsLoading(true);
+      const params = new URLSearchParams();
       if (statusFilter !== 'all') {
-        params.append('status', statusFilter)
+        params.append('status', statusFilter);
       }
-      
-      const response = await fetch(`/api/events?${params.toString()}`)
-      const result = await response.json()
+
+      const response = await fetch(`/api/events?${params.toString()}`);
+      const result = await response.json();
 
       if (!result.success) {
-        throw new Error(result.error.message || 'Failed to fetch events')
+        throw new Error(result.error.message || 'Failed to fetch events');
       }
 
-      setEvents(result.data || [])
-      
+      setEvents(result.data || []);
+
       // Calculate stats
-      const totalStats = result.data.reduce((acc: DashboardStats, event: Event) => {
-        acc.totalEvents++
-        acc.totalContributors += event.totalContributors
-        acc.totalPhotos += event.totalPhotos
-        acc.totalVideos += event.totalVideos
-        if (event.status === 'active') acc.activeEvents++
-        if (event.status === 'expired') acc.expiredEvents++
-        return acc
-      }, {
-        totalEvents: 0,
-        totalContributors: 0,
-        totalPhotos: 0,
-        totalVideos: 0,
-        activeEvents: 0,
-        expiredEvents: 0
-      })
-      
-      setStats(totalStats)
-      
+      const totalStats = result.data.reduce(
+        (acc: DashboardStats, event: Event) => {
+          acc.totalEvents++;
+          acc.totalContributors += event.totalContributors;
+          acc.totalPhotos += event.totalPhotos;
+          acc.totalVideos += event.totalVideos;
+          if (event.status === 'active') acc.activeEvents++;
+          if (event.status === 'expired') acc.expiredEvents++;
+          return acc;
+        },
+        {
+          totalEvents: 0,
+          totalContributors: 0,
+          totalPhotos: 0,
+          totalVideos: 0,
+          activeEvents: 0,
+          expiredEvents: 0,
+        }
+      );
+
+      setStats(totalStats);
     } catch (error) {
-      console.error('Error fetching events:', error)
-      toast.error('Failed to load events')
+      console.error('Error fetching events:', error);
+      toast.error('Failed to load events');
     } finally {
-      setEventsLoading(false)
+      setEventsLoading(false);
     }
-  }
+  };
 
   const handleEventEdit = (eventId: string) => {
-    router.push(`/dashboard/events/${eventId}/edit`)
-  }
+    router.push(`/dashboard/events/${eventId}/edit`);
+  };
 
   const handleEventView = (eventId: string) => {
-    router.push(`/dashboard/events/${eventId}`)
-  }
+    router.push(`/dashboard/events/${eventId}`);
+  };
 
   const handleEventShare = (eventId: string) => {
     // TODO: Implement QR code sharing modal
-    toast.info('QR code sharing coming soon!')
-  }
+    toast.info('QR code sharing coming soon!');
+  };
 
   const handleEventSettings = (eventId: string) => {
-    router.push(`/dashboard/events/${eventId}/settings`)
-  }
+    router.push(`/dashboard/events/${eventId}/settings`);
+  };
 
-  const filteredEvents = events.filter(event =>
-    event.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    event.location?.toLowerCase().includes(searchQuery.toLowerCase())
-  )
+  const filteredEvents = events.filter(
+    (event) =>
+      event.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      event.location?.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   if (loading) {
     return (
@@ -123,7 +145,7 @@ export default function DashboardPage() {
           <p className="text-muted-foreground">Loading dashboard...</p>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -162,9 +184,7 @@ export default function DashboardPage() {
       {/* Main Content */}
       <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
-          <h2 className="text-3xl font-bold mb-2">
-            Welcome to InstaMoments!
-          </h2>
+          <h2 className="text-3xl font-bold mb-2">Welcome to InstaMoments!</h2>
           <p className="text-muted-foreground text-lg">
             Start creating and sharing your Filipino celebration moments.
           </p>
@@ -193,8 +213,12 @@ export default function DashboardPage() {
                   <Users className="w-6 h-6 text-green-600" />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold">{stats.totalContributors}</p>
-                  <p className="text-sm text-muted-foreground">Total Contributors</p>
+                  <p className="text-2xl font-bold">
+                    {stats.totalContributors}
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    Total Contributors
+                  </p>
                 </div>
               </div>
             </CardContent>
@@ -241,7 +265,10 @@ export default function DashboardPage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <Button asChild className="w-full bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-primary-foreground">
+              <Button
+                asChild
+                className="w-full bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-primary-foreground"
+              >
                 <Link href="/create-event">Create New Event</Link>
               </Button>
             </CardContent>
@@ -257,7 +284,11 @@ export default function DashboardPage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <Button variant="outline" className="w-full" onClick={() => setStatusFilter('active')}>
+              <Button
+                variant="outline"
+                className="w-full"
+                onClick={() => setStatusFilter('active')}
+              >
                 View Active Events
               </Button>
             </CardContent>
@@ -337,5 +368,5 @@ export default function DashboardPage() {
         </Card>
       </main>
     </div>
-  )
+  );
 }

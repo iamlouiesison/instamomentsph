@@ -1,26 +1,31 @@
-'use client'
+'use client';
 
-import React from 'react'
-import { Card, CardContent } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { FILIPINO_EVENT_TYPES, type EventType } from '@/lib/validations/event'
-import { cn } from '@/lib/utils'
+import React from 'react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { FILIPINO_EVENT_TYPES, type EventType } from '@/lib/validations/event';
+import { cn } from '@/lib/utils';
 
 interface EventTypeSelectorProps {
-  selectedType?: EventType
-  onSelect: (type: EventType) => void
-  className?: string
+  selectedType?: EventType;
+  onSelect: (type: EventType) => void;
+  className?: string;
 }
 
 export const EventTypeSelector: React.FC<EventTypeSelectorProps> = ({
   selectedType,
   onSelect,
-  className
+  className,
 }) => {
   return (
-    <div className={cn('grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3', className)}>
+    <div
+      className={cn(
+        'grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3',
+        className
+      )}
+    >
       {Object.entries(FILIPINO_EVENT_TYPES).map(([key, eventType]) => {
-        const isSelected = selectedType === key
+        const isSelected = selectedType === key;
         return (
           <Card
             key={key}
@@ -45,8 +50,8 @@ export const EventTypeSelector: React.FC<EventTypeSelectorProps> = ({
               )}
             </CardContent>
           </Card>
-        )
+        );
       })}
     </div>
-  )
-}
+  );
+};

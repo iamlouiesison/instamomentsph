@@ -72,7 +72,9 @@ export default function ResetPasswordPage() {
                 {'Email sent!'}
               </CardTitle>
               <CardDescription className="text-gray-600">
-                {'We sent a password reset link to your email. Please check your inbox.'}
+                {
+                  'We sent a password reset link to your email. Please check your inbox.'
+                }
               </CardDescription>
             </CardHeader>
 
@@ -82,7 +84,8 @@ export default function ResetPasswordPage() {
                 <div>
                   <p className="font-medium">Check your email</p>
                   <p className="text-sm">
-                    Can't find the email? Check your spam folder or try again.
+                    Can&apos;t find the email? Check your spam folder or try
+                    again.
                   </p>
                 </div>
               </Alert>
@@ -124,7 +127,8 @@ export default function ResetPasswordPage() {
               {'Reset Password'}
             </CardTitle>
             <CardDescription className="text-gray-600">
-              Enter your email address and we'll send you a link to reset your password
+              Enter your email address and we&apos;ll send you a link to reset
+              your password
             </CardDescription>
           </CardHeader>
 

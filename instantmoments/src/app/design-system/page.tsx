@@ -337,14 +337,28 @@ export default function DesignSystemPage() {
                         Birthday Event
                       </p>
                       <EventCard
-                        title="Maria's 18th Birthday Celebration"
-                        date="January 20, 2024"
-                        location="Quezon City, Metro Manila"
-                        guestCount={50}
-                        photoCount={127}
-                        eventType="birthday"
-                        imageUrl="data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300'%3E%3Crect width='100%25' height='100%25' fill='%23fef3f4'/%3E%3Ctext x='50%25' y='50%25' font-family='Arial' font-size='24' fill='%23ffc107' text-anchor='middle' dy='.3em'%3EMaria's Birthday%3C/text%3E%3C/svg%3E"
-                        onClick={() => console.log('Event clicked')}
+                        event={{
+                          id: '1',
+                          name: "Maria's 18th Birthday Celebration",
+                          eventType: 'birthday',
+                          eventDate: '2024-01-20',
+                          location: 'Quezon City, Metro Manila',
+                          status: 'active',
+                          subscriptionTier: 'basic',
+                          totalContributors: 50,
+                          totalPhotos: 127,
+                          totalVideos: 5,
+                          hasVideoAddon: true,
+                          requiresModeration: false,
+                          createdAt: '2024-01-01T00:00:00Z',
+                          expiresAt: undefined,
+                          gallerySlug: 'maria-birthday',
+                          description: 'A wonderful 18th birthday celebration',
+                        }}
+                        onEdit={() => console.log('Edit clicked')}
+                        onView={() => console.log('View clicked')}
+                        onShare={() => console.log('Share clicked')}
+                        onSettings={() => console.log('Settings clicked')}
                       />
                     </div>
 
@@ -353,14 +367,28 @@ export default function DesignSystemPage() {
                         Wedding Event
                       </p>
                       <EventCard
-                        title="Juan & Maria's Wedding"
-                        date="February 14, 2024"
-                        location="Tagaytay, Cavite"
-                        guestCount={200}
-                        photoCount={450}
-                        eventType="wedding"
-                        imageUrl="data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300'%3E%3Crect width='100%25' height='100%25' fill='%23fef3f4'/%3E%3Ctext x='50%25' y='50%25' font-family='Arial' font-size='24' fill='%23ec4499' text-anchor='middle' dy='.3em'%3EWedding%3C/text%3E%3C/svg%3E"
-                        onClick={() => console.log('Event clicked')}
+                        event={{
+                          id: '2',
+                          name: "Juan & Maria's Wedding",
+                          eventType: 'wedding',
+                          eventDate: '2024-02-14',
+                          location: 'Tagaytay, Cavite',
+                          status: 'active',
+                          subscriptionTier: 'premium',
+                          totalContributors: 200,
+                          totalPhotos: 450,
+                          totalVideos: 25,
+                          hasVideoAddon: true,
+                          requiresModeration: false,
+                          createdAt: '2024-01-01T00:00:00Z',
+                          expiresAt: undefined,
+                          gallerySlug: 'juan-maria-wedding',
+                          description: 'A beautiful wedding celebration',
+                        }}
+                        onEdit={() => console.log('Edit clicked')}
+                        onView={() => console.log('View clicked')}
+                        onShare={() => console.log('Share clicked')}
+                        onSettings={() => console.log('Settings clicked')}
                       />
                     </div>
 
@@ -369,14 +397,28 @@ export default function DesignSystemPage() {
                         Graduation Event
                       </p>
                       <EventCard
-                        title="Graduation Ceremony"
-                        date="March 15, 2024"
-                        location="University of the Philippines"
-                        guestCount={75}
-                        photoCount={200}
-                        eventType="graduation"
-                        imageUrl="data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300'%3E%3Crect width='100%25' height='100%25' fill='%23fef3f4'/%3E%3Ctext x='50%25' y='50%25' font-family='Arial' font-size='24' fill='%23ff6b6b' text-anchor='middle' dy='.3em'%3EGraduation%3C/text%3E%3C/svg%3E"
-                        onClick={() => console.log('Event clicked')}
+                        event={{
+                          id: '3',
+                          name: 'Graduation Ceremony',
+                          eventType: 'graduation',
+                          eventDate: '2024-03-15',
+                          location: 'University of the Philippines',
+                          status: 'active',
+                          subscriptionTier: 'standard',
+                          totalContributors: 75,
+                          totalPhotos: 200,
+                          totalVideos: 10,
+                          hasVideoAddon: true,
+                          requiresModeration: false,
+                          createdAt: '2024-01-01T00:00:00Z',
+                          expiresAt: undefined,
+                          gallerySlug: 'graduation-ceremony',
+                          description: 'A memorable graduation ceremony',
+                        }}
+                        onEdit={() => console.log('Edit clicked')}
+                        onView={() => console.log('View clicked')}
+                        onShare={() => console.log('Share clicked')}
+                        onSettings={() => console.log('Settings clicked')}
                       />
                     </div>
                   </div>

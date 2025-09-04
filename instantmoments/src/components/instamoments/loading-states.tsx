@@ -1,4 +1,4 @@
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 import { Loader2, Camera, Upload } from 'lucide-react';
@@ -216,3 +216,93 @@ export function CameraLoading({ className }: CameraLoadingProps) {
     </div>
   );
 }
+
+interface GalleryPageLoadingProps {
+  className?: string;
+}
+
+export function GalleryPageLoading({ className }: GalleryPageLoadingProps) {
+  return (
+    <div
+      className={cn(
+        'min-h-screen bg-gradient-to-br from-pink-50 to-purple-50',
+        className
+      )}
+    >
+      <div className="max-w-6xl mx-auto px-4 py-8">
+        <div className="space-y-8">
+          {/* Header Skeleton */}
+          <div className="bg-white shadow-sm border-b p-6">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <Skeleton className="h-8 w-8 rounded-lg" />
+                <div>
+                  <Skeleton className="h-8 w-48 mb-2" />
+                  <Skeleton className="h-4 w-32" />
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <Skeleton className="h-8 w-16" />
+                <Skeleton className="h-8 w-20" />
+              </div>
+            </div>
+          </div>
+
+          {/* Event Info Skeleton */}
+          <Card>
+            <CardHeader>
+              <div className="flex items-center gap-2 mb-4">
+                <Skeleton className="h-6 w-16" />
+                <Skeleton className="h-6 w-20" />
+              </div>
+              <Skeleton className="h-8 w-64 mb-2" />
+              <Skeleton className="h-5 w-96" />
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                <Skeleton className="h-4 w-32" />
+                <Skeleton className="h-4 w-40" />
+                <Skeleton className="h-4 w-28" />
+              </div>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <Skeleton className="h-20 w-full" />
+                <Skeleton className="h-20 w-full" />
+                <Skeleton className="h-20 w-full" />
+                <Skeleton className="h-20 w-full" />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Guest Entry Form Skeleton */}
+          <Card>
+            <CardHeader>
+              <Skeleton className="h-6 w-48 mb-2" />
+              <Skeleton className="h-4 w-64" />
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <Skeleton className="h-10 w-full" />
+                <Skeleton className="h-10 w-full" />
+              </div>
+              <div className="flex gap-3">
+                <Skeleton className="h-10 w-32" />
+                <Skeleton className="h-10 w-32" />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Export all loading states as a namespace
+export const LoadingStates = {
+  LoadingSpinner,
+  PhotoUploadLoading,
+  GalleryLoading,
+  EventCardLoading,
+  PaymentLoading,
+  CameraLoading,
+  GalleryPageLoading,
+};

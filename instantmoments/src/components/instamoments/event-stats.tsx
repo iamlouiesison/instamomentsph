@@ -1,57 +1,50 @@
-'use client'
+'use client';
 
-import React from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Progress } from '@/components/ui/progress'
-import { 
-  Camera, 
-  Video, 
-  Users, 
-  TrendingUp, 
+import React from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Progress } from '@/components/ui/progress';
+import {
+  Camera,
+  Video,
+  Users,
+  TrendingUp,
   Clock,
   Download,
-  Eye
-} from 'lucide-react'
-import { cn } from '@/lib/utils'
+  Eye,
+} from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface EventStatsProps {
-  eventId: string
+  eventId: string;
   stats: {
-    totalPhotos: number
-    totalVideos: number
-    totalContributors: number
-    maxPhotos: number
-    maxVideos?: number
-    storageDays: number
-    daysRemaining: number
-    totalViews?: number
-    totalDownloads?: number
-  }
-  className?: string
+    totalPhotos: number;
+    totalVideos: number;
+    totalContributors: number;
+    maxPhotos: number;
+    maxVideos?: number;
+    storageDays: number;
+    daysRemaining: number;
+    totalViews?: number;
+    totalDownloads?: number;
+  };
+  className?: string;
 }
 
-export const EventStats: React.FC<EventStatsProps> = ({
-  eventId,
-  stats,
-  className
-}) => {
-  const photoUsagePercent = (stats.totalPhotos / stats.maxPhotos) * 100
-  const videoUsagePercent = stats.maxVideos ? (stats.totalVideos / stats.maxVideos) * 100 : 0
-  const storageUsagePercent = ((stats.storageDays - stats.daysRemaining) / stats.storageDays) * 100
-
-  const getUsageColor = (percent: number) => {
-    if (percent >= 90) return 'bg-red-500'
-    if (percent >= 75) return 'bg-yellow-500'
-    return 'bg-green-500'
-  }
+export const EventStats: React.FC<EventStatsProps> = ({ stats, className }) => {
+  const photoUsagePercent = (stats.totalPhotos / stats.maxPhotos) * 100;
+  const videoUsagePercent = stats.maxVideos
+    ? (stats.totalVideos / stats.maxVideos) * 100
+    : 0;
+  const storageUsagePercent =
+    ((stats.storageDays - stats.daysRemaining) / stats.storageDays) * 100;
 
   const getUsageStatus = (percent: number) => {
-    if (percent >= 90) return 'Critical'
-    if (percent >= 75) return 'High'
-    if (percent >= 50) return 'Medium'
-    return 'Low'
-  }
+    if (percent >= 90) return 'Critical';
+    if (percent >= 75) return 'High';
+    if (percent >= 50) return 'Medium';
+    return 'Low';
+  };
 
   return (
     <div className={cn('space-y-6', className)}>
@@ -86,8 +79,12 @@ export const EventStats: React.FC<EventStatsProps> = ({
             <div className="flex items-center gap-2">
               <Users className="w-5 h-5 text-green-500" />
               <div>
-                <div className="text-2xl font-bold">{stats.totalContributors}</div>
-                <div className="text-sm text-muted-foreground">Contributors</div>
+                <div className="text-2xl font-bold">
+                  {stats.totalContributors}
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  Contributors
+                </div>
               </div>
             </div>
           </CardContent>
@@ -121,16 +118,19 @@ export const EventStats: React.FC<EventStatsProps> = ({
               <span className="text-sm text-muted-foreground">
                 {stats.totalPhotos} of {stats.maxPhotos} photos
               </span>
-              <Badge 
-                variant={photoUsagePercent >= 90 ? 'destructive' : photoUsagePercent >= 75 ? 'secondary' : 'default'}
+              <Badge
+                variant={
+                  photoUsagePercent >= 90
+                    ? 'destructive'
+                    : photoUsagePercent >= 75
+                      ? 'secondary'
+                      : 'default'
+                }
               >
                 {getUsageStatus(photoUsagePercent)}
               </Badge>
             </div>
-            <Progress 
-              value={photoUsagePercent} 
-              className="h-2"
-            />
+            <Progress value={photoUsagePercent} className="h-2" />
             <div className="text-xs text-muted-foreground">
               {Math.round(photoUsagePercent)}% of limit used
             </div>
@@ -151,16 +151,19 @@ export const EventStats: React.FC<EventStatsProps> = ({
                 <span className="text-sm text-muted-foreground">
                   {stats.totalVideos} of {stats.maxVideos} videos
                 </span>
-                <Badge 
-                  variant={videoUsagePercent >= 90 ? 'destructive' : videoUsagePercent >= 75 ? 'secondary' : 'default'}
+                <Badge
+                  variant={
+                    videoUsagePercent >= 90
+                      ? 'destructive'
+                      : videoUsagePercent >= 75
+                        ? 'secondary'
+                        : 'default'
+                  }
                 >
                   {getUsageStatus(videoUsagePercent)}
                 </Badge>
               </div>
-              <Progress 
-                value={videoUsagePercent} 
-                className="h-2"
-              />
+              <Progress value={videoUsagePercent} className="h-2" />
               <div className="text-xs text-muted-foreground">
                 {Math.round(videoUsagePercent)}% of limit used
               </div>
@@ -181,16 +184,19 @@ export const EventStats: React.FC<EventStatsProps> = ({
               <span className="text-sm text-muted-foreground">
                 {stats.daysRemaining} of {stats.storageDays} days remaining
               </span>
-              <Badge 
-                variant={storageUsagePercent >= 90 ? 'destructive' : storageUsagePercent >= 75 ? 'secondary' : 'default'}
+              <Badge
+                variant={
+                  storageUsagePercent >= 90
+                    ? 'destructive'
+                    : storageUsagePercent >= 75
+                      ? 'secondary'
+                      : 'default'
+                }
               >
                 {getUsageStatus(storageUsagePercent)}
               </Badge>
             </div>
-            <Progress 
-              value={storageUsagePercent} 
-              className="h-2"
-            />
+            <Progress value={storageUsagePercent} className="h-2" />
             <div className="text-xs text-muted-foreground">
               {Math.round(storageUsagePercent)}% of storage period used
             </div>
@@ -219,12 +225,14 @@ export const EventStats: React.FC<EventStatsProps> = ({
                   <Download className="w-4 h-4 text-muted-foreground" />
                   <span className="text-sm">Downloads</span>
                 </div>
-                <span className="font-semibold">{stats.totalDownloads || 0}</span>
+                <span className="font-semibold">
+                  {stats.totalDownloads || 0}
+                </span>
               </div>
             </div>
           </CardContent>
         </Card>
       </div>
     </div>
-  )
-}
+  );
+};

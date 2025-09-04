@@ -1,75 +1,78 @@
-'use client'
+'use client';
 
-import React from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { 
-  Calendar, 
-  MapPin, 
-  Users, 
-  Camera, 
-  Video, 
-  Settings, 
+import React from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import {
+  Calendar,
+  MapPin,
+  Users,
+  Camera,
+  Video,
+  Settings,
   ExternalLink,
   QrCode,
-  Clock
-} from 'lucide-react'
-import { FILIPINO_EVENT_TYPES, type EventType } from '@/lib/validations/event'
-import { formatDistanceToNow, format } from 'date-fns'
-import { cn } from '@/lib/utils'
+  Clock,
+} from 'lucide-react';
+import { FILIPINO_EVENT_TYPES, type EventType } from '@/lib/validations/event';
+import { formatDistanceToNow, format } from 'date-fns';
+import { cn } from '@/lib/utils';
 
 export interface Event {
-  id: string
-  name: string
-  description?: string
-  eventType: EventType
-  eventDate?: string
-  location?: string
-  gallerySlug: string
-  subscriptionTier: string
-  totalPhotos: number
-  totalVideos: number
-  totalContributors: number
-  status: 'active' | 'expired' | 'archived'
-  createdAt: string
-  expiresAt?: string
-  hasVideoAddon: boolean
-  requiresModeration: boolean
+  id: string;
+  name: string;
+  description?: string;
+  eventType: EventType;
+  eventDate?: string;
+  location?: string;
+  gallerySlug: string;
+  subscriptionTier: string;
+  totalPhotos: number;
+  totalVideos: number;
+  totalContributors: number;
+  status: 'active' | 'expired' | 'archived';
+  createdAt: string;
+  expiresAt?: string;
+  hasVideoAddon: boolean;
+  requiresModeration: boolean;
 }
 
 interface EventCardProps {
-  event: Event
-  onEdit?: (eventId: string) => void
-  onView?: (eventId: string) => void
-  onShare?: (eventId: string) => void
-  onSettings?: (eventId: string) => void
-  showActions?: boolean
-  className?: string
+  event: Event;
+  onEdit?: (eventId: string) => void;
+  onView?: (eventId: string) => void;
+  onShare?: (eventId: string) => void;
+  onSettings?: (eventId: string) => void;
+  showActions?: boolean;
+  className?: string;
 }
 
 export const EventCard: React.FC<EventCardProps> = ({
   event,
-  onEdit,
   onView,
   onShare,
   onSettings,
   showActions = true,
-  className
+  className,
 }) => {
-  const eventTypeInfo = FILIPINO_EVENT_TYPES[event.eventType]
-  const isExpired = event.status === 'expired' || (event.expiresAt && new Date(event.expiresAt) < new Date())
-  const isExpiringSoon = event.expiresAt && new Date(event.expiresAt) < new Date(Date.now() + 24 * 60 * 60 * 1000)
+  const eventTypeInfo = FILIPINO_EVENT_TYPES[event.eventType];
+  const isExpired =
+    event.status === 'expired' ||
+    (event.expiresAt && new Date(event.expiresAt) < new Date());
+  const isExpiringSoon =
+    event.expiresAt &&
+    new Date(event.expiresAt) < new Date(Date.now() + 24 * 60 * 60 * 1000);
 
   const getStatusBadge = () => {
     if (isExpired) {
-      return <Badge variant="destructive">Expired</Badge>
+      return <Badge variant="destructive">Expired</Badge>;
     }
     if (isExpiringSoon) {
-      return <Badge variant="secondary">Expiring Soon</Badge>
+      return <Badge variant="secondary">Expiring Soon</Badge>;
     }
-    return <Badge variant="default">Active</Badge>
-  }
+    return <Badge variant="default">Active</Badge>;
+  };
 
   const getTierBadge = () => {
     const tierColors = {
@@ -77,21 +80,31 @@ export const EventCard: React.FC<EventCardProps> = ({
       basic: 'bg-blue-100 text-blue-800',
       standard: 'bg-green-100 text-green-800',
       premium: 'bg-purple-100 text-purple-800',
-      pro: 'bg-yellow-100 text-yellow-800'
-    }
-    
+      pro: 'bg-yellow-100 text-yellow-800',
+    };
+
     return (
-      <Badge 
-        variant="outline" 
-        className={cn('text-xs', tierColors[event.subscriptionTier as keyof typeof tierColors] || 'bg-gray-100 text-gray-800')}
+      <Badge
+        variant="outline"
+        className={cn(
+          'text-xs',
+          tierColors[event.subscriptionTier as keyof typeof tierColors] ||
+            'bg-gray-100 text-gray-800'
+        )}
       >
-        {event.subscriptionTier.charAt(0).toUpperCase() + event.subscriptionTier.slice(1)}
+        {event.subscriptionTier.charAt(0).toUpperCase() +
+          event.subscriptionTier.slice(1)}
       </Badge>
-    )
-  }
+    );
+  };
 
   return (
-    <Card className={cn('hover:shadow-md transition-shadow duration-200', className)}>
+    <Card
+      className={cn(
+        'hover:shadow-md transition-shadow duration-200',
+        className
+      )}
+    >
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between">
           <div className="flex-1">
@@ -129,7 +142,12 @@ export const EventCard: React.FC<EventCardProps> = ({
           )}
           <div className="flex items-center gap-2">
             <Clock className="w-4 h-4" />
-            <span>Created {formatDistanceToNow(new Date(event.createdAt), { addSuffix: true })}</span>
+            <span>
+              Created{' '}
+              {formatDistanceToNow(new Date(event.createdAt), {
+                addSuffix: true,
+              })}
+            </span>
           </div>
         </div>
 
@@ -154,7 +172,9 @@ export const EventCard: React.FC<EventCardProps> = ({
               <Users className="w-4 h-4" />
               <span className="text-sm">Contributors</span>
             </div>
-            <div className="font-semibold text-lg">{event.totalContributors}</div>
+            <div className="font-semibold text-lg">
+              {event.totalContributors}
+            </div>
           </div>
         </div>
 
@@ -195,12 +215,15 @@ export const EventCard: React.FC<EventCardProps> = ({
             <div className="flex items-center gap-2 text-yellow-800">
               <Clock className="w-4 h-4" />
               <span className="text-sm font-medium">
-                Event expires {formatDistanceToNow(new Date(event.expiresAt!), { addSuffix: true })}
+                Event expires{' '}
+                {formatDistanceToNow(new Date(event.expiresAt!), {
+                  addSuffix: true,
+                })}
               </span>
             </div>
           </div>
         )}
       </CardContent>
     </Card>
-  )
-}
+  );
+};

@@ -5,7 +5,15 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
-import { Eye, EyeOff, Mail, Lock, User, Smartphone, CheckCircle } from 'lucide-react';
+import {
+  Eye,
+  EyeOff,
+  Mail,
+  Lock,
+  User,
+  Smartphone,
+  CheckCircle,
+} from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -39,15 +47,11 @@ export default function SignUpPage() {
     resolver: zodResolver(signUpSchema),
   });
 
-  const password = watch('password');
-
   const onSubmit = async (data: SignUpInput) => {
     setIsLoading(true);
 
     try {
-      const { error } = await signUp(data.email, data.password, {
-        full_name: data.fullName,
-      });
+      const { error } = await signUp(data.email, data.password, data.fullName);
 
       if (error) {
         const errorMessage =
@@ -137,9 +141,10 @@ export default function SignUpPage() {
               <CardContent className="space-y-6">
                 <div className="text-center space-y-4">
                   <p className="text-sm text-muted-foreground">
-                    We sent a verification link to your email. Click the link to activate your account.
+                    We sent a verification link to your email. Click the link to
+                    activate your account.
                   </p>
-                  
+
                   <div className="space-y-2">
                     <Button
                       onClick={() => router.push('/signin')}
@@ -147,7 +152,7 @@ export default function SignUpPage() {
                     >
                       {'Sign In'}
                     </Button>
-                    
+
                     <Button
                       variant="outline"
                       onClick={() => setIsSuccess(false)}
@@ -201,7 +206,9 @@ export default function SignUpPage() {
                   {'Join InstaMoments!'}
                 </CardTitle>
                 <CardDescription className="text-muted-foreground">
-                  {'Create your account to start sharing Filipino celebration moments'}
+                  {
+                    'Create your account to start sharing Filipino celebration moments'
+                  }
                 </CardDescription>
               </div>
             </CardHeader>
@@ -227,7 +234,9 @@ export default function SignUpPage() {
                     />
                   </div>
                   {errors.fullName && (
-                    <p className="text-sm text-destructive">{errors.fullName.message}</p>
+                    <p className="text-sm text-destructive">
+                      {errors.fullName.message}
+                    </p>
                   )}
                 </div>
 
@@ -246,7 +255,9 @@ export default function SignUpPage() {
                     />
                   </div>
                   {errors.email && (
-                    <p className="text-sm text-destructive">{errors.email.message}</p>
+                    <p className="text-sm text-destructive">
+                      {errors.email.message}
+                    </p>
                   )}
                 </div>
 
@@ -283,7 +294,10 @@ export default function SignUpPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="confirmPassword" className="text-sm font-medium">
+                  <Label
+                    htmlFor="confirmPassword"
+                    className="text-sm font-medium"
+                  >
                     {'Confirm Password'}
                   </Label>
                   <div className="relative">
@@ -297,7 +311,9 @@ export default function SignUpPage() {
                     />
                     <button
                       type="button"
-                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      onClick={() =>
+                        setShowConfirmPassword(!showConfirmPassword)
+                      }
                       className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
                     >
                       {showConfirmPassword ? (
