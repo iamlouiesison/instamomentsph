@@ -241,6 +241,288 @@ export default function Home() {
         </div>
       </section>
 
+      {/* How It Works Section */}
+      <section id="how-it-works" className="py-20">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center space-y-4 mb-16">
+            <h2 className="text-3xl sm:text-4xl font-bold">
+              How InstaMoments Works
+            </h2>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              Creating amazing celebration memories is simple. Just follow these 4 easy steps.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="text-center space-y-4">
+              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
+                <span className="text-2xl font-bold text-primary">1</span>
+              </div>
+              <h3 className="text-xl font-semibold">Create Your Event</h3>
+              <p className="text-muted-foreground">
+                Set up your celebration details and get a unique QR code in seconds.
+              </p>
+            </div>
+
+            <div className="text-center space-y-4">
+              <div className="w-16 h-16 bg-secondary/10 rounded-full flex items-center justify-center mx-auto">
+                <span className="text-2xl font-bold text-secondary">2</span>
+              </div>
+              <h3 className="text-xl font-semibold">Guests Scan & Share</h3>
+              <p className="text-muted-foreground">
+                No app downloads needed! Guests scan your QR code and instantly start sharing.
+              </p>
+            </div>
+
+            <div className="text-center space-y-4">
+              <div className="w-16 h-16 bg-accent/10 rounded-full flex items-center justify-center mx-auto">
+                <span className="text-2xl font-bold text-accent-foreground">3</span>
+              </div>
+              <h3 className="text-xl font-semibold">Real-time Gallery</h3>
+              <p className="text-muted-foreground">
+                Photos and video greetings appear live in your gallery during the event.
+              </p>
+            </div>
+
+            <div className="text-center space-y-4">
+              <div className="w-16 h-16 bg-success/10 rounded-full flex items-center justify-center mx-auto">
+                <span className="text-2xl font-bold text-success">4</span>
+              </div>
+              <h3 className="text-xl font-semibold">Download Memories</h3>
+              <p className="text-muted-foreground">
+                Get all your celebration photos and videos in one beautiful collection.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Social Proof Section */}
+      <section className="py-20 bg-muted/30">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center space-y-4 mb-16">
+            <h2 className="text-3xl sm:text-4xl font-bold">
+              Loved by Filipino Families
+            </h2>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              Join thousands of families who trust InstaMoments for their special celebrations.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8 mb-16">
+            <Card className="celebration-card">
+              <CardHeader>
+                <div className="flex items-center space-x-4 mb-4">
+                  <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                    <span className="text-lg">👰</span>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold">Maria Santos</h4>
+                    <p className="text-sm text-muted-foreground">Wedding Planner, Manila</p>
+                  </div>
+                </div>
+                <CardDescription>
+                  "InstaMoments made our wedding unforgettable! All our guests could easily share photos without downloading any app. The real-time gallery was magical."
+                </CardDescription>
+              </CardHeader>
+            </Card>
+
+            <Card className="celebration-card">
+              <CardHeader>
+                <div className="flex items-center space-x-4 mb-4">
+                  <div className="w-12 h-12 bg-secondary/10 rounded-full flex items-center justify-center">
+                    <span className="text-lg">🎂</span>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold">Roberto Cruz</h4>
+                    <p className="text-sm text-muted-foreground">Father, Cebu</p>
+                  </div>
+                </div>
+                <CardDescription>
+                  "Perfect for my daughter's 18th birthday! Even my parents could easily share photos. The video greetings from family abroad were so touching."
+                </CardDescription>
+              </CardHeader>
+            </Card>
+
+            <Card className="celebration-card">
+              <CardHeader>
+                <div className="flex items-center space-x-4 mb-4">
+                  <div className="w-12 h-12 bg-accent/10 rounded-full flex items-center justify-center">
+                    <span className="text-lg">🎓</span>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold">Ana Dela Cruz</h4>
+                    <p className="text-sm text-muted-foreground">Graduate, Davao</p>
+                  </div>
+                </div>
+                <CardDescription>
+                  "My graduation ceremony was captured beautifully by everyone! The QR code made it so easy for all my classmates and family to share memories."
+                </CardDescription>
+              </CardHeader>
+            </Card>
+          </div>
+
+          <div className="grid md:grid-cols-4 gap-8 text-center">
+            <div className="space-y-2">
+              <div className="text-3xl font-bold text-primary">10,000+</div>
+              <div className="text-muted-foreground">Events Created</div>
+            </div>
+            <div className="space-y-2">
+              <div className="text-3xl font-bold text-secondary">500,000+</div>
+              <div className="text-muted-foreground">Photos Shared</div>
+            </div>
+            <div className="space-y-2">
+              <div className="text-3xl font-bold text-accent">50,000+</div>
+              <div className="text-muted-foreground">Happy Families</div>
+            </div>
+            <div className="space-y-2">
+              <div className="text-3xl font-bold text-success">4.9★</div>
+              <div className="text-muted-foreground">User Rating</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Pricing Preview Section */}
+      <section id="pricing" className="py-20">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center space-y-4 mb-16">
+            <h2 className="text-3xl sm:text-4xl font-bold">
+              Simple, Transparent Pricing
+            </h2>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              Choose the perfect plan for your celebration. All plans include GCash payment options.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+            <Card className="celebration-card">
+              <CardHeader className="text-center">
+                <CardTitle className="text-2xl">Free</CardTitle>
+                <CardDescription>Perfect for small family gatherings</CardDescription>
+                <div className="text-4xl font-bold text-primary mt-4">₱0</div>
+                <div className="text-muted-foreground">per event</div>
+              </CardHeader>
+              <div className="px-6 pb-6 space-y-4">
+                <div className="space-y-2">
+                  <div className="flex items-center space-x-2">
+                    <CheckCircle className="w-4 h-4 text-success" />
+                    <span className="text-sm">Up to 50 photos</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <CheckCircle className="w-4 h-4 text-success" />
+                    <span className="text-sm">Up to 10 video greetings</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <CheckCircle className="w-4 h-4 text-success" />
+                    <span className="text-sm">QR code access</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <CheckCircle className="w-4 h-4 text-success" />
+                    <span className="text-sm">Basic gallery</span>
+                  </div>
+                </div>
+                <Button asChild className="w-full">
+                  <Link href="/signup">Get Started Free</Link>
+                </Button>
+              </div>
+            </Card>
+
+            <Card className="celebration-card border-primary relative">
+              <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                <Badge className="bg-primary text-primary-foreground">Most Popular</Badge>
+              </div>
+              <CardHeader className="text-center">
+                <CardTitle className="text-2xl">Premium</CardTitle>
+                <CardDescription>Ideal for weddings and special events</CardDescription>
+                <div className="text-4xl font-bold text-primary mt-4">₱299</div>
+                <div className="text-muted-foreground">per event</div>
+              </CardHeader>
+              <div className="px-6 pb-6 space-y-4">
+                <div className="space-y-2">
+                  <div className="flex items-center space-x-2">
+                    <CheckCircle className="w-4 h-4 text-success" />
+                    <span className="text-sm">Up to 500 photos</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <CheckCircle className="w-4 h-4 text-success" />
+                    <span className="text-sm">Up to 50 video greetings</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <CheckCircle className="w-4 h-4 text-success" />
+                    <span className="text-sm">Custom QR code design</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <CheckCircle className="w-4 h-4 text-success" />
+                    <span className="text-sm">Advanced gallery features</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <CheckCircle className="w-4 h-4 text-success" />
+                    <span className="text-sm">Download all photos</span>
+                  </div>
+                </div>
+                <Button asChild className="w-full">
+                  <Link href="/signup">Choose Premium</Link>
+                </Button>
+              </div>
+            </Card>
+
+            <Card className="celebration-card">
+              <CardHeader className="text-center">
+                <CardTitle className="text-2xl">Professional</CardTitle>
+                <CardDescription>For event planners and businesses</CardDescription>
+                <div className="text-4xl font-bold text-primary mt-4">₱999</div>
+                <div className="text-muted-foreground">per month</div>
+              </CardHeader>
+              <div className="px-6 pb-6 space-y-4">
+                <div className="space-y-2">
+                  <div className="flex items-center space-x-2">
+                    <CheckCircle className="w-4 h-4 text-success" />
+                    <span className="text-sm">Unlimited events</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <CheckCircle className="w-4 h-4 text-success" />
+                    <span className="text-sm">Unlimited photos & videos</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <CheckCircle className="w-4 h-4 text-success" />
+                    <span className="text-sm">White-label options</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <CheckCircle className="w-4 h-4 text-success" />
+                    <span className="text-sm">Priority support</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <CheckCircle className="w-4 h-4 text-success" />
+                    <span className="text-sm">Analytics dashboard</span>
+                  </div>
+                </div>
+                <Button asChild variant="outline" className="w-full">
+                  <Link href="/signup">Go Professional</Link>
+                </Button>
+              </div>
+            </Card>
+          </div>
+
+          <div className="text-center mt-12">
+            <div className="flex items-center justify-center space-x-4 text-sm text-muted-foreground">
+              <div className="flex items-center space-x-2">
+                <CheckCircle className="w-4 h-4 text-success" />
+                <span>GCash payments accepted</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <CheckCircle className="w-4 h-4 text-success" />
+                <span>PayMaya supported</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <CheckCircle className="w-4 h-4 text-success" />
+                <span>Credit cards welcome</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* CTA Section */}
       <section className="py-20 bg-gradient-to-br from-primary/10 via-secondary/5 to-accent/10">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
