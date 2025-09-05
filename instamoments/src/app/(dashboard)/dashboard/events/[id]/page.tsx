@@ -989,68 +989,74 @@ export default function EventManagementPage() {
           <TabsContent value="actions" className="space-y-6">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Copy className="w-5 h-5" />
-                    Duplicate Event
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-gray-600 mb-4">
-                    Create a copy of this event with the same settings
-                  </p>
-                  <Button
-                    onClick={handleDuplicate}
-                    variant="outline"
-                    className="w-full"
-                  >
-                    <Copy className="w-4 h-4 mr-2" />
-                    Duplicate
-                  </Button>
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <Copy className="w-5 h-5 text-gray-600" />
+                      <div>
+                        <h3 className="font-medium">Duplicate Event</h3>
+                        <p className="text-sm text-gray-600">
+                          Create a copy with same settings
+                        </p>
+                      </div>
+                    </div>
+                    <Button
+                      onClick={handleDuplicate}
+                      variant="outline"
+                      size="sm"
+                    >
+                      <Copy className="w-4 h-4 mr-2" />
+                      Duplicate
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
 
               <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <DownloadIcon className="w-5 h-5" />
-                    Export Data
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-gray-600 mb-4">
-                    Download all photos and videos as a ZIP file
-                  </p>
-                  <Button
-                    onClick={handleExport}
-                    variant="outline"
-                    className="w-full"
-                  >
-                    <DownloadIcon className="w-4 h-4 mr-2" />
-                    Export
-                  </Button>
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <DownloadIcon className="w-5 h-5 text-gray-600" />
+                      <div>
+                        <h3 className="font-medium">Export Data</h3>
+                        <p className="text-sm text-gray-600">
+                          Download photos and videos
+                        </p>
+                      </div>
+                    </div>
+                    <Button
+                      onClick={handleExport}
+                      variant="outline"
+                      size="sm"
+                    >
+                      <DownloadIcon className="w-4 h-4 mr-2" />
+                      Export
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
 
               <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Archive className="w-5 h-5" />
-                    Archive Event
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-gray-600 mb-4">
-                    Hide this event from your dashboard
-                  </p>
-                  <Button
-                    onClick={handleArchive}
-                    variant="outline"
-                    className="w-full"
-                  >
-                    <Archive className="w-4 h-4 mr-2" />
-                    Archive
-                  </Button>
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <Archive className="w-5 h-5 text-gray-600" />
+                      <div>
+                        <h3 className="font-medium">Archive Event</h3>
+                        <p className="text-sm text-gray-600">
+                          Hide from dashboard
+                        </p>
+                      </div>
+                    </div>
+                    <Button
+                      onClick={handleArchive}
+                      variant="outline"
+                      size="sm"
+                    >
+                      <Archive className="w-4 h-4 mr-2" />
+                      Archive
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
             </div>

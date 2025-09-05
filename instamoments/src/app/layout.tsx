@@ -29,11 +29,11 @@ const firaCode = Fira_Code({
 
 export const metadata: Metadata = {
   title:
-    'InstaMoments - QR Code Photo Sharing for Filipino Celebrations | Weddings, Birthdays, Debuts',
+    'InstaMoments - QR Code Photo Sharing for Celebrations | Weddings, Birthdays, Debuts',
   description:
-    'Create instant photo galleries for Filipino celebrations. No app downloads needed! Guests scan QR code and share photos instantly. Perfect for weddings, birthdays, debuts, graduations. GCash payments accepted.',
+    'Create instant photo galleries for celebrations. No app downloads needed! Guests scan QR code and share photos instantly. Perfect for weddings, birthdays, debuts, graduations. Multiple payment options accepted.',
   keywords: [
-    'Filipino celebrations',
+    'celebrations',
     'wedding photos',
     'birthday party',
     'debut photos',
@@ -63,9 +63,9 @@ export const metadata: Metadata = {
     canonical: '/',
   },
   openGraph: {
-    title: 'InstaMoments - QR Code Photo Sharing for Filipino Celebrations',
+    title: 'InstaMoments - QR Code Photo Sharing for Celebrations',
     description:
-      'Create instant photo galleries for Filipino celebrations. No app downloads needed! Perfect for weddings, birthdays, debuts, graduations.',
+      'Create instant photo galleries for celebrations. No app downloads needed! Perfect for weddings, birthdays, debuts, graduations.',
     url: 'https://instamoments.ph',
     siteName: 'InstaMoments',
     images: [
@@ -81,9 +81,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'InstaMoments - QR Code Photo Sharing for Filipino Celebrations',
+    title: 'InstaMoments - QR Code Photo Sharing for Celebrations',
     description:
-      'Create instant photo galleries for Filipino celebrations. No app downloads needed!',
+      'Create instant photo galleries for celebrations. No app downloads needed!',
     images: ['/og-image.jpg'],
   },
   robots: {

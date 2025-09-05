@@ -28,7 +28,6 @@ import {
   AccessibilitySettings,
   VoiceGuidance,
   LargeTouchTarget,
-  FilipinoLanguageSupport,
   AccessibleFormField,
 } from '@/components/instamoments';
 
@@ -93,8 +92,8 @@ export default function DesignSystemPage() {
             </div>
             <p className="text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed">
               A comprehensive design system for capturing and sharing precious
-              moments from Filipino celebrations and events. Built with
-              accessibility, mobile-first design, and vibrant Filipino-inspired
+              moments from celebrations and events. Built with
+              accessibility, mobile-first design, and vibrant celebration-inspired
               colors.
             </p>
             <div className="flex flex-wrap justify-center gap-2 pt-4">
@@ -147,7 +146,7 @@ export default function DesignSystemPage() {
                 <h2 className="text-3xl font-bold">Design System Overview</h2>
                 <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
                   InstaMoments uses a comprehensive design system built for
-                  Filipino celebrations, with accessibility and mobile-first
+                  celebrations, with accessibility and mobile-first
                   principles at its core.
                 </p>
               </div>
@@ -158,11 +157,11 @@ export default function DesignSystemPage() {
                     <div className="w-12 h-12 bg-primary/20 rounded-lg flex items-center justify-center mb-4">
                       <span className="text-2xl">🎨</span>
                     </div>
-                    <CardTitle>Filipino Theme</CardTitle>
+                    <CardTitle>Celebration Theme</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <p className="text-muted-foreground">
-                      Vibrant colors and design elements inspired by Filipino
+                      Vibrant colors and design elements inspired by
                       celebrations, fiestas, and cultural traditions.
                     </p>
                   </CardContent>
@@ -462,7 +461,7 @@ export default function DesignSystemPage() {
                         PaymentSelector
                       </h3>
                       <div className="flex gap-2">
-                        <Badge variant="outline">Filipino Focus</Badge>
+                        <Badge variant="outline">Celebration Focus</Badge>
                         <Badge variant="secondary">GCash Priority</Badge>
                       </div>
                     </div>
@@ -775,15 +774,12 @@ export default function DesignSystemPage() {
 
                 <Card>
                   <CardHeader>
-                    <CardTitle>Filipino Language Support</CardTitle>
+                    <CardTitle>Language Support</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <FilipinoLanguageSupport
-                      englishText="Welcome to InstaMoments!"
-                      filipinoText="Maligayang pagdating sa InstaMoments!"
-                    >
-                      <Button>Welcome Button</Button>
-                    </FilipinoLanguageSupport>
+                    <p className="text-muted-foreground">
+                      Currently supporting English with plans for multi-language support.
+                    </p>
                   </CardContent>
                 </Card>
 
@@ -813,10 +809,10 @@ export default function DesignSystemPage() {
             <div className="space-y-6">
               <div className="text-center space-y-4">
                 <h2 className="text-3xl font-bold">
-                  Filipino Fiesta Color Palette
+                  Celebration Fiesta Color Palette
                 </h2>
                 <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                  A vibrant, modern color system inspired by Filipino
+                  A vibrant, modern color system inspired by
                   celebrations, designed for accessibility and visual impact.
                 </p>
               </div>
@@ -1029,7 +1025,7 @@ export default function DesignSystemPage() {
                     </CardHeader>
                     <CardContent className="space-y-2">
                       <p className="text-sm text-muted-foreground">
-                        Colors inspired by Filipino celebrations and cultural
+                        Colors inspired by celebrations and cultural
                         significance.
                       </p>
                       <ul className="text-sm text-muted-foreground space-y-1">

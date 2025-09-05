@@ -35,11 +35,11 @@ export default function Home() {
             <div className="space-y-8">
               <div className="space-y-4">
                 <Badge variant="secondary" className="w-fit">
-                  🇵🇭 Made for Filipino Celebrations
+                  📸 Made for Celebrations
                 </Badge>
                 <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight">
                   Create Instant Photo Galleries for Your{' '}
-                  <span className="text-primary">Filipino Celebrations</span>
+                  <span className="text-primary">Special Celebrations</span>
                 </h1>
                 <p className="text-xl text-muted-foreground max-w-2xl">
                   No app downloads needed! Guests scan your QR code and
@@ -75,11 +75,11 @@ export default function Home() {
                 </div>
                 <div className="flex items-center space-x-2">
                   <CheckCircle className="w-4 h-4 text-success" />
-                  <span>From ₱699 per event</span>
+                  <span>From $12 per event</span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <CheckCircle className="w-4 h-4 text-success" />
-                  <span>GCash payments</span>
+                  <span>Multiple payment options</span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <CheckCircle className="w-4 h-4 text-success" />
@@ -94,7 +94,7 @@ export default function Home() {
                   <div className="text-center space-y-4">
                     <QrCode className="w-24 h-24 text-primary mx-auto" />
                     <p className="text-muted-foreground">
-                      Filipino family celebration with QR code
+                      Family celebration with QR code
                     </p>
                   </div>
                 </div>
@@ -113,10 +113,10 @@ export default function Home() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center space-y-4 mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold">
-              Why Filipino Families Love InstaMoments
+              Why Families Love InstaMoments
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Designed specifically for Philippine celebration culture with
+              Designed specifically for celebration culture with
               features that make sharing memories effortless.
             </p>
           </div>
@@ -156,7 +156,7 @@ export default function Home() {
                 <CardTitle>Video Greetings</CardTitle>
                 <CardDescription>
                   20-second personal video messages from all your guests.
-                  Perfect for Filipino celebration culture.
+                  Perfect for celebration culture.
                 </CardDescription>
               </CardHeader>
             </Card>
@@ -166,9 +166,9 @@ export default function Home() {
                 <div className="w-12 h-12 bg-success/10 rounded-lg flex items-center justify-center mb-4">
                   <Heart className="w-6 h-6 text-success" />
                 </div>
-                <CardTitle>Filipino-First Design</CardTitle>
+                <CardTitle>Mobile-First Design</CardTitle>
                 <CardDescription>
-                  Built for Philippine celebration culture with local payment
+                  Built for celebration culture with local payment
                   methods and cultural considerations.
                 </CardDescription>
               </CardHeader>
@@ -181,7 +181,7 @@ export default function Home() {
                 </div>
                 <CardTitle>Mobile Optimized</CardTitle>
                 <CardDescription>
-                  Perfect for Filipino mobile-first users. Works seamlessly on
+                  Perfect for mobile-first users. Works seamlessly on
                   all Android and iOS devices.
                 </CardDescription>
               </CardHeader>
@@ -271,7 +271,7 @@ export default function Home() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center space-y-4 mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold">
-              Loved by Filipino Families
+              Loved by Families
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
               Join thousands of families who trust InstaMoments for their
@@ -638,7 +638,7 @@ export default function Home() {
               Ready to Create Amazing Celebration Memories?
             </h2>
             <p className="text-xl text-muted-foreground">
-              Join thousands of Filipino families who trust InstaMoments for
+              Join thousands of families who trust InstaMoments for
               their special moments. Start your first event in minutes.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -668,7 +668,7 @@ export default function Home() {
                 <span className="text-xl font-bold">InstaMoments</span>
               </div>
               <p className="text-sm text-muted-foreground">
-                Creating instant photo galleries for Filipino celebrations. No
+                Creating instant photo galleries for celebrations. No
                 app downloads, just scan and share.
               </p>
               <div className="flex space-x-4">
@@ -760,7 +760,7 @@ export default function Home() {
           <div className="border-t mt-8 pt-8 text-center text-sm text-muted-foreground">
             <p>
               &copy; 2025 InstaMoments. All rights reserved. Made with ❤️ for
-              Filipino celebrations.
+              celebrations.
             </p>
           </div>
         </div>

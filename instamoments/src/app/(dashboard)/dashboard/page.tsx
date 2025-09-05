@@ -177,7 +177,7 @@ export default function DashboardPage() {
                 Welcome to InstaMoments!
               </h1>
               <p className="text-gray-600 text-sm sm:text-base mt-1">
-                Start creating and sharing your Filipino celebration moments.
+                Start creating and sharing your celebration moments.
               </p>
             </div>
             <Button asChild className="w-full sm:w-auto">

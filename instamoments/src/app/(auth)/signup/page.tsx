@@ -169,7 +169,7 @@ export default function SignUpPage() {
                 </CardTitle>
                 <CardDescription className="text-muted-foreground">
                   {
-                    'Create your account to start sharing Filipino celebration moments'
+                    'Create your account to start sharing celebration moments'
                   }
                 </CardDescription>
               </div>
