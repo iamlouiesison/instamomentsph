@@ -51,18 +51,17 @@ export function useAuth() {
 
         if (session?.user) {
           // Get user profile
-          const { data: profile, error: profileError } = await supabase
+          const { data: profiles, error: profileError } = await supabase
             .from('profiles')
             .select('*')
-            .eq('id', session.user.id)
-            .single();
+            .eq('id', session.user.id);
 
-          console.log('Profile result:', { hasProfile: !!profile, error: profileError?.message });
+          console.log('Profile result:', { profilesCount: profiles?.length || 0, error: profileError?.message });
 
           if (mounted) {
             setAuthState({
               user: session.user,
-              profile: profile || null,
+              profile: profiles && profiles.length > 0 ? profiles[0] : null,
               loading: false,
               error: profileError?.message || null,
             });
@@ -114,15 +113,14 @@ export function useAuth() {
 
       if (event === 'SIGNED_IN' && session?.user) {
         // Get user profile
-        const { data: profile, error: profileError } = await supabase
+        const { data: profiles, error: profileError } = await supabase
           .from('profiles')
           .select('*')
-          .eq('id', session.user.id)
-          .single();
+          .eq('id', session.user.id);
 
         setAuthState({
           user: session.user,
-          profile: profile || null,
+          profile: profiles && profiles.length > 0 ? profiles[0] : null,
           loading: false,
           error: profileError?.message || null,
         });
@@ -135,29 +133,27 @@ export function useAuth() {
         });
       } else if (event === 'TOKEN_REFRESHED' && session?.user) {
         // Handle token refresh - user is still authenticated
-        const { data: profile, error: profileError } = await supabase
+        const { data: profiles, error: profileError } = await supabase
           .from('profiles')
           .select('*')
-          .eq('id', session.user.id)
-          .single();
+          .eq('id', session.user.id);
 
         setAuthState({
           user: session.user,
-          profile: profile || null,
+          profile: profiles && profiles.length > 0 ? profiles[0] : null,
           loading: false,
           error: profileError?.message || null,
         });
       } else if (event === 'INITIAL_SESSION' && session?.user) {
         // Handle initial session - user is authenticated
-        const { data: profile, error: profileError } = await supabase
+        const { data: profiles, error: profileError } = await supabase
           .from('profiles')
           .select('*')
-          .eq('id', session.user.id)
-          .single();
+          .eq('id', session.user.id);
 
         setAuthState({
           user: session.user,
-          profile: profile || null,
+          profile: profiles && profiles.length > 0 ? profiles[0] : null,
           loading: false,
           error: profileError?.message || null,
         });

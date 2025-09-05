@@ -1,13 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import Link from 'next/link';
+import { useState, useEffect } from 'react';
 import { useAuthContext } from '@/components/providers/AuthProvider';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import {
   Card,
   CardContent,
@@ -15,57 +9,51 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Alert } from '@/components/ui/alert';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { User, Phone, Mail, Camera, Save } from 'lucide-react';
-import {
-  profileUpdateSchema,
-  type ProfileUpdateInput,
-} from '@/lib/validations/auth';
+import { User, Mail } from 'lucide-react';
+import { PaymentLoading } from '@/components/instamoments/loading-states';
 
 export default function ProfilePage() {
-  const [isLoading, setIsLoading] = useState(false);
-  const { profile, updateProfile } = useAuthContext();
+  const { profile, loading, user, error } = useAuthContext();
+  const [isCreatingProfile, setIsCreatingProfile] = useState(false);
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    setError,
-  } = useForm<ProfileUpdateInput>({
-    resolver: zodResolver(profileUpdateSchema),
-    defaultValues: {
-      fullName: profile?.full_name || '',
-      phoneNumber: profile?.phone_number || '',
-    },
-  });
+  // Debug information
+  console.log('ProfilePage Debug:', { profile, loading, user, error });
 
-  const onSubmit = async (data: ProfileUpdateInput) => {
-    setIsLoading(true);
-
+  // Create profile if user exists but no profile
+  const createProfile = async () => {
+    if (!user || profile || isCreatingProfile) return;
+    
+    setIsCreatingProfile(true);
     try {
-      const { error } = await updateProfile({
-        full_name: data.fullName,
-        phone_number: data.phoneNumber || null,
+      const response = await fetch('/api/profile/create', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
       });
-
-      if (error) {
-        setError('root', {
-          message:
-            'May problema sa pag-update ng profile. Pakisuyo, subukan ulit.',
-        });
+      
+      const result = await response.json();
+      
+      if (result.success) {
+        // Refresh the page to load the new profile
+        window.location.reload();
       } else {
-        // Show success message (you could use a toast here)
-        alert('Profile updated successfully!');
+        console.error('Failed to create profile:', result.error);
       }
-    } catch {
-      setError('root', {
-        message: 'May hindi inaasahang error. Pakisuyo, subukan ulit.',
-      });
+    } catch (error) {
+      console.error('Error creating profile:', error);
     } finally {
-      setIsLoading(false);
+      setIsCreatingProfile(false);
     }
   };
+
+  // Auto-create profile if needed
+  useEffect(() => {
+    if (user && !profile && !loading && !error) {
+      createProfile();
+    }
+  }, [user, profile, loading, error]);
 
   const getInitials = (name: string) => {
     return name
@@ -76,52 +64,99 @@ export default function ProfilePage() {
       .slice(0, 2);
   };
 
+  if (loading || isCreatingProfile) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
+        <PaymentLoading />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold mb-4 text-destructive">Error</h1>
+          <p className="text-muted-foreground mb-4">{error}</p>
+          <a href="/signin" className="text-primary hover:underline">Try signing in again</a>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold mb-4">Not Authenticated</h1>
+          <p className="text-muted-foreground mb-4">You need to sign in to view your profile.</p>
+          <a href="/signin" className="text-primary hover:underline">Go to Sign In</a>
+        </div>
+      </div>
+    );
+  }
+
+  if (!profile && user) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold mb-4">Profile Not Found</h1>
+          <p className="text-muted-foreground mb-4">Your profile could not be loaded.</p>
+          <p className="text-sm text-muted-foreground mb-4">User ID: {user.id}</p>
+          <a href="/signin" className="text-primary hover:underline">Try signing in again</a>
+        </div>
+      </div>
+    );
+  }
+
+  if (!profile && !user) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold mb-4">Not Authenticated</h1>
+          <p className="text-muted-foreground mb-4">You need to sign in to view your profile.</p>
+          <a href="/signin" className="text-primary hover:underline">Go to Sign In</a>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background">
+      {/* Header */}
+      <div className="bg-gradient-to-r from-primary/5 via-secondary/5 to-accent/5 border-b">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="flex items-center space-x-6">
+            <Avatar className="w-20 h-20 ring-4 ring-background shadow-lg">
+              <AvatarImage
+                src={profile.avatar_url || ''}
+                alt={profile.full_name || ''}
+              />
+              <AvatarFallback className="text-2xl font-bold">
+                {profile.full_name ? getInitials(profile.full_name) : 'U'}
+              </AvatarFallback>
+            </Avatar>
+            <div className="flex-1">
+              <h1 className="text-3xl font-bold mb-2">
+                {profile.full_name || 'Walang Pangalan'}
+              </h1>
+              <p className="text-muted-foreground text-lg mb-3">
+                {profile.email}
+              </p>
+              <div className="flex items-center space-x-4">
+                <span className="text-sm text-muted-foreground">
+                  Member since{' '}
+                  {new Date(profile.created_at).toLocaleDateString('en-PH')}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Main Content */}
       <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Profile Settings</h1>
-          <p className="text-muted-foreground text-lg">
-            Manage your account information and preferences
-          </p>
-        </div>
-
         <div className="space-y-6">
-          {/* Profile Picture Section */}
-          <Card className="border-0 bg-card/95 backdrop-blur">
-            <CardHeader>
-              <CardTitle className="flex items-center">
-                <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center mr-3">
-                  <Camera className="w-4 h-4 text-primary" />
-                </div>
-                Profile Picture
-              </CardTitle>
-              <CardDescription>Update your profile picture</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-center space-x-6">
-                <Avatar className="w-20 h-20">
-                  <AvatarImage
-                    src={profile?.avatar_url || ''}
-                    alt={profile?.full_name || ''}
-                  />
-                  <AvatarFallback className="text-lg">
-                    {profile?.full_name ? getInitials(profile.full_name) : 'U'}
-                  </AvatarFallback>
-                </Avatar>
-                <div>
-                  <Button variant="outline" disabled>
-                    Upload New Photo
-                  </Button>
-                  <p className="text-sm text-muted-foreground mt-2">
-                    Avatar upload coming soon
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
           {/* Profile Information */}
           <Card className="border-0 bg-card/95 backdrop-blur">
             <CardHeader>
@@ -129,130 +164,86 @@ export default function ProfilePage() {
                 <div className="w-8 h-8 bg-secondary/10 rounded-lg flex items-center justify-center mr-3">
                   <User className="w-4 h-4 text-secondary" />
                 </div>
-                Profile Information
+                Personal Information
               </CardTitle>
               <CardDescription>
-                Update your personal information
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-                {errors.root && (
-                  <Alert variant="destructive">{errors.root.message}</Alert>
-                )}
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <Label htmlFor="fullName" className="text-sm font-medium">
-                      Full Name *
-                    </Label>
-                    <div className="relative">
-                      <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-                      <Input
-                        id="fullName"
-                        type="text"
-                        placeholder="Juan dela Cruz"
-                        className="pl-10 h-12"
-                        {...register('fullName')}
-                      />
-                    </div>
-                    {errors.fullName && (
-                      <p className="text-sm text-destructive">
-                        {errors.fullName.message}
-                      </p>
-                    )}
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label
-                      htmlFor="phoneNumber"
-                      className="text-sm font-medium"
-                    >
-                      Phone Number
-                    </Label>
-                    <div className="relative">
-                      <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-                      <Input
-                        id="phoneNumber"
-                        type="tel"
-                        placeholder="09123456789"
-                        className="pl-10 h-12"
-                        {...register('phoneNumber')}
-                      />
-                    </div>
-                    {errors.phoneNumber && (
-                      <p className="text-sm text-destructive">
-                        {errors.phoneNumber.message}
-                      </p>
-                    )}
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="email" className="text-sm font-medium">
-                    Email Address
-                  </Label>
-                  <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-                    <Input
-                      id="email"
-                      type="email"
-                      value={profile?.email || ''}
-                      disabled
-                      className="pl-10 h-12 bg-muted"
-                    />
-                  </div>
-                  <p className="text-xs text-muted-foreground">
-                    Email address cannot be changed
-                  </p>
-                </div>
-
-                <div className="flex justify-end">
-                  <Button
-                    type="submit"
-                    className="h-12 px-8 text-primary-foreground font-semibold"
-                    disabled={isLoading}
-                  >
-                    <Save className="w-4 h-4 mr-2" />
-                    {isLoading ? 'Saving...' : 'Save Changes'}
-                  </Button>
-                </div>
-              </form>
-            </CardContent>
-          </Card>
-
-          {/* Account Information */}
-          <Card className="border-0 bg-card/95 backdrop-blur">
-            <CardHeader>
-              <CardTitle className="flex items-center">
-                <div className="w-8 h-8 bg-accent/10 rounded-lg flex items-center justify-center mr-3">
-                  <Mail className="w-4 h-4 text-accent-foreground" />
-                </div>
-                Account Information
-              </CardTitle>
-              <CardDescription>
-                Your account details and subscription information
+                I-update ang personal information mo
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                <div className="flex justify-between items-center py-2">
-                  <span className="text-sm font-medium text-foreground">
-                    Account Type
-                  </span>
-                  <span className="text-sm text-muted-foreground capitalize">
-                    {profile?.subscription_tier || 'Free'}
-                  </span>
+                <div className="flex items-center space-x-4">
+                  <Mail className="w-5 h-5 text-muted-foreground" />
+                  <div>
+                    <p className="font-medium">Email Address</p>
+                    <p className="text-sm text-muted-foreground">
+                      {profile.email}
+                    </p>
+                  </div>
                 </div>
-                <div className="flex justify-between items-center py-2">
-                  <span className="text-sm font-medium text-foreground">
-                    Member Since
-                  </span>
-                  <span className="text-sm text-muted-foreground">
-                    {profile?.created_at
-                      ? new Date(profile.created_at).toLocaleDateString()
-                      : 'N/A'}
-                  </span>
+                <div className="flex items-center space-x-4">
+                  <User className="w-5 h-5 text-muted-foreground" />
+                  <div>
+                    <p className="font-medium">Full Name</p>
+                    <p className="text-sm text-muted-foreground">
+                      {profile.full_name || 'Not set'}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-4">
+                  <User className="w-5 h-5 text-muted-foreground" />
+                  <div>
+                    <p className="font-medium">Subscription Tier</p>
+                    <p className="text-sm text-muted-foreground capitalize">
+                      {profile.subscription_tier}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Account Stats */}
+          <Card className="border-0 bg-card/95 backdrop-blur">
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <div className="w-8 h-8 bg-accent/10 rounded-lg flex items-center justify-center mr-3">
+                  <User className="w-4 h-4 text-accent-foreground" />
+                </div>
+                Account Statistics
+              </CardTitle>
+              <CardDescription>
+                Tingnan ang activity mo sa InstaMoments
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="text-center p-4 bg-primary/5 rounded-lg">
+                  <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <User className="w-6 h-6 text-primary" />
+                  </div>
+                  <p className="text-2xl font-bold text-primary">0</p>
+                  <p className="text-sm text-muted-foreground">
+                    Photos Uploaded
+                  </p>
+                </div>
+                <div className="text-center p-4 bg-secondary/5 rounded-lg">
+                  <div className="w-12 h-12 bg-secondary/10 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <User className="w-6 h-6 text-secondary" />
+                  </div>
+                  <p className="text-2xl font-bold text-secondary">0</p>
+                  <p className="text-sm text-muted-foreground">
+                    Videos Uploaded
+                  </p>
+                </div>
+                <div className="text-center p-4 bg-accent/5 rounded-lg">
+                  <div className="w-12 h-12 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <User className="w-6 h-6 text-accent-foreground" />
+                  </div>
+                  <p className="text-2xl font-bold text-accent-foreground">0</p>
+                  <p className="text-sm text-muted-foreground">
+                    Events Created
+                  </p>
                 </div>
               </div>
             </CardContent>

@@ -3,6 +3,7 @@ import { ABeeZee, Lora, Fira_Code } from 'next/font/google';
 import './globals.css';
 import { AuthProvider } from '@/components/providers/AuthProvider';
 import { GlobalNavigation } from '@/components/layout';
+import { Toaster } from '@/components/ui/sonner';
 
 const abeeZee = ABeeZee({
   variable: '--font-sans',
@@ -114,6 +115,7 @@ export default function RootLayout({
         <AuthProvider>
           <GlobalNavigation />
           {children}
+          <Toaster />
         </AuthProvider>
       </body>
     </html>
