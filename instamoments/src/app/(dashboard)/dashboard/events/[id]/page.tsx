@@ -1045,6 +1045,30 @@ export default function EventManagementPage() {
                         <h3 className="font-medium">Archive Event</h3>
                         <p className="text-sm text-gray-600">
                           Hide from dashboard
+                        </p>
+                      </div>
+                    </div>
+                    <Button
+                      onClick={handleArchive}
+                      variant="outline"
+                      size="sm"
+                    >
+                      <Archive className="w-4 h-4 mr-2" />
+                      Archive
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="border-red-200">
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <AlertTriangle className="w-5 h-5 text-red-600" />
+                      <div>
+                        <h3 className="font-medium text-red-600">Delete Event</h3>
+                        <p className="text-sm text-gray-600">
+                          Permanently delete this event and all its data
                           {event.total_photos > 0 || event.total_videos > 0 ? (
                             <span className="block text-red-600 mt-1">
                               Cannot delete with {event.total_photos} photos and{' '}
@@ -1054,38 +1078,28 @@ export default function EventManagementPage() {
                         </p>
                       </div>
                     </div>
-                    <div className="flex gap-2">
-                      <Button
-                        onClick={handleArchive}
-                        variant="outline"
-                        size="sm"
-                      >
-                        <Archive className="w-4 h-4 mr-2" />
-                        Archive
-                      </Button>
-                      <Button
-                        variant="destructive"
-                        onClick={handleDelete}
-                        disabled={
-                          isDeleting ||
-                          event.total_photos > 0 ||
-                          event.total_videos > 0
-                        }
-                        size="sm"
-                      >
-                        {isDeleting ? (
-                          <>
-                            <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
-                            Deleting...
-                          </>
-                        ) : (
-                          <>
-                            <Trash2 className="w-4 h-4 mr-2" />
-                            Delete
-                          </>
-                        )}
-                      </Button>
-                    </div>
+                    <Button
+                      variant="destructive"
+                      onClick={handleDelete}
+                      disabled={
+                        isDeleting ||
+                        event.total_photos > 0 ||
+                        event.total_videos > 0
+                      }
+                      size="sm"
+                    >
+                      {isDeleting ? (
+                        <>
+                          <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
+                          Deleting...
+                        </>
+                      ) : (
+                        <>
+                          <Trash2 className="w-4 h-4 mr-2" />
+                          Delete
+                        </>
+                      )}
+                    </Button>
                   </div>
                 </CardContent>
               </Card>
