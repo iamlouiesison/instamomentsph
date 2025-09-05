@@ -10,6 +10,20 @@ const nextConfig: NextConfig = {
         pathname: '/**',
       },
     ],
+    localPatterns: [
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+        port: '3000',
+        pathname: '/api/qr/**',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.vercel.app',
+        port: '',
+        pathname: '/api/qr/**',
+      },
+    ],
   },
   webpack: (config, { isServer }) => {
     config.resolve.fallback = {

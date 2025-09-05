@@ -863,6 +863,16 @@ export default function EventManagementPage() {
                       >
                         <Copy className="w-4 h-4" />
                       </Button>
+                      <Button 
+                        variant="default" 
+                        size="sm" 
+                        onClick={() => {
+                          window.open(`/gallery/${event.gallery_slug}`, '_blank');
+                        }}
+                      >
+                        <Eye className="w-4 h-4 mr-1" />
+                        View Gallery
+                      </Button>
                     </div>
                   </div>
 
