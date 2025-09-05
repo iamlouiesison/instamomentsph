@@ -33,6 +33,7 @@ import {
   getImageDimensions,
   sanitizeEXIFData,
 } from '@/lib/image-processing';
+import { usePhotoUpload } from '@/hooks/usePhotoUpload';
 
 // Validation schema for photo upload form
 const PhotoUploadSchema = z.object({
@@ -79,14 +80,33 @@ export const PhotoUpload: React.FC<PhotoUploadProps> = ({
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [processedPhotos, setProcessedPhotos] = useState<UploadingPhoto[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [isUploading, setIsUploading] = useState(false);
   const [dragActive, setDragActive] = useState(false);
   const [cameraStream, setCameraStream] = useState<MediaStream | null>(null);
   const [showCamera, setShowCamera] = useState(false);
-  const [uploadResults, setUploadResults] = useState<{
-    success: number;
-    failed: number;
-  }>({ success: 0, failed: 0 });
+
+  // React Query hook for photo uploads
+  const {
+    uploadPhotos,
+    isPending: isUploading,
+    isError: uploadError,
+    error: uploadErrorDetails,
+    isSuccess: uploadSuccess,
+    uploadProgress,
+    uploadedCount,
+    totalCount,
+    reset: resetUpload,
+  } = usePhotoUpload({
+    onSuccess: (uploadedPhotos) => {
+      onUploadComplete?.(uploadedPhotos);
+      // Reset form after successful upload
+      form.reset();
+      setProcessedPhotos([]);
+      setSelectedFiles([]);
+    },
+    onError: (error) => {
+      onUploadError?.(error);
+    },
+  });
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraVideoRef = useRef<HTMLVideoElement>(null);
@@ -280,143 +300,46 @@ export const PhotoUpload: React.FC<PhotoUploadProps> = ({
     });
   }, []);
 
-  // Upload photos
-  const uploadPhotos = useCallback(
-    async (formData: PhotoUploadFormData) => {
+  // Upload photos using React Query hook
+  const handleUpload = useCallback(
+    (formData: PhotoUploadFormData) => {
       if (processedPhotos.length === 0) {
         onUploadError?.('Please select at least one photo');
         return;
       }
 
-      setIsUploading(true);
-      setUploadResults({ success: 0, failed: 0 });
+      // Update photos to show uploading state
+      setProcessedPhotos((prev) =>
+        prev.map((p) => ({ ...p, isUploading: true, uploadProgress: 0 }))
+      );
 
-      const uploadPromises = processedPhotos.map(async (photo) => {
-        try {
-          // Update photo as uploading
-          setProcessedPhotos((prev) =>
-            prev.map((p) =>
-              p.id === photo.id
-                ? { ...p, isUploading: true, uploadProgress: 0 }
-                : p
-            )
-          );
+      // Convert UploadingPhoto to ProcessedImage for upload
+      const photosToUpload: ProcessedImage[] = processedPhotos.map((photo) => ({
+        file: photo.file,
+        thumbnail: photo.thumbnail,
+        exifData: photo.exifData,
+        originalSize: photo.originalSize,
+        compressedSize: photo.compressedSize,
+        compressionRatio: photo.compressionRatio,
+      }));
 
-          // Create form data for upload
-          const uploadFormData = new FormData();
-          uploadFormData.append('file', photo.file);
-          uploadFormData.append('thumbnail', photo.thumbnail);
-          uploadFormData.append('eventId', eventId);
-          uploadFormData.append('contributorName', formData.contributorName);
-          uploadFormData.append(
-            'contributorEmail',
-            formData.contributorEmail || ''
-          );
-          uploadFormData.append('caption', formData.caption || '');
-          uploadFormData.append(
-            'exifData',
-            JSON.stringify(sanitizeEXIFData(photo.exifData))
-          );
-
-          // Simulate upload progress
-          const progressInterval = setInterval(() => {
-            setProcessedPhotos((prev) =>
-              prev.map((p) =>
-                p.id === photo.id
-                  ? {
-                      ...p,
-                      uploadProgress: Math.min(p.uploadProgress + 10, 90),
-                    }
-                  : p
-              )
-            );
-          }, 200);
-
-          // Upload to API
-          const response = await fetch('/api/upload/photo', {
-            method: 'POST',
-            body: uploadFormData,
-          });
-
-          clearInterval(progressInterval);
-
-          if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.error?.message || 'Upload failed');
-          }
-
-          // Mark as completed
-          setProcessedPhotos((prev) =>
-            prev.map((p) =>
-              p.id === photo.id
-                ? {
-                    ...p,
-                    isUploading: false,
-                    uploadProgress: 100,
-                  }
-                : p
-            )
-          );
-
-          setUploadResults((prev) => ({ ...prev, success: prev.success + 1 }));
-          return photo;
-        } catch (error) {
-          console.error('Upload failed for photo:', photo.id, error);
-
-          setProcessedPhotos((prev) =>
-            prev.map((p) =>
-              p.id === photo.id
-                ? {
-                    ...p,
-                    isUploading: false,
-                    uploadError:
-                      error instanceof Error ? error.message : 'Upload failed',
-                  }
-                : p
-            )
-          );
-
-          setUploadResults((prev) => ({ ...prev, failed: prev.failed + 1 }));
-          return null;
-        }
+      // Call React Query mutation
+      uploadPhotos({
+        eventId,
+        files: photosToUpload,
+        contributorName: formData.contributorName,
+        contributorEmail: formData.contributorEmail,
+        caption: formData.caption,
       });
-
-      try {
-        const results = await Promise.all(uploadPromises);
-        const successfulUploads = results.filter(Boolean) as ProcessedImage[];
-
-        if (successfulUploads.length > 0) {
-          onUploadComplete?.(successfulUploads);
-        }
-
-        // Reset form after successful upload
-        if (uploadResults.failed === 0) {
-          form.reset();
-          setProcessedPhotos([]);
-          setSelectedFiles([]);
-        }
-      } catch (error) {
-        console.error('Upload process failed:', error);
-        onUploadError?.('Upload failed. Please try again.');
-      } finally {
-        setIsUploading(false);
-      }
     },
-    [
-      processedPhotos,
-      eventId,
-      onUploadComplete,
-      onUploadError,
-      form,
-      uploadResults.failed,
-    ]
+    [processedPhotos, eventId, uploadPhotos, onUploadError]
   );
 
-  const onSubmit = form.handleSubmit(uploadPhotos);
+  const onSubmit = form.handleSubmit(handleUpload);
 
   const canUpload = processedPhotos.length > 0 && !isProcessing && !isUploading;
   const totalPhotos = processedPhotos.length;
-  const hasErrors = processedPhotos.some((p) => p.uploadError);
+  const hasErrors = uploadError || processedPhotos.some((p) => p.uploadError);
 
   return (
     <div className="space-y-6">
@@ -543,8 +466,7 @@ export const PhotoUpload: React.FC<PhotoUploadProps> = ({
               <span>Selected Photos ({totalPhotos})</span>
               {isUploading && (
                 <span className="text-sm font-normal text-muted-foreground">
-                  Uploading... {uploadResults.success + uploadResults.failed}/
-                  {totalPhotos}
+                  Uploading... {uploadedCount}/{totalCount || totalPhotos}
                 </span>
               )}
             </CardTitle>
@@ -583,20 +505,20 @@ export const PhotoUpload: React.FC<PhotoUploadProps> = ({
                     {photo.isUploading && (
                       <div className="absolute bottom-0 left-0 right-0 p-2">
                         <Progress
-                          value={photo.uploadProgress}
+                          value={uploadProgress}
                           className="h-1"
                         />
                       </div>
                     )}
 
                     {/* Upload Status */}
-                    {photo.uploadProgress === 100 && (
+                    {uploadSuccess && photo.isUploading && (
                       <div className="absolute top-2 right-2">
                         <CheckCircle className="h-5 w-5 text-green-500" />
                       </div>
                     )}
 
-                    {photo.uploadError && (
+                    {(uploadError || photo.uploadError) && (
                       <div className="absolute top-2 right-2">
                         <AlertCircle className="h-5 w-5 text-red-500" />
                       </div>
@@ -614,9 +536,9 @@ export const PhotoUpload: React.FC<PhotoUploadProps> = ({
                   </div>
 
                   {/* Error Message */}
-                  {photo.uploadError && (
+                  {(uploadError || photo.uploadError) && (
                     <p className="text-xs text-red-500 mt-1">
-                      {photo.uploadError}
+                      {uploadErrorDetails?.message || photo.uploadError}
                     </p>
                   )}
                 </div>
@@ -688,8 +610,7 @@ export const PhotoUpload: React.FC<PhotoUploadProps> = ({
                   {isUploading ? (
                     <>
                       <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                      Uploading {uploadResults.success + uploadResults.failed}/
-                      {totalPhotos}...
+                      Uploading {uploadedCount}/{totalCount || totalPhotos}...
                     </>
                   ) : (
                     <>
@@ -704,16 +625,12 @@ export const PhotoUpload: React.FC<PhotoUploadProps> = ({
               {isUploading && (
                 <div className="space-y-2">
                   <Progress
-                    value={
-                      ((uploadResults.success + uploadResults.failed) /
-                        totalPhotos) *
-                      100
-                    }
+                    value={uploadProgress}
                     className="h-2"
                   />
                   <div className="flex justify-between text-sm text-muted-foreground">
-                    <span>Success: {uploadResults.success}</span>
-                    <span>Failed: {uploadResults.failed}</span>
+                    <span>Success: {uploadedCount}</span>
+                    <span>Failed: {(totalCount || totalPhotos) - uploadedCount}</span>
                   </div>
                 </div>
               )}
