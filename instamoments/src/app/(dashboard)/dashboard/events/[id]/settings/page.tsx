@@ -237,24 +237,24 @@ export default function EventSettingsPage() {
               </div>
               <div>
                 <p className="text-sm text-gray-600">Event Type</p>
-                <p className="font-medium capitalize">{event.eventType}</p>
+                <p className="font-medium capitalize">{event.event_type}</p>
               </div>
               <div>
                 <p className="text-sm text-gray-600">Contributors</p>
-                <p className="font-medium">{event.totalContributors} people</p>
+                <p className="font-medium">{event.total_contributors} people</p>
               </div>
               <div>
                 <p className="text-sm text-gray-600">Photos</p>
-                <p className="font-medium">{event.totalPhotos} uploaded</p>
+                <p className="font-medium">{event.total_photos} uploaded</p>
               </div>
               <div>
                 <p className="text-sm text-gray-600">Videos</p>
-                <p className="font-medium">{event.totalVideos} uploaded</p>
+                <p className="font-medium">{event.total_videos} uploaded</p>
               </div>
               <div>
                 <p className="text-sm text-gray-600">Created</p>
                 <p className="font-medium">
-                  {new Date(event.createdAt).toLocaleDateString('en-PH')}
+                  {event.created_at ? new Date(event.created_at).toLocaleDateString('en-PH') : 'Unknown'}
                 </p>
               </div>
             </div>

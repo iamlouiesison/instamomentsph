@@ -150,7 +150,7 @@ export default function EventManagementPage() {
   const handleDelete = async () => {
     if (!event) return;
     
-    if (event.totalPhotos > 0 || event.totalVideos > 0) {
+    if (event.total_photos > 0 || event.total_videos > 0) {
       toast.error('Cannot delete event with photos or videos. Archive instead.');
       return;
     }
@@ -185,14 +185,14 @@ export default function EventManagementPage() {
 
   const handleShare = () => {
     if (!event) return;
-    const galleryUrl = `${window.location.origin}/gallery/${event.gallerySlug}`;
+    const galleryUrl = `${window.location.origin}/gallery/${event.gallery_slug}`;
     navigator.clipboard.writeText(galleryUrl);
     toast.success('Gallery link copied to clipboard!');
   };
 
   const handleViewGallery = () => {
     if (!event) return;
-    const galleryUrl = `/gallery/${event.gallerySlug}`;
+    const galleryUrl = `/gallery/${event.gallery_slug}`;
     window.open(galleryUrl, '_blank');
   };
 
@@ -255,7 +255,7 @@ export default function EventManagementPage() {
                 {event.name}
               </h1>
               <p className="text-gray-600 capitalize">
-                {event.eventType} Event
+                {event.event_type} Event
               </p>
             </div>
             <div className="flex items-center gap-2">
@@ -303,13 +303,13 @@ export default function EventManagementPage() {
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {event.eventDate && (
+              {event.event_date && (
                 <div className="flex items-center gap-3">
                   <Calendar className="w-5 h-5 text-gray-500" />
                   <div>
                     <p className="text-sm text-gray-600">Event Date</p>
                     <p className="font-medium">
-                      {format(new Date(event.eventDate), 'MMM dd, yyyy')}
+                      {format(new Date(event.event_date), 'MMM dd, yyyy')}
                     </p>
                   </div>
                 </div>
@@ -330,7 +330,7 @@ export default function EventManagementPage() {
                 <div>
                   <p className="text-sm text-gray-600">Created</p>
                   <p className="font-medium">
-                    {formatDistanceToNow(new Date(event.createdAt), { addSuffix: true })}
+                    {event.created_at ? formatDistanceToNow(new Date(event.created_at), { addSuffix: true }) : 'Unknown'}
                   </p>
                 </div>
               </div>
@@ -416,16 +416,16 @@ export default function EventManagementPage() {
                 <p className="text-sm text-gray-600">
                   Permanently delete this event and all its data. This action cannot be undone.
                 </p>
-                {event.totalPhotos > 0 || event.totalVideos > 0 ? (
+                {event.total_photos > 0 || event.total_videos > 0 ? (
                   <p className="text-sm text-red-600 mt-1">
-                    Cannot delete event with {event.totalPhotos} photos and {event.totalVideos} videos.
+                    Cannot delete event with {event.total_photos} photos and {event.total_videos} videos.
                   </p>
                 ) : null}
               </div>
               <Button
                 variant="destructive"
                 onClick={handleDelete}
-                disabled={isDeleting || event.totalPhotos > 0 || event.totalVideos > 0}
+                disabled={isDeleting || event.total_photos > 0 || event.total_videos > 0}
               >
                 {isDeleting ? (
                   <>

@@ -41,7 +41,7 @@ export const EventCard: React.FC<EventCardProps> = ({
   showActions = true,
   className,
 }) => {
-  const eventTypeInfo = FILIPINO_EVENT_TYPES[event.eventType];
+  const eventTypeInfo = FILIPINO_EVENT_TYPES[event.event_type];
   const isExpired =
     event.status === 'expired' ||
     (event.expiresAt && new Date(event.expiresAt) < new Date());
@@ -117,10 +117,10 @@ export const EventCard: React.FC<EventCardProps> = ({
       <CardContent className="space-y-4">
         {/* Event Details */}
         <div className="space-y-2 text-sm text-muted-foreground">
-          {event.eventDate && (
+          {event.event_date && (
             <div className="flex items-center gap-2">
               <Calendar className="w-4 h-4" />
-              <span>{format(new Date(event.eventDate), 'MMM dd, yyyy')}</span>
+              <span>{format(new Date(event.event_date), 'MMM dd, yyyy')}</span>
             </div>
           )}
           {event.location && (
@@ -133,9 +133,9 @@ export const EventCard: React.FC<EventCardProps> = ({
             <Clock className="w-4 h-4" />
             <span>
               Created{' '}
-              {formatDistanceToNow(new Date(event.createdAt), {
+              {event.created_at ? formatDistanceToNow(new Date(event.created_at), {
                 addSuffix: true,
-              })}
+              }) : 'Unknown'}
             </span>
           </div>
         </div>
@@ -147,14 +147,14 @@ export const EventCard: React.FC<EventCardProps> = ({
               <Camera className="w-4 h-4" />
               <span className="text-sm">Photos</span>
             </div>
-            <div className="font-semibold text-lg">{event.totalPhotos}</div>
+            <div className="font-semibold text-lg">{event.total_photos}</div>
           </div>
           <div className="text-center">
             <div className="flex items-center justify-center gap-1 text-muted-foreground">
               <Video className="w-4 h-4" />
               <span className="text-sm">Videos</span>
             </div>
-            <div className="font-semibold text-lg">{event.totalVideos}</div>
+            <div className="font-semibold text-lg">{event.total_videos}</div>
           </div>
           <div className="text-center">
             <div className="flex items-center justify-center gap-1 text-muted-foreground">
@@ -162,7 +162,7 @@ export const EventCard: React.FC<EventCardProps> = ({
               <span className="text-sm">Contributors</span>
             </div>
             <div className="font-semibold text-lg">
-              {event.totalContributors}
+              {event.total_contributors}
             </div>
           </div>
         </div>
