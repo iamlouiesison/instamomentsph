@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuthContext } from '@/components/providers/AuthProvider';
@@ -32,18 +32,28 @@ export function GlobalNavigation({ className }: GlobalNavigationProps) {
   const { user, profile, signOut, loading } = useAuthContext();
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
+
+  // Show skeleton immediately on first load
+  React.useEffect(() => {
+    if (!loading) {
+      setIsInitialLoad(false);
+    }
+  }, [loading]);
 
   const handleSignOut = async () => {
     await signOut();
     setIsMobileMenuOpen(false);
   };
 
-  // Determine if we're on a public page (landing, auth pages)
-  const isPublicPage =
+  // Determine if we're on a public page (landing, auth pages) - memoized for performance
+  const isPublicPage = useMemo(() => 
     pathname === '/' ||
     pathname.startsWith('/signin') ||
     pathname.startsWith('/signup') ||
-    pathname.startsWith('/reset-password');
+    pathname.startsWith('/reset-password'),
+    [pathname]
+  );
 
   // Navigation items for authenticated users
   const authenticatedNavItems = [
@@ -93,8 +103,8 @@ export function GlobalNavigation({ className }: GlobalNavigationProps) {
     return pathname.startsWith(href);
   };
 
-  // Show loading state
-  if (loading) {
+  // Show loading state with better UX
+  if (loading || isInitialLoad) {
     return (
       <nav
         className={cn(
@@ -112,7 +122,14 @@ export function GlobalNavigation({ className }: GlobalNavigationProps) {
                 InstaMoments
               </span>
             </div>
-            <div className="w-24 h-8 bg-muted animate-pulse rounded" />
+            <div className="flex items-center space-x-4">
+              <div className="hidden md:flex items-center space-x-2">
+                <div className="w-16 h-8 bg-muted animate-pulse rounded" />
+                <div className="w-20 h-8 bg-muted animate-pulse rounded" />
+                <div className="w-16 h-8 bg-muted animate-pulse rounded" />
+              </div>
+              <div className="w-20 h-8 bg-muted animate-pulse rounded" />
+            </div>
           </div>
         </div>
       </nav>

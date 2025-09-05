@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
+import { LoadingSpinner } from '@/components/instamoments';
 import {
   Dialog,
   DialogContent,
@@ -147,7 +148,7 @@ export function CompactQRCode({
         >
           {isLoading ? (
             <div className="flex flex-col items-center gap-1">
-              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
+              <LoadingSpinner className="w-4 h-4" />
             </div>
           ) : qrCodeUrl ? (
             <Image
@@ -177,7 +178,7 @@ export function CompactQRCode({
             <div className="w-64 h-64 flex items-center justify-center border-2 border-dashed border-muted-foreground/25 rounded-lg">
               {isLoading ? (
                 <div className="flex flex-col items-center gap-2">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                  <LoadingSpinner className="w-8 h-8" />
                   <p className="text-sm text-muted-foreground">
                     Generating QR code...
                   </p>

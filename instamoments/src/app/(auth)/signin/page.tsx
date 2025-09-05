@@ -127,6 +127,7 @@ export default function SignInPage() {
                       type="email"
                       placeholder="your.email@example.com"
                       className="pl-10 h-12"
+                      autoComplete="email"
                       {...register('email')}
                     />
                   </div>
@@ -148,6 +149,7 @@ export default function SignInPage() {
                       type={showPassword ? 'text' : 'password'}
                       placeholder="Your password"
                       className="pl-10 pr-10 h-12"
+                      autoComplete="current-password"
                       {...register('password')}
                     />
                     <button

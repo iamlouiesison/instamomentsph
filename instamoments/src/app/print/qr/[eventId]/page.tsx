@@ -7,6 +7,7 @@ import { Event } from '@/types/database';
 import { FILIPINO_EVENT_TYPES } from '@/lib/validations/event';
 import { format } from 'date-fns';
 import { useEffect, useState } from 'react';
+import { LoadingSpinner } from '@/components/instamoments';
 
 interface PrintQRPageProps {
   params: { eventId: string };
@@ -57,7 +58,7 @@ export default function PrintQRPage({
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+          <LoadingSpinner className="w-8 h-8 mx-auto mb-4" />
           <p>Loading...</p>
         </div>
       </div>

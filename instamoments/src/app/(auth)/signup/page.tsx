@@ -192,6 +192,7 @@ export default function SignUpPage() {
                       type="text"
                       placeholder="Your full name"
                       className="pl-10 h-12"
+                      autoComplete="name"
                       {...register('fullName')}
                     />
                   </div>
@@ -213,6 +214,7 @@ export default function SignUpPage() {
                       type="email"
                       placeholder="your.email@example.com"
                       className="pl-10 h-12"
+                      autoComplete="email"
                       {...register('email')}
                     />
                   </div>
@@ -234,6 +236,7 @@ export default function SignUpPage() {
                       type={showPassword ? 'text' : 'password'}
                       placeholder="Your password"
                       className="pl-10 pr-10 h-12"
+                      autoComplete="new-password"
                       {...register('password')}
                     />
                     <button
@@ -269,6 +272,7 @@ export default function SignUpPage() {
                       type={showConfirmPassword ? 'text' : 'password'}
                       placeholder="Confirm your password"
                       className="pl-10 pr-10 h-12"
+                      autoComplete="new-password"
                       {...register('confirmPassword')}
                     />
                     <button

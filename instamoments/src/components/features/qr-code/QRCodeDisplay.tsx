@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
+import { LoadingSpinner } from '@/components/instamoments';
 import {
   Card,
   CardContent,
@@ -268,7 +269,7 @@ export function QRCodeDisplay({
           >
             {isLoading ? (
               <div className="flex flex-col items-center gap-2">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                <LoadingSpinner className="w-8 h-8" />
                 <p className="text-sm text-muted-foreground">
                   Generating QR code...
                 </p>

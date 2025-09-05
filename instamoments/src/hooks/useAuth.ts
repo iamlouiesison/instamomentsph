@@ -27,7 +27,7 @@ export function useAuth() {
   useEffect(() => {
     let mounted = true;
 
-    // Get initial session
+    // Get initial session with faster timeout
     const getInitialSession = async () => {
       try {
         console.log('Getting initial session...');
@@ -54,7 +54,15 @@ export function useAuth() {
         }
 
         if (session?.user) {
-          // Get user profile
+          // Set user immediately, fetch profile in background
+          setAuthState({
+            user: session.user,
+            profile: null, // Will be loaded in background
+            loading: false,
+            error: null,
+          });
+
+          // Fetch profile in background
           const { data: profiles, error: profileError } = await supabase
             .from('profiles')
             .select('*')
@@ -66,12 +74,11 @@ export function useAuth() {
           });
 
           if (mounted) {
-            setAuthState({
-              user: session.user,
+            setAuthState((prev) => ({
+              ...prev,
               profile: profiles && profiles.length > 0 ? profiles[0] : null,
-              loading: false,
               error: profileError?.message || null,
-            });
+            }));
           }
         } else {
           if (mounted) {
@@ -97,7 +104,7 @@ export function useAuth() {
 
     getInitialSession();
 
-    // Fallback timeout to prevent infinite loading
+    // Faster timeout to prevent slow loading
     const timeout = setTimeout(() => {
       if (mounted) {
         console.warn('Auth loading timeout - setting loading to false');
@@ -108,7 +115,7 @@ export function useAuth() {
           return prev;
         });
       }
-    }, 5000); // 5 second timeout
+    }, 2000); // Reduced from 5 seconds to 2 seconds
 
     // Listen for auth changes
     const {

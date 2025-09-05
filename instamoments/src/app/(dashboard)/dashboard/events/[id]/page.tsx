@@ -13,12 +13,11 @@ import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Progress } from '@/components/ui/progress';
 import { QRCodeDisplay } from '@/components/features/qr-code';
+import { LoadingSpinner } from '@/components/instamoments';
 import {
   ArrowLeft,
   Settings,
-  Share2,
   QrCode,
-  ExternalLink,
   Calendar,
   MapPin,
   Users,
@@ -314,18 +313,6 @@ export default function EventManagementPage() {
     }
   };
 
-  const handleShare = () => {
-    if (!event) return;
-    const galleryUrl = `${window.location.origin}/gallery/${event.gallery_slug}`;
-    navigator.clipboard.writeText(galleryUrl);
-    toast.success('Gallery link copied to clipboard!');
-  };
-
-  const handleViewGallery = () => {
-    if (!event) return;
-    const galleryUrl = `/gallery/${event.gallery_slug}`;
-    window.open(galleryUrl, '_blank');
-  };
 
   const handleDuplicate = () => {
     if (!event) return;
@@ -351,7 +338,7 @@ export default function EventManagementPage() {
         <div className="container mx-auto px-4 py-8">
           <div className="flex items-center justify-center min-h-[400px]">
             <div className="text-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+              <LoadingSpinner className="w-12 h-12 mx-auto mb-4" />
               <p className="text-muted-foreground">Loading event...</p>
             </div>
           </div>
@@ -438,24 +425,6 @@ export default function EventManagementPage() {
               </p>
             </div>
 
-            <div className="flex items-center gap-3">
-              <Button onClick={handleViewGallery} variant="outline" size="sm">
-                <ExternalLink className="w-4 h-4 mr-2" />
-                View Gallery
-              </Button>
-              <Button onClick={handleShare} variant="outline" size="sm">
-                <Share2 className="w-4 h-4 mr-2" />
-                Share
-              </Button>
-              <Button
-                onClick={() => setShowQRCode(!showQRCode)}
-                variant="outline"
-                size="sm"
-              >
-                <QrCode className="w-4 h-4 mr-2" />
-                {showQRCode ? 'Hide QR' : 'Show QR'}
-              </Button>
-            </div>
           </div>
         </div>
 
@@ -932,7 +901,7 @@ export default function EventManagementPage() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Share2 className="w-5 h-5" />
+                  <QrCode className="w-5 h-5" />
                   Sharing & QR Code
                 </CardTitle>
               </CardHeader>
@@ -946,7 +915,14 @@ export default function EventManagementPage() {
                         readOnly
                         className="bg-gray-50"
                       />
-                      <Button variant="outline" size="sm" onClick={handleShare}>
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        onClick={() => {
+                          navigator.clipboard.writeText(`${window.location.origin}/gallery/${event.gallery_slug}`);
+                          toast.success('Gallery link copied to clipboard!');
+                        }}
+                      >
                         <Copy className="w-4 h-4" />
                       </Button>
                     </div>
