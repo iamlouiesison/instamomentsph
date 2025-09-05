@@ -21,9 +21,7 @@ export async function generateMetadata({
 
   const { data: event } = await supabase
     .from('events')
-    .select(
-      'name, description, event_type, event_date, location, custom_message'
-    )
+    .select('name, description, event_type, event_date, location, custom_message')
     .eq('gallery_slug', slug)
     .eq('status', 'active')
     .single();
@@ -61,16 +59,7 @@ async function getEventData(slug: string): Promise<Event | null> {
 
   const { data: event, error } = await supabase
     .from('events')
-    .select(
-      `
-      *,
-      host:profiles!events_host_id_fkey(
-        id,
-        full_name,
-        avatar_url
-      )
-    `
-    )
+    .select('*')
     .eq('gallery_slug', slug)
     .eq('status', 'active')
     .single();

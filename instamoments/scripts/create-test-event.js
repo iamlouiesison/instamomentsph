@@ -47,36 +47,34 @@ async function createTestEvent() {
         console.error('❌ Could not get user ID');
         return;
       }
-
-      console.log('✅ Using user ID:', userId);
-
-      // Create a profile for the user (ignore if already exists)
-      const { error: profileError } = await supabase.from('profiles').insert({
-        id: userId,
-        email: 'test@instamoments.ph',
-        full_name: 'Test User',
-        user_type: 'host',
-        subscription_tier: 'free',
-      });
-
-      if (profileError && profileError.code !== '23505') {
-        console.error('❌ Error creating profile:', profileError);
-        return;
-      }
-
-      if (profileError && profileError.code === '23505') {
-        console.log('ℹ️  Profile already exists, continuing...');
-      } else {
-        console.log('✅ Test profile created');
-      }
     } else {
-      console.log('✅ Found existing users, using first user');
+      // Use the first existing user
+      const testUser = users.data[0];
+      userId = testUser.id;
+      console.log('✅ Using existing user:', userId);
     }
 
-    // Get the first user (or the one we just created)
-    const { data: usersList, error: usersError2 } =
-      await supabase.auth.admin.listUsers();
-    const testUser = usersList.data[0];
+    console.log('✅ Using user ID:', userId);
+
+    // Create a profile for the user (ignore if already exists)
+    const { error: profileError } = await supabase.from('profiles').insert({
+      id: userId,
+      email: 'test@instamoments.ph',
+      full_name: 'Test User',
+      user_type: 'host',
+      subscription_tier: 'free',
+    });
+
+    if (profileError && profileError.code !== '23505') {
+      console.error('❌ Error creating profile:', profileError);
+      return;
+    }
+
+    if (profileError && profileError.code === '23505') {
+      console.log('ℹ️  Profile already exists, continuing...');
+    } else {
+      console.log('✅ Test profile created');
+    }
 
     // Create a test event
     const testEvent = {
@@ -85,7 +83,7 @@ async function createTestEvent() {
       event_type: 'wedding',
       event_date: new Date().toISOString().split('T')[0],
       location: 'Manila, Philippines',
-      host_id: testUser.id,
+      host_id: userId,
       gallery_slug: 'test-wedding-' + Date.now().toString(36),
       subscription_tier: 'free',
       has_video_addon: false,

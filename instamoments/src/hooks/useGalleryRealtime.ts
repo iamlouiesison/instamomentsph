@@ -72,101 +72,80 @@ export function useGalleryRealtime(
       setLoading(page === 0);
 
       try {
-        const offset = page * limit;
+        // Get the gallery slug from the eventId (assuming eventId is the gallery slug)
+        const gallerySlug = eventId;
+        
+        // Build query parameters
+        const params = new URLSearchParams({
+          page: page.toString(),
+          limit: limit.toString(),
+          sortBy: sortBy,
+          type: 'photos' // Only fetch photos for now
+        });
 
-        // Fetch photos
-        const { data: photos, error: photosError } = await supabase
-          .from('photos')
-          .select('*')
-          .eq('event_id', eventId)
-          .eq('is_approved', true)
-          .order('uploaded_at', { ascending: sortBy === 'oldest' })
-          .range(offset, offset + limit - 1);
-
-        if (photosError) throw photosError;
-
-        // Fetch videos
-        const { data: videos, error: videosError } = await supabase
-          .from('videos')
-          .select('*')
-          .eq('event_id', eventId)
-          .eq('is_approved', true)
-          .order('uploaded_at', { ascending: sortBy === 'oldest' })
-          .range(offset, offset + limit - 1);
-
-        if (videosError) throw videosError;
-
-        // Combine and sort media items
-        const photoItems: MediaItem[] = photos.map((photo) => ({
-          ...photo,
-          type: 'photo' as const,
-        }));
-        const videoItems: MediaItem[] = videos.map((video) => ({
-          ...video,
-          type: 'video' as const,
-        }));
-
-        const combinedItems = [...photoItems, ...videoItems];
-
-        // Sort combined items
-        if (sortBy === 'newest') {
-          combinedItems.sort(
-            (a, b) =>
-              new Date(b.uploaded_at).getTime() -
-              new Date(a.uploaded_at).getTime()
-          );
-        } else if (sortBy === 'oldest') {
-          combinedItems.sort(
-            (a, b) =>
-              new Date(a.uploaded_at).getTime() -
-              new Date(b.uploaded_at).getTime()
-          );
-        } else if (sortBy === 'contributor') {
-          combinedItems.sort((a, b) =>
-            a.contributor_name.localeCompare(b.contributor_name)
-          );
+        // Add search and contributor filters if provided
+        if (options.search) {
+          params.set('search', options.search);
+        }
+        if (options.contributor) {
+          params.set('contributor', options.contributor);
         }
 
-        // Apply pagination to combined results
-        const startIndex = offset;
-        const endIndex = startIndex + limit;
-        const paginatedItems = combinedItems.slice(startIndex, endIndex);
+        // Fetch data from API endpoint
+        const response = await fetch(`/api/gallery/${gallerySlug}/photos?${params.toString()}`);
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const result = await response.json();
+
+        if (!result.success) {
+          throw new Error(result.error?.message || 'Failed to fetch gallery data');
+        }
+
+        const { items, pagination } = result.data;
+
+        // Map API response to MediaItem format
+        const mediaItems: MediaItem[] = items.map((item: any) => ({
+          id: item.id,
+          event_id: eventId,
+          contributor_name: item.uploaded_by || 'Unknown',
+          contributor_email: '',
+          file_name: item.url.split('/').pop() || '',
+          file_url: item.url,
+          thumbnail_url: item.thumbnail_url,
+          file_size: item.file_size || 0,
+          mime_type: 'image/jpeg', // Default for now
+          caption: item.caption || '',
+          uploaded_at: item.created_at,
+          is_approved: true,
+          exif_data: null,
+          type: item.type,
+          message: item.type === 'video' ? item.caption : undefined
+        }));
 
         if (reset) {
-          setItems(paginatedItems);
+          setItems(mediaItems);
           currentPageRef.current = 0;
         } else {
-          setItems((prev) => [...prev, ...paginatedItems]);
+          setItems((prev) => [...prev, ...mediaItems]);
         }
 
-        setHasMore(paginatedItems.length === limit);
+        setHasMore(pagination.hasMore);
         setError(null);
 
-        // Fetch contributors
-        const { data: contributorsData } = await supabase
-          .from('event_contributors')
-          .select('contributor_name')
-          .eq('event_id', eventId)
-          .order('contributor_name');
+        // Extract contributors from items
+        const uniqueContributors = [...new Set(mediaItems.map(item => item.contributor_name))].sort();
+        setContributors(uniqueContributors);
 
-        if (contributorsData) {
-          setContributors(contributorsData.map((c) => c.contributor_name));
-        }
+        // Set stats from pagination
+        setStats({
+          totalPhotos: pagination.total,
+          totalVideos: 0, // We'll need to update this if we have videos
+          totalContributors: uniqueContributors.length,
+        });
 
-        // Fetch stats
-        const { data: eventData } = await supabase
-          .from('events')
-          .select('total_photos, total_videos, total_contributors')
-          .eq('id', eventId)
-          .single();
-
-        if (eventData) {
-          setStats({
-            totalPhotos: eventData.total_photos || 0,
-            totalVideos: eventData.total_videos || 0,
-            totalContributors: eventData.total_contributors || 0,
-          });
-        }
       } catch (err) {
         console.error('Error fetching gallery data:', err);
         setError(err instanceof Error ? err.message : 'Failed to load gallery');
@@ -175,7 +154,7 @@ export function useGalleryRealtime(
         isLoadingRef.current = false;
       }
     },
-    [eventId, limit, sortBy, supabase]
+    [eventId, limit, sortBy, options.search, options.contributor]
   );
 
   // Load more data
@@ -260,6 +239,7 @@ export function useGalleryRealtime(
           const newVideo: VideoItem = {
             ...(payload.new as Video),
             type: 'video' as const,
+            message: (payload.new as Video).message,
           };
 
           setItems((prev) => {
@@ -325,6 +305,7 @@ export function useGalleryRealtime(
           const updatedVideo: VideoItem = {
             ...(payload.new as Video),
             type: 'video' as const,
+            message: (payload.new as Video).message,
           };
 
           setItems((prev) =>

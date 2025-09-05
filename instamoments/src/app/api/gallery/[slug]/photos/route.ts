@@ -15,8 +15,8 @@ const PhotosSearchParamsSchema = z.object({
     .string()
     .optional()
     .transform((val) => (val ? parseInt(val, 10) : 20)),
-  search: z.string().optional(),
-  contributor: z.string().optional(),
+  search: z.string().optional().default(''),
+  contributor: z.string().optional().default(''),
   sortBy: z
     .enum(['newest', 'oldest', 'contributor'])
     .optional()
@@ -35,12 +35,12 @@ export async function GET(
     const { slug } = PhotosQuerySchema.parse(await params);
     const searchParams = new URL(request.url).searchParams;
     const query = PhotosSearchParamsSchema.parse({
-      page: searchParams.get('page'),
-      limit: searchParams.get('limit'),
-      search: searchParams.get('search'),
-      contributor: searchParams.get('contributor'),
-      sortBy: searchParams.get('sortBy'),
-      type: searchParams.get('type'),
+      page: searchParams.get('page') || undefined,
+      limit: searchParams.get('limit') || undefined,
+      search: searchParams.get('search') || undefined,
+      contributor: searchParams.get('contributor') || undefined,
+      sortBy: searchParams.get('sortBy') || undefined,
+      type: searchParams.get('type') || undefined,
     });
 
     // Get event by gallery slug

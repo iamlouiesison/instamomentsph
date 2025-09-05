@@ -30,15 +30,19 @@ import {
   ZoomIn,
   ZoomOut,
   RotateCw,
-  User,
   Wifi,
   WifiOff,
+  Play,
+  Camera,
+  Video,
+  Heart,
+  MoreHorizontal,
 } from 'lucide-react';
 import { CalendarIcon } from '@/components/ui/calendar-icon';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
 import { useGalleryRealtime } from '@/hooks/useGalleryRealtime';
-import { Photo, Video } from '@/types/database';
+import { Photo, Video as VideoType } from '@/types/database';
 
 interface PhotoGalleryProps {
   eventId: string;
@@ -50,7 +54,7 @@ interface MediaItem extends Photo {
   type: 'photo';
 }
 
-interface VideoItem extends Video {
+interface VideoItem extends VideoType {
   type: 'video';
 }
 
@@ -205,12 +209,15 @@ export function PhotoGallery({
     }
 
     try {
-      const response = await fetch(item.file_url);
+      const fileUrl = item.type === 'photo' ? item.file_url : item.file_url;
+      const fileName = item.type === 'photo' ? item.file_name : item.file_name;
+      
+      const response = await fetch(fileUrl);
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = item.file_name;
+      a.download = fileName;
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
@@ -225,18 +232,19 @@ export function PhotoGallery({
   // Handle share
   const handleShare = async (item: GalleryItem) => {
     try {
+      const caption = item.type === 'photo' ? item.caption : item.message;
+      const fileUrl = item.type === 'photo' ? item.file_url : item.file_url;
+      
       const shareData = {
         title: `${item.type === 'photo' ? 'Photo' : 'Video'} from ${item.contributor_name}`,
-        text:
-          (item.type === 'photo' ? item.caption : item.message) ||
-          `Check out this ${item.type}!`,
-        url: item.file_url,
+        text: caption || `Check out this ${item.type}!`,
+        url: fileUrl,
       };
 
       if (navigator.share) {
         await navigator.share(shareData);
       } else {
-        await navigator.clipboard.writeText(item.file_url);
+        await navigator.clipboard.writeText(fileUrl);
         toast.success('Photo URL copied to clipboard');
       }
     } catch (error) {
@@ -272,19 +280,19 @@ export function PhotoGallery({
 
   return (
     <div className="space-y-6">
-      {/* Connection Status */}
+      {/* Connection Status and Stats */}
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           {isConnected ? (
-            <Badge variant="default" className="flex items-center gap-1">
-              <Wifi className="h-3 w-3" />
-              Live Updates
-            </Badge>
+            <div className="flex items-center gap-1 text-sm text-muted-foreground">
+              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+              <span>Live</span>
+            </div>
           ) : (
-            <Badge variant="secondary" className="flex items-center gap-1">
-              <WifiOff className="h-3 w-3" />
-              Offline
-            </Badge>
+            <div className="flex items-center gap-1 text-sm text-muted-foreground">
+              <div className="w-2 h-2 bg-gray-400 rounded-full"></div>
+              <span>Offline</span>
+            </div>
           )}
           <span className="text-sm text-muted-foreground">
             {stats.totalPhotos} photos • {stats.totalVideos} videos
@@ -292,159 +300,199 @@ export function PhotoGallery({
         </div>
       </div>
 
-      {/* Filters and Search */}
-      <Card>
-        <CardContent className="p-4">
-          <div className="flex flex-col sm:flex-row gap-4">
-            <div className="flex-1">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Search photos, captions, or contributors..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10"
-                />
-              </div>
-            </div>
-
-            <Select
-              value={contributorFilter}
-              onValueChange={setContributorFilter}
-            >
-              <SelectTrigger className="w-full sm:w-48">
-                <SelectValue placeholder="Filter by contributor" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Contributors</SelectItem>
-                {contributors.map((contributor) => (
-                  <SelectItem key={contributor} value={contributor}>
-                    {contributor}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
-            <Select
-              value={sortBy}
-              onValueChange={(value: 'newest' | 'oldest' | 'contributor') =>
-                setSortBy(value)
-              }
-            >
-              <SelectTrigger className="w-full sm:w-48">
-                <SelectValue placeholder="Sort by" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="newest">Newest First</SelectItem>
-                <SelectItem value="oldest">Oldest First</SelectItem>
-                <SelectItem value="contributor">By Contributor</SelectItem>
-              </SelectContent>
-            </Select>
-
-            {(searchQuery || contributorFilter !== 'all') && (
-              <Button variant="outline" onClick={clearFilters}>
-                <X className="h-4 w-4 mr-2" />
-                Clear
-              </Button>
-            )}
+      {/* Google Photos Style Search and Filters */}
+      <div className="flex items-center justify-between gap-4">
+        {/* Search Bar */}
+        <div className="flex-1 max-w-md">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search photos..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10 bg-background/50 border-border/50 focus:bg-background"
+            />
           </div>
-        </CardContent>
-      </Card>
+        </div>
 
-      {/* Gallery Grid */}
-      {filteredItems.length === 0 && !loading ? (
-        <Card className="p-8 text-center">
-          <CardContent>
-            <div className="text-muted-foreground">
-              <Filter className="h-12 w-12 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold mb-2">No photos found</h3>
-              <p className="text-sm">
-                {searchQuery || contributorFilter !== 'all'
-                  ? 'Try adjusting your search or filters'
-                  : 'No photos have been uploaded yet'}
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-      ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2">
-          {filteredItems.map((item, index) => (
-            <div
-              key={item.id}
-              className="relative group cursor-pointer aspect-square rounded-lg overflow-hidden bg-muted"
-              onClick={() => handleItemClick(item, index)}
+        {/* Filter Controls */}
+        <div className="flex items-center gap-2">
+          <Select
+            value={contributorFilter}
+            onValueChange={setContributorFilter}
+          >
+            <SelectTrigger className="w-40 bg-background/50 border-border/50">
+              <SelectValue placeholder="All people" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All people</SelectItem>
+              {contributors.map((contributor) => (
+                <SelectItem key={contributor} value={contributor}>
+                  {contributor}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          <Select
+            value={sortBy}
+            onValueChange={(value: 'newest' | 'oldest' | 'contributor') =>
+              setSortBy(value)
+            }
+          >
+            <SelectTrigger className="w-32 bg-background/50 border-border/50">
+              <SelectValue placeholder="Sort" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="newest">Newest</SelectItem>
+              <SelectItem value="oldest">Oldest</SelectItem>
+              <SelectItem value="contributor">By person</SelectItem>
+            </SelectContent>
+          </Select>
+
+          {(searchQuery || contributorFilter !== 'all') && (
+            <Button 
+              variant="ghost" 
+              size="sm"
+              onClick={clearFilters}
+              className="text-muted-foreground hover:text-foreground"
             >
-              <Image
-                src={item.thumbnail_url || item.file_url}
-                alt={
-                  (item.type === 'photo' ? item.caption : item.message) ||
-                  `${item.type === 'photo' ? 'Photo' : 'Video'} by ${item.contributor_name}`
-                }
-                fill
-                className="object-cover transition-transform group-hover:scale-105"
-                sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, (max-width: 1280px) 20vw, 16vw"
-              />
+              <X className="h-4 w-4" />
+            </Button>
+          )}
+        </div>
+      </div>
 
-              {/* Overlay */}
-              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors" />
+      {/* Google Photos Style Gallery Grid */}
+      {filteredItems.length === 0 && !loading ? (
+        <div className="flex flex-col items-center justify-center py-16 text-center">
+          <div className="w-24 h-24 bg-muted rounded-full flex items-center justify-center mb-4">
+            <Camera className="h-12 w-12 text-muted-foreground" />
+          </div>
+          <h3 className="text-xl font-semibold text-foreground mb-2">
+            {searchQuery || contributorFilter !== 'all'
+              ? 'No photos found'
+              : 'No photos yet'}
+          </h3>
+          <p className="text-muted-foreground max-w-md">
+            {searchQuery || contributorFilter !== 'all'
+              ? 'Try adjusting your search or filters to see more photos'
+              : 'Be the first to share a memory from this event!'}
+          </p>
+        </div>
+      ) : (
+        <div className="space-y-2">
+          {/* Google Photos Style Masonry Grid */}
+          <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 xl:columns-5 2xl:columns-6 gap-2 space-y-2">
+            {filteredItems.map((item, index) => (
+              <div
+                key={item.id}
+                className="relative group cursor-pointer break-inside-avoid mb-2 rounded-lg overflow-hidden bg-muted hover:shadow-lg transition-all duration-200"
+                onClick={() => handleItemClick(item, index)}
+              >
+                {/* Image Container */}
+                <div className="relative">
+                  <Image
+                    src={item.thumbnail_url || item.file_url}
+                    alt={
+                      (item.type === 'photo' ? item.caption : item.message) ||
+                      `${item.type === 'photo' ? 'Photo' : 'Video'} by ${item.contributor_name}`
+                    }
+                    width={400}
+                    height={300}
+                    className="w-full h-auto object-cover transition-transform group-hover:scale-105"
+                    sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, (max-width: 1280px) 25vw, 20vw"
+                  />
 
-              {/* Type Badge */}
-              <div className="absolute top-2 left-2">
-                <Badge variant="secondary" className="text-xs">
-                  {item.type === 'video' ? 'VIDEO' : 'PHOTO'}
-                </Badge>
-              </div>
-
-              {/* Actions */}
-              <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                <div className="flex gap-1">
-                  {allowDownloads && (
-                    <Button
-                      size="sm"
-                      variant="secondary"
-                      className="h-6 w-6 p-0"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleDownload(item);
-                      }}
-                    >
-                      <Download className="h-3 w-3" />
-                    </Button>
-                  )}
-                  <Button
-                    size="sm"
-                    variant="secondary"
-                    className="h-6 w-6 p-0"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleShare(item);
-                    }}
-                  >
-                    <Share2 className="h-3 w-3" />
-                  </Button>
-                </div>
-              </div>
-
-              {/* Contributor Info */}
-              <div className="absolute bottom-0 left-0 right-0 bg-black/60 p-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                <div className="text-white text-xs">
-                  <div className="font-medium truncate">
-                    {item.contributor_name}
-                  </div>
-                  {(item.type === 'photo' ? item.caption : item.message) && (
-                    <div className="truncate text-white/80">
-                      {item.type === 'photo' ? item.caption : item.message}
+                  {/* Video Play Button Overlay */}
+                  {item.type === 'video' && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/30 transition-colors">
+                      <div className="w-12 h-12 bg-white/90 rounded-full flex items-center justify-center shadow-lg">
+                        <Play className="h-6 w-6 text-primary ml-1" />
+                      </div>
                     </div>
                   )}
+
+                  {/* Hover Overlay */}
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors" />
+
+                  {/* Top Actions */}
+                  <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div className="flex gap-1">
+                      {allowDownloads && (
+                        <Button
+                          size="sm"
+                          variant="secondary"
+                          className="h-8 w-8 p-0 bg-white/90 hover:bg-white shadow-md"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDownload(item);
+                          }}
+                        >
+                          <Download className="h-4 w-4" />
+                        </Button>
+                      )}
+                      <Button
+                        size="sm"
+                        variant="secondary"
+                        className="h-8 w-8 p-0 bg-white/90 hover:bg-white shadow-md"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleShare(item);
+                        }}
+                      >
+                        <Share2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+
+                  {/* Type Indicator */}
+                  <div className="absolute top-2 left-2">
+                    <div className="flex items-center gap-1 px-2 py-1 bg-black/60 rounded-md">
+                      {item.type === 'video' ? (
+                        <Video className="h-3 w-3 text-white" />
+                      ) : (
+                        <Camera className="h-3 w-3 text-white" />
+                      )}
+                      <span className="text-xs text-white font-medium">
+                        {item.type === 'video' ? 'VIDEO' : 'PHOTO'}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Bottom Info Bar */}
+                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="text-white">
+                    <div className="flex items-center justify-between mb-1">
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-medium truncate">
+                          {item.contributor_name}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-1 text-xs text-white/80">
+                        <CalendarIcon size="xs" variant="muted" />
+                        {format(new Date(item.uploaded_at), 'MMM d')}
+                      </div>
+                    </div>
+                    {(item.type === 'photo' ? item.caption : item.message) && (
+                      <p className="text-xs text-white/90 truncate">
+                        {item.type === 'photo' ? item.caption : item.message}
+                      </p>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
 
           {/* Loading indicator */}
           {loading && (
-            <div className="col-span-full flex justify-center py-8">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+            <div className="flex justify-center py-8">
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-primary"></div>
+                <span className="text-sm">Loading more photos...</span>
+              </div>
             </div>
           )}
 
@@ -459,11 +507,7 @@ export function PhotoGallery({
           <DialogHeader className="p-6 pb-0">
             <div className="flex items-center justify-between">
               <DialogTitle className="flex items-center gap-2">
-                <User className="h-4 w-4" />
-                {selectedItem?.contributor_name}
-                <span className="text-muted-foreground">
-                  ({lightboxIndex + 1} of {filteredItems.length})
-                </span>
+                {/* Contributor name and pagination removed */}
               </DialogTitle>
               <div className="flex items-center gap-2">
                 <Button
@@ -548,7 +592,7 @@ export function PhotoGallery({
                     src={selectedItem.file_url}
                     alt={
                       (selectedItem.type === 'photo'
-                        ? (selectedItem as MediaItem).caption
+                        ? selectedItem.caption
                         : (selectedItem as VideoItem).message) ||
                       `${selectedItem.type === 'photo' ? 'Photo' : 'Video'} by ${selectedItem.contributor_name}`
                     }
@@ -571,11 +615,11 @@ export function PhotoGallery({
             <div className="p-6 pt-0 border-t">
               <div className="space-y-2">
                 {(selectedItem.type === 'photo'
-                  ? (selectedItem as MediaItem).caption
+                  ? selectedItem.caption
                   : (selectedItem as VideoItem).message) && (
                   <p className="text-sm">
                     {selectedItem.type === 'photo'
-                      ? (selectedItem as MediaItem).caption
+                      ? selectedItem.caption
                       : (selectedItem as VideoItem).message}
                   </p>
                 )}
@@ -588,7 +632,6 @@ export function PhotoGallery({
                     )}
                   </div>
                   <div className="flex items-center gap-1">
-                    <User className="h-3 w-3" />
                     {selectedItem.contributor_name}
                   </div>
                 </div>
