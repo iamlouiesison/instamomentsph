@@ -1063,27 +1063,22 @@ export default function EventManagementPage() {
 
             {/* Danger Zone */}
             <Card className="border-red-200">
-              <CardHeader>
-                <CardTitle className="text-red-600 flex items-center gap-2">
-                  <AlertTriangle className="w-5 h-5" />
-                  Danger Zone
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  <div>
-                    <h3 className="font-medium text-red-600 text-sm">
-                      Delete Event
-                    </h3>
-                    <p className="text-xs text-gray-600 mt-1">
-                      Permanently delete this event and all its data.
-                    </p>
-                    {event.total_photos > 0 || event.total_videos > 0 ? (
-                      <p className="text-xs text-red-600 mt-1">
-                        Cannot delete event with {event.total_photos} photos and{' '}
-                        {event.total_videos} videos.
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <AlertTriangle className="w-5 h-5 text-red-600" />
+                    <div>
+                      <h3 className="font-medium text-red-600">Delete Event</h3>
+                      <p className="text-sm text-gray-600">
+                        Permanently delete this event and all its data
+                        {event.total_photos > 0 || event.total_videos > 0 ? (
+                          <span className="block text-red-600 mt-1">
+                            Cannot delete with {event.total_photos} photos and{' '}
+                            {event.total_videos} videos
+                          </span>
+                        ) : null}
                       </p>
-                    ) : null}
+                    </div>
                   </div>
                   <Button
                     variant="destructive"
@@ -1094,7 +1089,6 @@ export default function EventManagementPage() {
                       event.total_videos > 0
                     }
                     size="sm"
-                    className="w-full"
                   >
                     {isDeleting ? (
                       <>
@@ -1104,7 +1098,7 @@ export default function EventManagementPage() {
                     ) : (
                       <>
                         <Trash2 className="w-4 h-4 mr-2" />
-                        Delete Event
+                        Delete
                       </>
                     )}
                   </Button>
