@@ -847,6 +847,7 @@ When generating code for this project:
 9. **Validate all inputs** with Zod schemas
 10. **Implement proper loading and error states**
 11. **Include proper TypeScript interfaces** for all data structures
+12. **Always run development server** at localhost:3000
 
 ### Code Review Checklist
 Before implementing any feature, verify:

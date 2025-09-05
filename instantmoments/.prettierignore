@@ -1,8 +1,0 @@
-node_modules
-.next
-.vercel
-dist
-build
-*.log
-.env*
-public
