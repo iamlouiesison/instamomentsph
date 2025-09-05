@@ -96,8 +96,7 @@ export const EventCard: React.FC<EventCardProps> = ({
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between">
           <div className="flex-1">
-            <CardTitle className="text-lg flex items-center gap-2">
-              <eventTypeInfo.icon className="w-5 h-5 text-gray-700" />
+            <CardTitle className="text-lg">
               {event.name}
             </CardTitle>
             <div className="flex items-center gap-2 mt-1">
