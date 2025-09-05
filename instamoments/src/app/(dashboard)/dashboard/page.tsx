@@ -312,6 +312,7 @@ export default function DashboardPage() {
                         onShare={handleEventShare}
                         onSettings={handleEventSettings}
                         showActions={true}
+                        showQRCode={false}
                       />
                     ))}
                   </div>

@@ -31,6 +31,7 @@ interface EventCardProps {
   onShare?: (eventId: string) => void;
   onSettings?: (eventId: string) => void;
   showActions?: boolean;
+  showQRCode?: boolean;
   className?: string;
 }
 
@@ -40,6 +41,7 @@ export const EventCard: React.FC<EventCardProps> = ({
   onShare,
   onSettings,
   showActions = true,
+  showQRCode = true,
   className,
 }) => {
   const eventTypeInfo = FILIPINO_EVENT_TYPES[event.eventType] || FILIPINO_EVENT_TYPES.other;
@@ -113,9 +115,11 @@ export const EventCard: React.FC<EventCardProps> = ({
             </div>
           </div>
           {/* QR Code Display */}
-          <div className="ml-4">
-            <CompactQRCode event={event} size="small" />
-          </div>
+          {showQRCode && (
+            <div className="ml-4">
+              <CompactQRCode event={event} size="small" />
+            </div>
+          )}
         </div>
       </CardHeader>
 
