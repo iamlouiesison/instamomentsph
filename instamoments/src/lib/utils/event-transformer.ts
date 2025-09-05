@@ -11,10 +11,11 @@ export interface FrontendEvent {
   eventType:
     | 'wedding'
     | 'birthday'
-    | 'corporate'
+    | 'debut'
+    | 'christening'
     | 'graduation'
     | 'anniversary'
-    | 'debut'
+    | 'corporate'
     | 'other';
   eventDate?: string;
   location?: string;

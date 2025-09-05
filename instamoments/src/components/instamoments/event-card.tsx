@@ -41,7 +41,7 @@ export const EventCard: React.FC<EventCardProps> = ({
   showActions = true,
   className,
 }) => {
-  const eventTypeInfo = FILIPINO_EVENT_TYPES[event.event_type];
+  const eventTypeInfo = FILIPINO_EVENT_TYPES[event.event_type] || FILIPINO_EVENT_TYPES.other;
   const isExpired =
     event.status === 'expired' ||
     (event.expiresAt && new Date(event.expiresAt) < new Date());

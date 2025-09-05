@@ -29,7 +29,7 @@ CREATE TABLE events (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   name TEXT NOT NULL,
   description TEXT,
-  event_type TEXT NOT NULL CHECK (event_type IN ('wedding', 'birthday', 'corporate', 'graduation', 'anniversary', 'debut', 'other')),
+  event_type TEXT NOT NULL CHECK (event_type IN ('wedding', 'birthday', 'debut', 'christening', 'graduation', 'anniversary', 'corporate', 'other')),
   event_date DATE,
   location TEXT,
   host_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,

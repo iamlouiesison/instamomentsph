@@ -104,18 +104,9 @@ export default function DashboardPage() {
   }, [statusFilter]);
 
   useEffect(() => {
-    console.log('Dashboard useEffect - User state:', {
-      hasUser: !!user,
-      userId: user?.id,
-      userEmail: user?.email,
-      loading,
-      profile: profile?.id,
-    });
-    
     if (user) {
       fetchEvents();
     } else if (!loading) {
-      console.log('Dashboard - No user and not loading, redirecting to signin');
       router.push('/signin');
     }
   }, [user, statusFilter, fetchEvents, loading, router]);
