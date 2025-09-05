@@ -793,7 +793,7 @@ PAYMONGO_WEBHOOK_SECRET=whsec_[...]
 
 # Email (Resend)
 RESEND_API_KEY=re_[...]
-RESEND_FROM_EMAIL=noreply@instantmoments.ph
+RESEND_FROM_EMAIL=noreply@instamoments.ph
 
 # Analytics (Optional)
 POSTHOG_KEY=[...]
@@ -817,7 +817,7 @@ FEATURE_ANALYTICS_ENABLED=true
 # .env.production (Vercel Environment Variables)
 # Same structure but with production values
 NEXT_PUBLIC_SUPABASE_URL=https://[prod-project-id].supabase.co
-NEXT_PUBLIC_APP_URL=https://instantmoments.ph
+NEXT_PUBLIC_APP_URL=https://instamoments.ph
 PAYMONGO_SECRET_KEY=sk_live_[...]
 # ... etc
 ```

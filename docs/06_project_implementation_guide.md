@@ -147,7 +147,7 @@ Days Remaining: 15-25 days
 
 ### Cursor Prompt
 ```
-Create a new Next.js 15 project called "instantmoments" with the following specifications:
+Create a new Next.js 15 project called "instamoments" with the following specifications:
 - Use TypeScript with strict mode
 - Include Tailwind CSS 4.1.12 (latest)
 - Use App Router directory structure
@@ -1576,7 +1576,7 @@ Set up production environment and deployment infrastructure for InstaMoments:
 2. Set up Vercel deployment:
    - Connect GitHub repository to Vercel
    - Configure build settings and environment variables
-   - Set up custom domain (instantmoments.ph)
+   - Set up custom domain (instamoments.ph)
    - Configure edge functions and caching
    - Set up deployment previews
 

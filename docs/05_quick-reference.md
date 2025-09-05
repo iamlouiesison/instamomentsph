@@ -10,7 +10,7 @@
 
 ```bash
 # Create InstaMoments Next.js 15 project
-npx create-next-app@latest instantmoments --typescript --tailwind --app --src-dir
+npx create-next-app@latest instamoments --typescript --tailwind --app --src-dir
 
 # Install InstaMoments-specific dependencies
 npm install @supabase/ssr @supabase/supabase-js
@@ -61,7 +61,7 @@ PAYMONGO_WEBHOOK_SECRET=whsec_[...]
 
 # Email Service (Resend)
 RESEND_API_KEY=re_[...]
-RESEND_FROM_EMAIL=noreply@instantmoments.ph
+RESEND_FROM_EMAIL=noreply@instamoments.ph
 
 # Content Moderation (AWS)
 AWS_ACCESS_KEY_ID=[...]
@@ -483,7 +483,7 @@ export async function createPaymentIntent(data: {
           description: `InstaMoments event package`,
           metadata: {
             event_id: data.eventId,
-            app: 'instantmoments'
+            app: 'instamoments'
           }
         }
       }

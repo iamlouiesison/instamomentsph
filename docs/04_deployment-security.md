@@ -47,12 +47,12 @@ vercel link
 ### Environment Variables (Vercel Dashboard)
 ```bash
 # Production Variables - InstaMoments
-NEXT_PUBLIC_SUPABASE_URL=https://[instantmoments-project].supabase.co
+NEXT_PUBLIC_SUPABASE_URL=https://[instamoments-project].supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=[anon-key]
 SUPABASE_SERVICE_ROLE_KEY=[service-role-key]
 
 # Application
-NEXT_PUBLIC_APP_URL=https://instantmoments.ph
+NEXT_PUBLIC_APP_URL=https://instamoments.ph
 NEXT_PUBLIC_APP_NAME=InstaMoments
 NEXT_PUBLIC_APP_VERSION=1.0.0
 
@@ -63,13 +63,13 @@ PAYMONGO_WEBHOOK_SECRET=whsec_[webhook-secret]
 
 # Email Service (Resend)
 RESEND_API_KEY=re_[production-key]
-RESEND_FROM_EMAIL=noreply@instantmoments.ph
+RESEND_FROM_EMAIL=noreply@instamoments.ph
 
 # Content Moderation (AWS Rekognition)
 AWS_ACCESS_KEY_ID=[production-key]
 AWS_SECRET_ACCESS_KEY=[production-secret]
 AWS_REGION=ap-southeast-1
-AWS_S3_BUCKET=instantmoments-moderation
+AWS_S3_BUCKET=instamoments-moderation
 
 # Security & Rate Limiting
 RATE_LIMIT_SECRET=[random-256-bit-string]
@@ -89,14 +89,14 @@ POSTHOG_HOST=https://app.posthog.com
 
 ### Domain Configuration
 ```markdown
-1. Add custom domain in Vercel dashboard: instantmoments.ph
+1. Add custom domain in Vercel dashboard: instamoments.ph
 2. Configure DNS at domain registrar:
    - A Record: @ → 76.76.21.21
    - CNAME: www → cname.vercel-dns.com
    - CNAME: api → cname.vercel-dns.com
 3. SSL certificate auto-provisioned by Vercel
 4. Configure redirects:
-   - www.instantmoments.ph → instantmoments.ph (301 redirect)
+   - www.instamoments.ph → instamoments.ph (301 redirect)
    - All HTTP traffic → HTTPS (automatic)
 ```
 
@@ -120,7 +120,7 @@ const withPWA = require('next-pwa')({
       },
     },
     {
-      urlPattern: /^https:\/\/api\.instantmoments\.ph\/gallery\/.*/i,
+      urlPattern: /^https:\/\/api\.instamoments\.ph\/gallery\/.*/i,
       handler: 'StaleWhileRevalidate',
       options: {
         cacheName: 'gallery-api',
@@ -143,7 +143,7 @@ module.exports = withPWA({
 
 ### Project Setup
 ```markdown
-1. Create new Supabase project: "instantmoments-production"
+1. Create new Supabase project: "instamoments-production"
 2. Save connection string and keys securely
 3. Configure authentication providers:
    - Email/Password ✓ (enabled by default)
@@ -1205,7 +1205,7 @@ export async function createPaymentIntent(data: {
             event_id: data.eventId,
             tier: data.tierPurchased,
             has_video_addon: data.hasVideoAddon.toString(),
-            app: 'instantmoments'
+            app: 'instamoments'
           }
         }
       }
@@ -1266,7 +1266,7 @@ export async function POST(request: NextRequest) {
 - [ ] Database schema deployed and RLS policies enabled in Supabase
 - [ ] Storage buckets created with proper policies in Supabase
 - [ ] PayMongo webhooks configured with production endpoints
-- [ ] Domain DNS properly configured (instantmoments.ph)
+- [ ] Domain DNS properly configured (instamoments.ph)
 - [ ] SSL certificate auto-provisioned and active
 - [ ] Security headers configured and tested
 - [ ] Rate limiting implemented and tested
@@ -1321,7 +1321,7 @@ export async function POST(request: NextRequest) {
 # - Cross-region backup replication
 
 # Manual backup for critical events
-pg_dump $SUPABASE_DB_URL > "instantmoments-backup-$(date +%Y%m%d).sql"
+pg_dump $SUPABASE_DB_URL > "instamoments-backup-$(date +%Y%m%d).sql"
 
 # Backup critical data before major updates
 supabase db dump --db-url $SUPABASE_DB_URL --data-only > data-backup.sql

@@ -802,26 +802,27 @@ chore: update dependencies
 ## Development Server Rules
 
 ### Critical Directory Requirements
-- **ALWAYS run the development server from the correct directory**: `/Users/louiesison/projects/instamomentsph/instantmoments`
+- **ALWAYS run the development server from the correct directory**: `/Users/louiesison/projects/instamomentsph/instamoments`
 - **NEVER run npm commands from the parent directory** (`instamomentsph`) as it will fail with ENOENT errors
-- **Use the full path command**: `cd /Users/louiesison/projects/instamomentsph/instantmoments && npm run dev`
+- **Use the full path command**: `cd /Users/louiesison/projects/instamomentsph/instamoments && npm run dev`
 - **Verify the correct directory** before running any npm commands by checking for `package.json` presence
+- **REMEMBER**: The correct working directory is `/Users/louiesison/projects/instamomentsph/instamoments` - this is where package.json exists
 
 ### Development Workflow
 ```bash
 # Correct way to start development server
-cd /Users/louiesison/projects/instamomentsph/instantmoments
+cd /Users/louiesison/projects/instamomentsph/instamoments
 npm run dev
 
 # Or use the full path command
-cd /Users/louiesison/projects/instamomentsph/instantmoments && npm run dev
+cd /Users/louiesison/projects/instamomentsph/instamoments && npm run dev
 ```
 
 ### Directory Structure Context
 ```
 /Users/louiesison/projects/instamomentsph/          # Parent directory (NO package.json)
 ├── docs/                                           # Documentation
-├── instantmoments/                                 # Next.js project directory (HAS package.json)
+├── instamoments/                                 # Next.js project directory (HAS package.json)
 │   ├── package.json                               # ← This is where npm commands must run
 │   ├── src/
 │   ├── public/
@@ -835,7 +836,7 @@ cd /Users/louiesison/projects/instamomentsph/instantmoments && npm run dev
 
 When generating code for this project:
 
-1. **Always run development server from `/Users/louiesison/projects/instamomentsph/instantmoments`**
+1. **Always run development server from `/Users/louiesison/projects/instamomentsph/instamoments`**
 2. **Always follow the exact folder structure** defined above
 3. **Use TypeScript strictly** - no `any` types allowed
 4. **Implement proper error handling** in all API routes
