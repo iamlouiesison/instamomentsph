@@ -13,7 +13,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Progress } from '@/components/ui/progress';
 import { QRCodeDisplay } from '@/components/features/qr-code';
-import { LoadingSpinner } from '@/components/instamoments';
+import { LoadingSpinner, EventStats } from '@/components/instamoments';
 import {
   ArrowLeft,
   Settings,
@@ -940,49 +940,20 @@ export default function EventManagementPage() {
 
           {/* Analytics Tab */}
           <TabsContent value="analytics" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <BarChart3 className="w-5 h-5" />
-                  Analytics & Insights
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                  <div className="text-center p-4 bg-blue-50 rounded-lg">
-                    <Eye className="w-8 h-8 text-blue-600 mx-auto mb-2" />
-                    <p className="text-2xl font-bold text-blue-900">0</p>
-                    <p className="text-sm text-blue-700">Total Views</p>
-                  </div>
-                  <div className="text-center p-4 bg-green-50 rounded-lg">
-                    <DownloadIcon className="w-8 h-8 text-green-600 mx-auto mb-2" />
-                    <p className="text-2xl font-bold text-green-900">0</p>
-                    <p className="text-sm text-green-700">Downloads</p>
-                  </div>
-                  <div className="text-center p-4 bg-purple-50 rounded-lg">
-                    <Users className="w-8 h-8 text-purple-600 mx-auto mb-2" />
-                    <p className="text-2xl font-bold text-purple-900">
-                      {event.total_contributors}
-                    </p>
-                    <p className="text-sm text-purple-700">Contributors</p>
-                  </div>
-                  <div className="text-center p-4 bg-orange-50 rounded-lg">
-                    <Camera className="w-8 h-8 text-orange-600 mx-auto mb-2" />
-                    <p className="text-2xl font-bold text-orange-900">
-                      {event.total_photos}
-                    </p>
-                    <p className="text-sm text-orange-700">Photos</p>
-                  </div>
-                </div>
-
-                <div className="pt-4 border-t">
-                  <p className="text-sm text-gray-600 text-center">
-                    Advanced analytics coming soon! Track engagement, popular
-                    photos, and guest activity.
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
+            <EventStats
+              eventId={eventId}
+              stats={{
+                totalPhotos: event.total_photos,
+                totalVideos: event.total_videos,
+                totalContributors: event.total_contributors,
+                maxPhotos: event.max_photos,
+                maxVideos: event.has_video_addon ? undefined : 0,
+                storageDays: event.storage_days,
+                daysRemaining: event.daysRemaining,
+                totalViews: 0, // TODO: Implement analytics tracking
+                totalDownloads: 0, // TODO: Implement analytics tracking
+              }}
+            />
           </TabsContent>
 
           {/* Actions Tab */}
