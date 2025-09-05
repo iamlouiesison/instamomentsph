@@ -406,7 +406,7 @@ export function QRScanner({
                 <span className="bg-primary text-primary-foreground rounded-full w-5 h-5 flex items-center justify-center text-xs font-semibold">
                   2
                 </span>
-                I-point ang camera sa QR code
+                Point the camera at the QR code
               </li>
               <li className="flex items-start gap-2">
                 <span className="bg-primary text-primary-foreground rounded-full w-5 h-5 flex items-center justify-center text-xs font-semibold">

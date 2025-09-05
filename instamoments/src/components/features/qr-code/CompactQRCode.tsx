@@ -241,13 +241,13 @@ export function CompactQRCode({
           {/* Instructions */}
           <div className="bg-muted/50 rounded-lg p-4">
             <h4 className="font-semibold mb-2 text-sm">
-              Paano gamitin ng mga bisita:
+              How guests can use this:
             </h4>
             <ol className="space-y-1 text-xs text-muted-foreground">
-              <li>1. Buksan ang camera ng phone</li>
-              <li>2. I-point ang camera sa QR code</li>
-              <li>3. I-tap ang link na lalabas</li>
-              <li>4. Mag-upload ng mga larawan!</li>
+              <li>1. Open your phone's camera</li>
+              <li>2. Point the camera at this QR code</li>
+              <li>3. Tap the link that appears on screen</li>
+              <li>4. Upload photos for the event!</li>
             </ol>
           </div>
         </div>

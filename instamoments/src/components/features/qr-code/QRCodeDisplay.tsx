@@ -198,11 +198,11 @@ export function QRCodeDisplay({
                    alt="QR Code for ${event.name}" 
                    class="qr-code" />
               <div class="instructions">
-                <h3>Paano gamitin ang QR Code:</h3>
-                <p>1. Buksan ang camera ng inyong phone</p>
-                <p>2. I-point ang camera sa QR code</p>
-                <p>3. I-tap ang link na lalabas</p>
-                <p>4. Mag-upload ng mga larawan at video!</p>
+                <h3>How to use the QR Code:</h3>
+                <p>1. Open your phone's camera</p>
+                <p>2. Point the camera at this QR code</p>
+                <p>3. Tap the link that appears on screen</p>
+                <p>4. Upload photos and videos for the event!</p>
                 <br>
                 <p><strong>InstaMoments.ph</strong></p>
               </div>
@@ -350,25 +350,25 @@ export function QRCodeDisplay({
                 <span className="bg-primary text-primary-foreground rounded-full w-5 h-5 flex items-center justify-center text-xs font-semibold">
                   1
                 </span>
-                Buksan ang camera ng inyong phone
+                Open your phone's camera
               </li>
               <li className="flex items-start gap-2">
                 <span className="bg-primary text-primary-foreground rounded-full w-5 h-5 flex items-center justify-center text-xs font-semibold">
                   2
                 </span>
-                I-point ang camera sa QR code na ito
+                Point the camera at this QR code
               </li>
               <li className="flex items-start gap-2">
                 <span className="bg-primary text-primary-foreground rounded-full w-5 h-5 flex items-center justify-center text-xs font-semibold">
                   3
                 </span>
-                I-tap ang link na lalabas sa screen
+                Tap the link that appears on screen
               </li>
               <li className="flex items-start gap-2">
                 <span className="bg-primary text-primary-foreground rounded-full w-5 h-5 flex items-center justify-center text-xs font-semibold">
                   4
                 </span>
-                Mag-upload ng mga larawan at video para sa event!
+                Upload photos and videos for the event!
               </li>
             </ol>
           </div>

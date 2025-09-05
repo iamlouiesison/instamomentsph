@@ -164,12 +164,12 @@ export default function PrintQRPage({
 
             {/* Instructions */}
             <div className="text-sm text-gray-600 space-y-2">
-              <p className="font-semibold">Paano gamitin ang QR Code:</p>
+              <p className="font-semibold">How to use the QR Code:</p>
               <ol className="text-left space-y-1">
-                <li>1. Buksan ang camera ng inyong phone</li>
-                <li>2. I-point ang camera sa QR code</li>
-                <li>3. I-tap ang link na lalabas</li>
-                <li>4. Mag-upload ng mga larawan at video!</li>
+                <li>1. Open your phone's camera</li>
+                <li>2. Point the camera at this QR code</li>
+                <li>3. Tap the link that appears on screen</li>
+                <li>4. Upload photos and videos for the event!</li>
               </ol>
             </div>
 
