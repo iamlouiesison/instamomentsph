@@ -17,13 +17,14 @@ export async function generateMetadata({
   params: { slug: string };
 }) {
   const supabase = await createClient();
+  const { slug } = await params;
 
   const { data: event } = await supabase
     .from('events')
     .select(
       'name, description, event_type, event_date, location, custom_message'
     )
-    .eq('gallery_slug', params.slug)
+    .eq('gallery_slug', slug)
     .eq('status', 'active')
     .single();
 
@@ -108,7 +109,7 @@ async function trackGalleryView(
 }
 
 export default async function GalleryPageRoute({ params }: GalleryPageProps) {
-  const { slug } = params;
+  const { slug } = await params;
 
   // Get event data
   const event = await getEventData(slug);
