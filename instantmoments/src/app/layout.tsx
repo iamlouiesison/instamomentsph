@@ -7,16 +7,22 @@ const abeeZee = ABeeZee({
   variable: '--font-sans',
   subsets: ['latin'],
   weight: '400',
+  display: 'swap',
+  preload: true,
 });
 
 const lora = Lora({
   variable: '--font-serif',
   subsets: ['latin'],
+  display: 'swap',
+  preload: true,
 });
 
 const firaCode = Fira_Code({
   variable: '--font-mono',
   subsets: ['latin'],
+  display: 'swap',
+  preload: true,
 });
 
 export const metadata: Metadata = {
