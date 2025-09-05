@@ -1,57 +1,56 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import React, { useState, useEffect } from 'react';
+import { useRouter, useParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
-import {
-  EventStats,
-  LoadingSpinner,
-  QRDisplay,
-} from '@/components/instamoments';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { MainNavigation } from '@/components/layout';
+import { EventStats, LoadingSpinner, EmptyStates } from '@/components/instamoments';
 import {
   ArrowLeft,
   Settings,
   Share2,
-  Edit,
+  Download,
+  QrCode,
+  ExternalLink,
   Calendar,
   MapPin,
   Users,
   Camera,
   Video,
   Clock,
-  ExternalLink,
+  AlertTriangle,
+  Trash2,
+  Edit,
 } from 'lucide-react';
 import { toast } from 'sonner';
-import { format } from 'date-fns';
-import { FILIPINO_EVENT_TYPES } from '@/lib/validations/event';
+import { formatDistanceToNow, format } from 'date-fns';
 
-interface EventDetails {
+interface Event {
   id: string;
   name: string;
   description?: string;
+  location?: string;
   eventType: string;
   eventDate?: string;
-  location?: string;
-  gallerySlug: string;
-  qrCodeUrl: string;
   subscriptionTier: string;
-  hasVideoAddon: boolean;
+  totalPhotos: number;
+  totalVideos: number;
+  totalContributors: number;
+  status: string;
   requiresModeration: boolean;
   allowDownloads: boolean;
   isPublic: boolean;
   customMessage?: string;
-  totalPhotos: number;
-  totalVideos: number;
-  totalContributors: number;
-  status: 'active' | 'expired' | 'archived';
+  gallerySlug: string;
+  qrCodeUrl?: string;
   createdAt: string;
   expiresAt?: string;
 }
 
-interface EventStatsData {
+interface EventStats {
   totalPhotos: number;
   totalVideos: number;
   totalContributors: number;
@@ -63,18 +62,24 @@ interface EventStatsData {
   totalDownloads?: number;
 }
 
-export default function EventDetailsPage() {
-  const params = useParams();
+export default function EventManagementPage() {
   const router = useRouter();
-  const [event, setEvent] = useState<EventDetails | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('overview');
-
+  const params = useParams();
   const eventId = params.id as string;
+  
+  const [event, setEvent] = useState<Event | null>(null);
+  const [stats, setStats] = useState<EventStats | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const fetchEventDetails = useCallback(async () => {
+  useEffect(() => {
+    fetchEvent();
+  }, [eventId]);
+
+  const fetchEvent = async () => {
     try {
-      setLoading(true);
+      setIsLoading(true);
       const response = await fetch(`/api/events/${eventId}`);
       const result = await response.json();
 
@@ -82,98 +87,156 @@ export default function EventDetailsPage() {
         throw new Error(result.error.message || 'Failed to fetch event');
       }
 
-      setEvent(result.data);
+      const eventData = result.data;
+      setEvent(eventData);
+      
+      // Calculate stats
+      const eventStats: EventStats = {
+        totalPhotos: eventData.totalPhotos || 0,
+        totalVideos: eventData.totalVideos || 0,
+        totalContributors: eventData.totalContributors || 0,
+        maxPhotos: getMaxPhotos(eventData.subscriptionTier),
+        maxVideos: eventData.hasVideoAddon ? getMaxVideos(eventData.subscriptionTier) : undefined,
+        storageDays: getStorageDays(eventData.subscriptionTier),
+        daysRemaining: eventData.expiresAt 
+          ? Math.max(0, Math.ceil((new Date(eventData.expiresAt).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)))
+          : 0,
+        totalViews: 0, // TODO: Implement analytics
+        totalDownloads: 0, // TODO: Implement analytics
+      };
+      
+      setStats(eventStats);
     } catch (error) {
       console.error('Error fetching event:', error);
-      toast.error('Failed to load event details');
-      router.push('/dashboard');
+      setError(error instanceof Error ? error.message : 'Failed to load event');
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
-  }, [eventId, router]);
-
-  useEffect(() => {
-    if (eventId) {
-      fetchEventDetails();
-    }
-  }, [eventId, fetchEventDetails]);
-
-  const handleEdit = () => {
-    router.push(`/dashboard/events/${eventId}/edit`);
   };
 
-  const handleSettings = () => {
-    router.push(`/dashboard/events/${eventId}/settings`);
+  const getMaxPhotos = (tier: string): number => {
+    const limits = {
+      free: 30,
+      basic: 50,
+      standard: 100,
+      premium: 250,
+      pro: 500,
+    };
+    return limits[tier as keyof typeof limits] || 30;
+  };
+
+  const getMaxVideos = (tier: string): number => {
+    const limits = {
+      free: 0,
+      basic: 0,
+      standard: 20,
+      premium: 50,
+      pro: 100,
+    };
+    return limits[tier as keyof typeof limits] || 0;
+  };
+
+  const getStorageDays = (tier: string): number => {
+    const limits = {
+      free: 3,
+      basic: 7,
+      standard: 14,
+      premium: 30,
+      pro: 30,
+    };
+    return limits[tier as keyof typeof limits] || 3;
+  };
+
+  const handleDelete = async () => {
+    if (!event) return;
+    
+    if (event.totalPhotos > 0 || event.totalVideos > 0) {
+      toast.error('Cannot delete event with photos or videos. Archive instead.');
+      return;
+    }
+
+    if (!confirm('Are you sure you want to delete this event? This action cannot be undone.')) {
+      return;
+    }
+
+    try {
+      setIsDeleting(true);
+      const response = await fetch(`/api/events/${eventId}`, {
+        method: 'DELETE',
+      });
+
+      const result = await response.json();
+
+      if (!result.success) {
+        throw new Error(result.error.message || 'Failed to delete event');
+      }
+
+      toast.success('Event deleted successfully!');
+      router.push('/dashboard');
+    } catch (error) {
+      console.error('Error deleting event:', error);
+      toast.error(
+        error instanceof Error ? error.message : 'Failed to delete event'
+      );
+    } finally {
+      setIsDeleting(false);
+    }
   };
 
   const handleShare = () => {
-    // TODO: Implement QR code sharing modal
-    toast.info('QR code sharing coming soon!');
+    if (!event) return;
+    const galleryUrl = `${window.location.origin}/gallery/${event.gallerySlug}`;
+    navigator.clipboard.writeText(galleryUrl);
+    toast.success('Gallery link copied to clipboard!');
   };
 
   const handleViewGallery = () => {
-    window.open(`/gallery/${event?.gallerySlug}`, '_blank');
+    if (!event) return;
+    const galleryUrl = `/gallery/${event.gallerySlug}`;
+    window.open(galleryUrl, '_blank');
   };
 
-  const handleUpgrade = () => {
-    router.push(`/dashboard/events/${eventId}/upgrade`);
-  };
-
-  if (loading) {
+  if (isLoading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
-          <LoadingSpinner className="w-12 h-12 mx-auto mb-4" />
-          <p className="text-muted-foreground">Loading event details...</p>
+      <div className="min-h-screen bg-background">
+        <MainNavigation />
+        <div className="container mx-auto px-4 py-8">
+          <div className="flex items-center justify-center min-h-[400px]">
+            <LoadingSpinner size="lg" />
+          </div>
         </div>
       </div>
     );
   }
 
-  if (!event) {
+  if (error || !event) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold mb-2">Event not found</h2>
-          <p className="text-muted-foreground mb-4">
-            The event you&apos;re looking for doesn&apos;t exist.
-          </p>
-          <Button onClick={() => router.push('/dashboard')}>
-            Back to Dashboard
-          </Button>
+      <div className="min-h-screen bg-background">
+        <MainNavigation />
+        <div className="container mx-auto px-4 py-8">
+          <EmptyStates
+            type="error"
+            title="Event Not Found"
+            description={error || 'The event you are looking for does not exist.'}
+            action={{
+              label: 'Back to Dashboard',
+              onClick: () => router.push('/dashboard'),
+            }}
+          />
         </div>
       </div>
     );
   }
 
-  const eventTypeInfo =
-    FILIPINO_EVENT_TYPES[event.eventType as keyof typeof FILIPINO_EVENT_TYPES];
-  const isExpired =
-    event.status === 'expired' ||
+  const isExpired = event.status === 'expired' || 
     (event.expiresAt && new Date(event.expiresAt) < new Date());
-  const isExpiringSoon =
-    event.expiresAt &&
-    new Date(event.expiresAt) < new Date(Date.now() + 24 * 60 * 60 * 1000);
-
-  const statsData: EventStatsData = {
-    totalPhotos: event.totalPhotos,
-    totalVideos: event.totalVideos,
-    totalContributors: event.totalContributors,
-    maxPhotos: 100, // This should come from the subscription tier
-    maxVideos: event.hasVideoAddon ? 20 : undefined,
-    storageDays: 14, // This should come from the subscription tier
-    daysRemaining: event.expiresAt
-      ? Math.ceil(
-          (new Date(event.expiresAt).getTime() - new Date().getTime()) /
-            (1000 * 60 * 60 * 24)
-        )
-      : 0,
-    totalViews: 0, // TODO: Implement analytics
-    totalDownloads: 0, // TODO: Implement analytics
-  };
+  const isExpiringSoon = event.expiresAt && 
+    new Date(event.expiresAt) < new Date(Date.now() + 24 * 60 * 60 * 1000) &&
+    !isExpired;
 
   return (
     <div className="min-h-screen bg-background">
+      <MainNavigation />
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">
@@ -186,347 +249,196 @@ export default function EventDetailsPage() {
             Back
           </Button>
 
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+          <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2 flex items-center gap-3">
-                {eventTypeInfo?.icon && (
-                  <eventTypeInfo.icon className="w-8 h-8 text-gray-700" />
-                )}
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">
                 {event.name}
               </h1>
-              <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                {event.eventDate && (
-                  <div className="flex items-center gap-1">
-                    <Calendar className="w-4 h-4" />
-                    {format(new Date(event.eventDate), 'MMM dd, yyyy')}
-                  </div>
-                )}
-                {event.location && (
-                  <div className="flex items-center gap-1">
-                    <MapPin className="w-4 h-4" />
-                    {event.location}
-                  </div>
-                )}
-                <div className="flex items-center gap-1">
-                  <Clock className="w-4 h-4" />
-                  Created{' '}
-                  {event.createdAt
-                    ? format(new Date(event.createdAt), 'MMM dd, yyyy')
-                    : 'Unknown date'}
-                </div>
-              </div>
+              <p className="text-gray-600 capitalize">
+                {event.eventType} Event
+              </p>
             </div>
-
             <div className="flex items-center gap-2">
-              <Badge
-                variant={
-                  isExpired
-                    ? 'destructive'
-                    : isExpiringSoon
-                      ? 'secondary'
-                      : 'default'
-                }
-                className="text-sm"
-              >
-                {isExpired
-                  ? 'Expired'
-                  : isExpiringSoon
-                    ? 'Expiring Soon'
-                    : 'Active'}
+              <Badge variant={isExpired ? 'destructive' : 'default'}>
+                {isExpired ? 'Expired' : 'Active'}
               </Badge>
-              <Badge variant="outline" className="text-sm">
-                {event.subscriptionTier
-                  ? event.subscriptionTier.charAt(0).toUpperCase() +
-                    event.subscriptionTier.slice(1)
-                  : 'Free'}
+              <Badge variant="outline">
+                {event.subscriptionTier.charAt(0).toUpperCase() + event.subscriptionTier.slice(1)}
               </Badge>
-              {event.hasVideoAddon && (
-                <Badge
-                  variant="outline"
-                  className="text-sm flex items-center gap-1"
-                >
-                  <Video className="w-3 h-3" />
-                  Video
-                </Badge>
-              )}
             </div>
           </div>
         </div>
 
-        {/* Quick Actions */}
-        <div className="mb-8">
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex flex-wrap gap-2">
-                <Button
-                  onClick={handleViewGallery}
-                  className="flex items-center gap-2"
-                >
-                  <ExternalLink className="w-4 h-4" />
-                  View Gallery
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={handleShare}
-                  className="flex items-center gap-2"
-                >
-                  <Share2 className="w-4 h-4" />
-                  Share QR Code
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={handleEdit}
-                  className="flex items-center gap-2"
-                >
-                  <Edit className="w-4 h-4" />
-                  Edit Event
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={handleSettings}
-                  className="flex items-center gap-2"
-                >
-                  <Settings className="w-4 h-4" />
-                  Settings
-                </Button>
-                {event.subscriptionTier !== 'pro' && (
-                  <Button
-                    variant="outline"
-                    onClick={handleUpgrade}
-                    className="flex items-center gap-2"
-                  >
-                    Upgrade Package
-                  </Button>
-                )}
+        {/* Expiration Warnings */}
+        {isExpiringSoon && !isExpired && (
+          <Alert className="mb-6">
+            <AlertTriangle className="h-4 w-4" />
+            <AlertDescription>
+              This event expires {formatDistanceToNow(new Date(event.expiresAt!), { addSuffix: true })}. 
+              Consider upgrading to extend storage.
+            </AlertDescription>
+          </Alert>
+        )}
+
+        {isExpired && (
+          <Alert className="mb-6">
+            <AlertTriangle className="h-4 w-4" />
+            <AlertDescription>
+              This event has expired. Photos and videos may be deleted soon. 
+              Download your memories now.
+            </AlertDescription>
+          </Alert>
+        )}
+
+        {/* Event Details */}
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Calendar className="w-5 h-5" />
+              Event Details
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {event.eventDate && (
+                <div className="flex items-center gap-3">
+                  <Calendar className="w-5 h-5 text-gray-500" />
+                  <div>
+                    <p className="text-sm text-gray-600">Event Date</p>
+                    <p className="font-medium">
+                      {format(new Date(event.eventDate), 'MMM dd, yyyy')}
+                    </p>
+                  </div>
+                </div>
+              )}
+              
+              {event.location && (
+                <div className="flex items-center gap-3">
+                  <MapPin className="w-5 h-5 text-gray-500" />
+                  <div>
+                    <p className="text-sm text-gray-600">Location</p>
+                    <p className="font-medium">{event.location}</p>
+                  </div>
+                </div>
+              )}
+              
+              <div className="flex items-center gap-3">
+                <Clock className="w-5 h-5 text-gray-500" />
+                <div>
+                  <p className="text-sm text-gray-600">Created</p>
+                  <p className="font-medium">
+                    {formatDistanceToNow(new Date(event.createdAt), { addSuffix: true })}
+                  </p>
+                </div>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+
+            {event.description && (
+              <div className="mt-6">
+                <p className="text-sm text-gray-600 mb-2">Description</p>
+                <p className="text-gray-900">{event.description}</p>
+              </div>
+            )}
+
+            {event.customMessage && (
+              <div className="mt-6 p-4 bg-blue-50 rounded-lg">
+                <p className="text-sm text-blue-600 mb-2">Message for Guests</p>
+                <p className="text-blue-900">{event.customMessage}</p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Statistics */}
+        {stats && (
+          <div className="mb-8">
+            <EventStats eventId={eventId} stats={stats} />
+          </div>
+        )}
+
+        {/* Actions */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          <Button
+            onClick={handleViewGallery}
+            className="h-auto p-6 flex flex-col items-center gap-2"
+          >
+            <ExternalLink className="w-6 h-6" />
+            <span>View Gallery</span>
+            <span className="text-xs opacity-75">See all photos</span>
+          </Button>
+
+          <Button
+            variant="outline"
+            onClick={handleShare}
+            className="h-auto p-6 flex flex-col items-center gap-2"
+          >
+            <Share2 className="w-6 h-6" />
+            <span>Share Gallery</span>
+            <span className="text-xs opacity-75">Copy link</span>
+          </Button>
+
+          <Button
+            variant="outline"
+            onClick={() => router.push(`/dashboard/events/${eventId}/settings`)}
+            className="h-auto p-6 flex flex-col items-center gap-2"
+          >
+            <Settings className="w-6 h-6" />
+            <span>Settings</span>
+            <span className="text-xs opacity-75">Configure event</span>
+          </Button>
+
+          <Button
+            variant="outline"
+            onClick={() => router.push(`/print/qr/${eventId}`)}
+            className="h-auto p-6 flex flex-col items-center gap-2"
+          >
+            <QrCode className="w-6 h-6" />
+            <span>Print QR</span>
+            <span className="text-xs opacity-75">Download codes</span>
+          </Button>
         </div>
 
-        {/* Main Content */}
-        <Tabs
-          value={activeTab}
-          onValueChange={setActiveTab}
-          className="space-y-6"
-        >
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="stats">Statistics</TabsTrigger>
-            <TabsTrigger value="qr">QR Code</TabsTrigger>
-            <TabsTrigger value="settings">Settings</TabsTrigger>
-          </TabsList>
-
-          {/* Overview Tab */}
-          <TabsContent value="overview" className="space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {/* Event Details */}
-              <div className="lg:col-span-2 space-y-6">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Event Information</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    {event.description && (
-                      <div>
-                        <h4 className="font-semibold mb-2">Description</h4>
-                        <p className="text-muted-foreground">
-                          {event.description}
-                        </p>
-                      </div>
-                    )}
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <h4 className="font-semibold mb-2">Event Type</h4>
-                        <p className="text-muted-foreground flex items-center gap-2">
-                          {eventTypeInfo?.icon && (
-                            <eventTypeInfo.icon className="w-4 h-4 text-gray-700" />
-                          )}
-                          {eventTypeInfo?.label}
-                        </p>
-                      </div>
-                      <div>
-                        <h4 className="font-semibold mb-2">Package</h4>
-                        <p className="text-muted-foreground">
-                          {event.subscriptionTier
-                            ? event.subscriptionTier.charAt(0).toUpperCase() +
-                              event.subscriptionTier.slice(1)
-                            : 'Free'}
-                          {event.hasVideoAddon && ' + Video Add-on'}
-                        </p>
-                      </div>
-                    </div>
-
-                    {event.customMessage && (
-                      <div>
-                        <h4 className="font-semibold mb-2">Custom Message</h4>
-                        <p className="text-muted-foreground">
-                          {event.customMessage}
-                        </p>
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-
-                {/* Recent Activity */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Recent Activity</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-center py-8 text-muted-foreground">
-                      <div className="w-16 h-16 bg-muted/50 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <Camera className="w-8 h-8 text-muted-foreground" />
-                      </div>
-                      <p className="text-lg">No recent activity</p>
-                      <p className="text-sm">
-                        Photos and videos will appear here as guests contribute
-                      </p>
-                    </div>
-                  </CardContent>
-                </Card>
+        {/* Danger Zone */}
+        <Card className="border-red-200">
+          <CardHeader>
+            <CardTitle className="text-red-600 flex items-center gap-2">
+              <AlertTriangle className="w-5 h-5" />
+              Danger Zone
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="font-medium text-red-600">Delete Event</h3>
+                <p className="text-sm text-gray-600">
+                  Permanently delete this event and all its data. This action cannot be undone.
+                </p>
+                {event.totalPhotos > 0 || event.totalVideos > 0 ? (
+                  <p className="text-sm text-red-600 mt-1">
+                    Cannot delete event with {event.totalPhotos} photos and {event.totalVideos} videos.
+                  </p>
+                ) : null}
               </div>
-
-              {/* Quick Stats */}
-              <div className="space-y-6">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Quick Stats</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <Camera className="w-4 h-4 text-blue-500" />
-                        <span className="text-sm">Photos</span>
-                      </div>
-                      <span className="font-semibold">{event.totalPhotos}</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <Video className="w-4 h-4 text-purple-500" />
-                        <span className="text-sm">Videos</span>
-                      </div>
-                      <span className="font-semibold">{event.totalVideos}</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <Users className="w-4 h-4 text-green-500" />
-                        <span className="text-sm">Contributors</span>
-                      </div>
-                      <span className="font-semibold">
-                        {event.totalContributors}
-                      </span>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                {/* Gallery Link */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Gallery Access</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-sm text-muted-foreground mb-4">
-                      Share this link with your guests to view the gallery
-                    </p>
-                    <Button
-                      onClick={handleViewGallery}
-                      className="w-full"
-                      variant="outline"
-                    >
-                      <ExternalLink className="w-4 h-4 mr-2" />
-                      Open Gallery
-                    </Button>
-                  </CardContent>
-                </Card>
-              </div>
+              <Button
+                variant="destructive"
+                onClick={handleDelete}
+                disabled={isDeleting || event.totalPhotos > 0 || event.totalVideos > 0}
+              >
+                {isDeleting ? (
+                  <>
+                    <LoadingSpinner className="w-4 h-4 mr-2" />
+                    Deleting...
+                  </>
+                ) : (
+                  <>
+                    <Trash2 className="w-4 h-4 mr-2" />
+                    Delete Event
+                  </>
+                )}
+              </Button>
             </div>
-          </TabsContent>
-
-          {/* Statistics Tab */}
-          <TabsContent value="stats">
-            <EventStats eventId={eventId} stats={statsData} />
-          </TabsContent>
-
-          {/* QR Code Tab */}
-          <TabsContent value="qr">
-            <div className="max-w-md mx-auto">
-              <Card>
-                <CardHeader>
-                  <CardTitle>QR Code</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <QRDisplay
-                    qrCodeUrl={`/api/qr/${eventId}?format=png&size=256&branded=true`}
-                    eventName={event.name}
-                    eventCode={event.gallerySlug}
-                  />
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
-
-          {/* Settings Tab */}
-          <TabsContent value="settings">
-            <Card>
-              <CardHeader>
-                <CardTitle>Event Settings</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h4 className="font-semibold">Requires Moderation</h4>
-                      <p className="text-sm text-muted-foreground">
-                        Approve photos before they appear in gallery
-                      </p>
-                    </div>
-                    <Badge
-                      variant={
-                        event.requiresModeration ? 'default' : 'secondary'
-                      }
-                    >
-                      {event.requiresModeration ? 'Enabled' : 'Disabled'}
-                    </Badge>
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h4 className="font-semibold">Allow Downloads</h4>
-                      <p className="text-sm text-muted-foreground">
-                        Let guests download photos
-                      </p>
-                    </div>
-                    <Badge
-                      variant={event.allowDownloads ? 'default' : 'secondary'}
-                    >
-                      {event.allowDownloads ? 'Enabled' : 'Disabled'}
-                    </Badge>
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h4 className="font-semibold">Public Gallery</h4>
-                      <p className="text-sm text-muted-foreground">
-                        Gallery is accessible to everyone
-                      </p>
-                    </div>
-                    <Badge variant={event.isPublic ? 'default' : 'secondary'}>
-                      {event.isPublic ? 'Public' : 'Private'}
-                    </Badge>
-                  </div>
-                </div>
-
-                <div className="pt-4">
-                  <Button onClick={handleSettings} className="w-full">
-                    <Settings className="w-4 h-4 mr-2" />
-                    Manage Settings
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

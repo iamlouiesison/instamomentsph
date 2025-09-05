@@ -1,64 +1,98 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import React, { useState, useEffect } from 'react';
+import { useRouter, useParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
+import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { LoadingSpinner } from '@/components/instamoments';
+import { MainNavigation } from '@/components/layout';
+import { LoadingSpinner, EmptyStates } from '@/components/instamoments';
 import {
-  EventSettingsSchema,
-  type EventSettingsData,
-} from '@/lib/validations/event';
-import { ArrowLeft, Save, AlertTriangle, CheckCircle } from 'lucide-react';
+  ArrowLeft,
+  Save,
+  Shield,
+  Download,
+  Eye,
+  EyeOff,
+  MessageSquare,
+  AlertTriangle,
+  CheckCircle,
+} from 'lucide-react';
 import { toast } from 'sonner';
+import { z } from 'zod';
 
-interface EventSettings {
+const EventSettingsSchema = z.object({
+  name: z.string().min(3, 'Event name must be at least 3 characters'),
+  description: z.string().optional(),
+  location: z.string().optional(),
+  customMessage: z.string().max(500, 'Custom message must be less than 500 characters').optional(),
+  requiresModeration: z.boolean(),
+  allowDownloads: z.boolean(),
+  isPublic: z.boolean(),
+});
+
+type EventSettingsData = z.infer<typeof EventSettingsSchema>;
+
+interface Event {
   id: string;
   name: string;
+  description?: string;
+  location?: string;
+  eventType: string;
+  eventDate?: string;
+  subscriptionTier: string;
+  totalPhotos: number;
+  totalVideos: number;
+  totalContributors: number;
+  status: string;
   requiresModeration: boolean;
   allowDownloads: boolean;
   isPublic: boolean;
   customMessage?: string;
-  status: 'active' | 'expired' | 'archived';
+  createdAt: string;
+  expiresAt?: string;
 }
 
 export default function EventSettingsPage() {
-  const params = useParams();
   const router = useRouter();
-  const [event, setEvent] = useState<EventSettings | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-
+  const params = useParams();
   const eventId = params.id as string;
+  
+  const [event, setEvent] = useState<Event | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const form = useForm<EventSettingsData>({
     resolver: zodResolver(EventSettingsSchema),
     defaultValues: {
-      id: eventId,
+      name: '',
+      description: '',
+      location: '',
+      customMessage: '',
       requiresModeration: false,
       allowDownloads: true,
       isPublic: true,
-      customMessage: '',
     },
   });
 
-  const {
-    handleSubmit,
-    watch,
-    setValue,
-    formState: { errors, isDirty },
-  } = form;
+  const { handleSubmit, watch, setValue, formState: { errors, isDirty } } = form;
   const watchedValues = watch();
 
-  const fetchEventSettings = useCallback(async () => {
+  useEffect(() => {
+    fetchEvent();
+  }, [eventId]);
+
+  const fetchEvent = async () => {
     try {
-      setLoading(true);
+      setIsLoading(true);
       const response = await fetch(`/api/events/${eventId}`);
       const result = await response.json();
 
@@ -68,30 +102,26 @@ export default function EventSettingsPage() {
 
       const eventData = result.data;
       setEvent(eventData);
-
-      // Set form values
-      setValue('requiresModeration', eventData.requiresModeration);
-      setValue('allowDownloads', eventData.allowDownloads);
-      setValue('isPublic', eventData.isPublic);
+      
+      // Populate form with event data
+      setValue('name', eventData.name);
+      setValue('description', eventData.description || '');
+      setValue('location', eventData.location || '');
       setValue('customMessage', eventData.customMessage || '');
+      setValue('requiresModeration', eventData.requiresModeration || false);
+      setValue('allowDownloads', eventData.allowDownloads !== false);
+      setValue('isPublic', eventData.isPublic !== false);
     } catch (error) {
-      console.error('Error fetching event settings:', error);
-      toast.error('Failed to load event settings');
-      router.push(`/dashboard/events/${eventId}`);
+      console.error('Error fetching event:', error);
+      setError(error instanceof Error ? error.message : 'Failed to load event');
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
-  }, [eventId, router, setValue]);
-
-  useEffect(() => {
-    if (eventId) {
-      fetchEventSettings();
-    }
-  }, [eventId, fetchEventSettings]);
+  };
 
   const onSubmit = async (data: EventSettingsData) => {
     try {
-      setSaving(true);
+      setIsSaving(true);
       const response = await fetch(`/api/events/${eventId}`, {
         method: 'PUT',
         headers: {
@@ -103,54 +133,59 @@ export default function EventSettingsPage() {
       const result = await response.json();
 
       if (!result.success) {
-        throw new Error(
-          result.error.message || 'Failed to update event settings'
-        );
+        throw new Error(result.error.message || 'Failed to update event');
       }
 
       toast.success('Event settings updated successfully!');
       setEvent(result.data);
     } catch (error) {
-      console.error('Error updating event settings:', error);
+      console.error('Error updating event:', error);
       toast.error(
-        error instanceof Error
-          ? error.message
-          : 'Failed to update event settings'
+        error instanceof Error ? error.message : 'Failed to update event'
       );
     } finally {
-      setSaving(false);
+      setIsSaving(false);
     }
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
-          <LoadingSpinner className="w-12 h-12 mx-auto mb-4" />
-          <p className="text-muted-foreground">Loading event settings...</p>
+      <div className="min-h-screen bg-background">
+        <MainNavigation />
+        <div className="container mx-auto px-4 py-8">
+          <div className="flex items-center justify-center min-h-[400px]">
+            <LoadingSpinner size="lg" />
+          </div>
         </div>
       </div>
     );
   }
 
-  if (!event) {
+  if (error || !event) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold mb-2">Event not found</h2>
-          <p className="text-muted-foreground mb-4">
-            The event you&apos;re looking for doesn&apos;t exist.
-          </p>
-          <Button onClick={() => router.push('/dashboard')}>
-            Back to Dashboard
-          </Button>
+      <div className="min-h-screen bg-background">
+        <MainNavigation />
+        <div className="container mx-auto px-4 py-8">
+          <EmptyStates
+            type="error"
+            title="Event Not Found"
+            description={error || 'The event you are looking for does not exist.'}
+            action={{
+              label: 'Back to Dashboard',
+              onClick: () => router.push('/dashboard'),
+            }}
+          />
         </div>
       </div>
     );
   }
+
+  const isExpired = event.status === 'expired' || 
+    (event.expiresAt && new Date(event.expiresAt) < new Date());
 
   return (
     <div className="min-h-screen bg-background">
+      <MainNavigation />
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">
@@ -163,162 +198,210 @@ export default function EventSettingsPage() {
             Back
           </Button>
 
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Event Settings
-          </h1>
-          <p className="text-gray-600">
-            Configure settings for &quot;{event.name}&quot;
-          </p>
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                Event Settings
+              </h1>
+              <p className="text-gray-600">
+                Configure your event gallery settings and preferences
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              <Badge variant={isExpired ? 'destructive' : 'default'}>
+                {isExpired ? 'Expired' : 'Active'}
+              </Badge>
+              <Badge variant="outline">
+                {event.subscriptionTier.charAt(0).toUpperCase() + event.subscriptionTier.slice(1)}
+              </Badge>
+            </div>
+          </div>
         </div>
 
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="max-w-4xl mx-auto space-y-6"
-        >
-          {/* Privacy & Access Settings */}
+        {/* Event Info Card */}
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <MessageSquare className="w-5 h-5" />
+              Event Information
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <p className="text-sm text-gray-600">Event Name</p>
+                <p className="font-medium">{event.name}</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-600">Event Type</p>
+                <p className="font-medium capitalize">{event.eventType}</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-600">Contributors</p>
+                <p className="font-medium">{event.totalContributors} people</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-600">Photos</p>
+                <p className="font-medium">{event.totalPhotos} uploaded</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-600">Videos</p>
+                <p className="font-medium">{event.totalVideos} uploaded</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-600">Created</p>
+                <p className="font-medium">
+                  {new Date(event.createdAt).toLocaleDateString('en-PH')}
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Settings Form */}
+        <form onSubmit={handleSubmit(onSubmit)} className="max-w-4xl mx-auto space-y-8">
+          {/* Basic Information */}
           <Card>
             <CardHeader>
-              <CardTitle>Privacy & Access</CardTitle>
+              <CardTitle>Basic Information</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="name">Event Name *</Label>
+                  <Input
+                    id="name"
+                    placeholder="e.g., Maria's Wedding"
+                    {...form.register('name')}
+                    disabled={isExpired}
+                  />
+                  {errors.name && (
+                    <p className="text-sm text-red-500">{errors.name.message}</p>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="location">Location</Label>
+                  <Input
+                    id="location"
+                    placeholder="e.g., Manila Hotel, Makati City"
+                    {...form.register('location')}
+                    disabled={isExpired}
+                  />
+                  {errors.location && (
+                    <p className="text-sm text-red-500">{errors.location.message}</p>
+                  )}
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="description">Description</Label>
+                <Textarea
+                  id="description"
+                  placeholder="Tell your guests about your event..."
+                  rows={3}
+                  {...form.register('description')}
+                  disabled={isExpired}
+                />
+                {errors.description && (
+                  <p className="text-sm text-red-500">{errors.description.message}</p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="customMessage">Custom Message for Guests</Label>
+                <Textarea
+                  id="customMessage"
+                  placeholder="Add a special message that will be shown to guests when they scan the QR code..."
+                  rows={2}
+                  {...form.register('customMessage')}
+                  disabled={isExpired}
+                />
+                <p className="text-xs text-gray-500">
+                  This message will be displayed to guests when they access your event gallery
+                </p>
+                {errors.customMessage && (
+                  <p className="text-sm text-red-500">{errors.customMessage.message}</p>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Privacy & Security Settings */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Shield className="w-5 h-5" />
+                Privacy & Security
+              </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="flex items-center justify-between">
                 <div className="space-y-1">
-                  <Label htmlFor="isPublic" className="text-base font-medium">
-                    Public Gallery
-                  </Label>
-                  <p className="text-sm text-muted-foreground">
-                    Make the gallery accessible to anyone with the link
+                  <Label htmlFor="isPublic">Public Gallery</Label>
+                  <p className="text-sm text-gray-600">
+                    Allow anyone with the link to view the gallery
                   </p>
                 </div>
                 <Switch
                   id="isPublic"
                   checked={watchedValues.isPublic}
                   onCheckedChange={(checked) => setValue('isPublic', checked)}
+                  disabled={isExpired}
                 />
               </div>
 
               <div className="flex items-center justify-between">
                 <div className="space-y-1">
-                  <Label
-                    htmlFor="allowDownloads"
-                    className="text-base font-medium"
-                  >
-                    Allow Downloads
-                  </Label>
-                  <p className="text-sm text-muted-foreground">
+                  <Label htmlFor="requiresModeration">Content Moderation</Label>
+                  <p className="text-sm text-gray-600">
+                    Review photos and videos before they appear in the gallery
+                  </p>
+                </div>
+                <Switch
+                  id="requiresModeration"
+                  checked={watchedValues.requiresModeration}
+                  onCheckedChange={(checked) => setValue('requiresModeration', checked)}
+                  disabled={isExpired}
+                />
+              </div>
+
+              <div className="flex items-center justify-between">
+                <div className="space-y-1">
+                  <Label htmlFor="allowDownloads">Allow Downloads</Label>
+                  <p className="text-sm text-gray-600">
                     Let guests download photos from the gallery
                   </p>
                 </div>
                 <Switch
                   id="allowDownloads"
                   checked={watchedValues.allowDownloads}
-                  onCheckedChange={(checked) =>
-                    setValue('allowDownloads', checked)
-                  }
+                  onCheckedChange={(checked) => setValue('allowDownloads', checked)}
+                  disabled={isExpired}
                 />
-              </div>
-
-              {!watchedValues.isPublic && (
-                <Alert>
-                  <AlertTriangle className="h-4 w-4" />
-                  <AlertDescription>
-                    Private galleries are only accessible to you and people you
-                    specifically share the link with.
-                  </AlertDescription>
-                </Alert>
-              )}
-            </CardContent>
-          </Card>
-
-          {/* Content Moderation */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Content Moderation</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="flex items-center justify-between">
-                <div className="space-y-1">
-                  <Label
-                    htmlFor="requiresModeration"
-                    className="text-base font-medium"
-                  >
-                    Require Approval
-                  </Label>
-                  <p className="text-sm text-muted-foreground">
-                    Review and approve photos before they appear in the gallery
-                  </p>
-                </div>
-                <Switch
-                  id="requiresModeration"
-                  checked={watchedValues.requiresModeration}
-                  onCheckedChange={(checked) =>
-                    setValue('requiresModeration', checked)
-                  }
-                />
-              </div>
-
-              {watchedValues.requiresModeration && (
-                <Alert>
-                  <CheckCircle className="h-4 w-4" />
-                  <AlertDescription>
-                    When enabled, all new photos will be held for review.
-                    You&apos;ll receive notifications when new content needs
-                    approval.
-                  </AlertDescription>
-                </Alert>
-              )}
-            </CardContent>
-          </Card>
-
-          {/* Custom Message */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Custom Message</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="customMessage">Welcome Message</Label>
-                <Textarea
-                  id="customMessage"
-                  placeholder="Add a custom message that will be shown to guests when they visit your gallery..."
-                  rows={4}
-                  {...form.register('customMessage')}
-                />
-                {errors.customMessage && (
-                  <p className="text-sm text-red-500">
-                    {errors.customMessage.message}
-                  </p>
-                )}
-                <p className="text-sm text-muted-foreground">
-                  This message will be displayed at the top of your gallery to
-                  welcome guests.
-                </p>
               </div>
             </CardContent>
           </Card>
 
-          {/* Event Status Warning */}
-          {event.status === 'expired' && (
-            <Alert variant="destructive">
+          {/* Warning for Expired Events */}
+          {isExpired && (
+            <Alert>
               <AlertTriangle className="h-4 w-4" />
               <AlertDescription>
-                This event has expired. Some settings may not be applicable to
-                expired events.
+                This event has expired. You can view the settings but cannot make changes.
+                To modify settings, create a new event.
               </AlertDescription>
             </Alert>
           )}
 
           {/* Save Button */}
-          <div className="flex justify-end gap-4">
+          <div className="flex justify-end">
             <Button
-              type="button"
-              variant="outline"
-              onClick={() => router.back()}
+              type="submit"
+              disabled={!isDirty || isSaving || isExpired}
+              className="min-w-[120px]"
             >
-              Cancel
-            </Button>
-            <Button type="submit" disabled={!isDirty || saving}>
-              {saving ? (
+              {isSaving ? (
                 <>
                   <LoadingSpinner className="w-4 h-4 mr-2" />
                   Saving...
