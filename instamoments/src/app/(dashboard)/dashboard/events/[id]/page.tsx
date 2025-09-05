@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { EventStats, LoadingSpinner } from '@/components/instamoments';
 import { MainNavigation } from '@/components/layout';
+import { QRCodeDisplay } from '@/components/features/qr-code';
 import {
   ArrowLeft,
   Settings,
@@ -66,12 +67,13 @@ export default function EventManagementPage() {
   const router = useRouter();
   const params = useParams();
   const eventId = params.id as string;
-  
+
   const [event, setEvent] = useState<Event | null>(null);
   const [stats, setStats] = useState<EventStats | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isDeleting, setIsDeleting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showQRCode, setShowQRCode] = useState(false);
 
   useEffect(() => {
     fetchEvent();
@@ -89,22 +91,31 @@ export default function EventManagementPage() {
 
       const eventData = result.data;
       setEvent(eventData);
-      
+
       // Calculate stats
       const eventStats: EventStats = {
         totalPhotos: eventData.totalPhotos || 0,
         totalVideos: eventData.totalVideos || 0,
         totalContributors: eventData.totalContributors || 0,
         maxPhotos: getMaxPhotos(eventData.subscriptionTier),
-        maxVideos: eventData.hasVideoAddon ? getMaxVideos(eventData.subscriptionTier) : undefined,
+        maxVideos: eventData.hasVideoAddon
+          ? getMaxVideos(eventData.subscriptionTier)
+          : undefined,
         storageDays: getStorageDays(eventData.subscriptionTier),
-        daysRemaining: eventData.expiresAt 
-          ? Math.max(0, Math.ceil((new Date(eventData.expiresAt).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)))
+        daysRemaining: eventData.expiresAt
+          ? Math.max(
+              0,
+              Math.ceil(
+                (new Date(eventData.expiresAt).getTime() -
+                  new Date().getTime()) /
+                  (1000 * 60 * 60 * 24)
+              )
+            )
           : 0,
         totalViews: 0, // TODO: Implement analytics
         totalDownloads: 0, // TODO: Implement analytics
       };
-      
+
       setStats(eventStats);
     } catch (error) {
       console.error('Error fetching event:', error);
@@ -149,13 +160,19 @@ export default function EventManagementPage() {
 
   const handleDelete = async () => {
     if (!event) return;
-    
+
     if (event.total_photos > 0 || event.total_videos > 0) {
-      toast.error('Cannot delete event with photos or videos. Archive instead.');
+      toast.error(
+        'Cannot delete event with photos or videos. Archive instead.'
+      );
       return;
     }
 
-    if (!confirm('Are you sure you want to delete this event? This action cannot be undone.')) {
+    if (
+      !confirm(
+        'Are you sure you want to delete this event? This action cannot be undone.'
+      )
+    ) {
       return;
     }
 
@@ -237,9 +254,11 @@ export default function EventManagementPage() {
     );
   }
 
-  const isExpired = event.status === 'expired' || 
+  const isExpired =
+    event.status === 'expired' ||
     (event.expiresAt && new Date(event.expiresAt) < new Date());
-  const isExpiringSoon = event.expiresAt && 
+  const isExpiringSoon =
+    event.expiresAt &&
     new Date(event.expiresAt) < new Date(Date.now() + 24 * 60 * 60 * 1000) &&
     !isExpired;
 
@@ -263,7 +282,7 @@ export default function EventManagementPage() {
                 {event.name}
               </h1>
               <p className="text-gray-600 capitalize">
-                {event.event_type} Event
+                {event.eventType} Event
               </p>
             </div>
             <div className="flex items-center gap-2">
@@ -271,10 +290,10 @@ export default function EventManagementPage() {
                 {isExpired ? 'Expired' : 'Active'}
               </Badge>
               <Badge variant="outline">
-                {event.subscriptionTier ? 
-                  event.subscriptionTier.charAt(0).toUpperCase() + event.subscriptionTier.slice(1) : 
-                  'Unknown'
-                }
+                {event.subscriptionTier
+                  ? event.subscriptionTier.charAt(0).toUpperCase() +
+                    event.subscriptionTier.slice(1)
+                  : 'Unknown'}
               </Badge>
             </div>
           </div>
@@ -285,8 +304,11 @@ export default function EventManagementPage() {
           <Alert className="mb-6">
             <AlertTriangle className="h-4 w-4" />
             <AlertDescription>
-              This event expires {formatDistanceToNow(new Date(event.expiresAt!), { addSuffix: true })}. 
-              Consider upgrading to extend storage.
+              This event expires{' '}
+              {formatDistanceToNow(new Date(event.expiresAt!), {
+                addSuffix: true,
+              })}
+              . Consider upgrading to extend storage.
             </AlertDescription>
           </Alert>
         )}
@@ -295,7 +317,7 @@ export default function EventManagementPage() {
           <Alert className="mb-6">
             <AlertTriangle className="h-4 w-4" />
             <AlertDescription>
-              This event has expired. Photos and videos may be deleted soon. 
+              This event has expired. Photos and videos may be deleted soon.
               Download your memories now.
             </AlertDescription>
           </Alert>
@@ -311,18 +333,18 @@ export default function EventManagementPage() {
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {event.event_date && (
+              {event.eventDate && (
                 <div className="flex items-center gap-3">
                   <Calendar className="w-5 h-5 text-gray-500" />
                   <div>
                     <p className="text-sm text-gray-600">Event Date</p>
                     <p className="font-medium">
-                      {format(new Date(event.event_date), 'MMM dd, yyyy')}
+                      {format(new Date(event.eventDate), 'MMM dd, yyyy')}
                     </p>
                   </div>
                 </div>
               )}
-              
+
               {event.location && (
                 <div className="flex items-center gap-3">
                   <MapPin className="w-5 h-5 text-gray-500" />
@@ -332,13 +354,17 @@ export default function EventManagementPage() {
                   </div>
                 </div>
               )}
-              
+
               <div className="flex items-center gap-3">
                 <Clock className="w-5 h-5 text-gray-500" />
                 <div>
                   <p className="text-sm text-gray-600">Created</p>
                   <p className="font-medium">
-                    {event.created_at ? formatDistanceToNow(new Date(event.created_at), { addSuffix: true }) : 'Unknown'}
+                    {event.createdAt
+                      ? formatDistanceToNow(new Date(event.createdAt), {
+                          addSuffix: true,
+                        })
+                      : 'Unknown'}
                   </p>
                 </div>
               </div>
@@ -390,6 +416,16 @@ export default function EventManagementPage() {
 
           <Button
             variant="outline"
+            onClick={() => setShowQRCode(!showQRCode)}
+            className="h-auto p-6 flex flex-col items-center gap-2"
+          >
+            <QrCode className="w-6 h-6" />
+            <span>QR Code</span>
+            <span className="text-xs opacity-75">Show QR code</span>
+          </Button>
+
+          <Button
+            variant="outline"
             onClick={() => router.push(`/dashboard/events/${eventId}/settings`)}
             className="h-auto p-6 flex flex-col items-center gap-2"
           >
@@ -409,6 +445,19 @@ export default function EventManagementPage() {
           </Button>
         </div>
 
+        {/* QR Code Display */}
+        {showQRCode && event && (
+          <div className="mb-8">
+            <QRCodeDisplay
+              event={event}
+              size="large"
+              showInstructions={true}
+              showDownloadOptions={true}
+              branded={true}
+            />
+          </div>
+        )}
+
         {/* Danger Zone */}
         <Card className="border-red-200">
           <CardHeader>
@@ -422,18 +471,22 @@ export default function EventManagementPage() {
               <div>
                 <h3 className="font-medium text-red-600">Delete Event</h3>
                 <p className="text-sm text-gray-600">
-                  Permanently delete this event and all its data. This action cannot be undone.
+                  Permanently delete this event and all its data. This action
+                  cannot be undone.
                 </p>
-                {event.total_photos > 0 || event.total_videos > 0 ? (
+                {event.totalPhotos > 0 || event.totalVideos > 0 ? (
                   <p className="text-sm text-red-600 mt-1">
-                    Cannot delete event with {event.total_photos} photos and {event.total_videos} videos.
+                    Cannot delete event with {event.totalPhotos} photos and{' '}
+                    {event.totalVideos} videos.
                   </p>
                 ) : null}
               </div>
               <Button
                 variant="destructive"
                 onClick={handleDelete}
-                disabled={isDeleting || event.total_photos > 0 || event.total_videos > 0}
+                disabled={
+                  isDeleting || event.totalPhotos > 0 || event.totalVideos > 0
+                }
               >
                 {isDeleting ? (
                   <>

@@ -1116,7 +1116,7 @@ Integrate PayMongo for Philippine payment methods (GCash, PayMaya, cards):
    - PCI compliance considerations
 
 Include proper error handling for payment failures and network issues.
-```
+
 
 ### Reference Documents
 - `01_requirements.md` (Business Model, Pricing Tiers)
@@ -1140,7 +1140,7 @@ Include proper error handling for payment failures and network issues.
 - [ ] Payment security measures active
 - [ ] Payment receipts sent via email
 - [ ] Event upgrades apply immediately after payment
-
+```
 ---
 
 ## Step 3.2: Subscription Tiers & Business Logic

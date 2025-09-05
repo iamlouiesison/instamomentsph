@@ -19,6 +19,7 @@ import { FILIPINO_EVENT_TYPES, type EventType } from '@/lib/validations/event';
 import { formatDistanceToNow, format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { FrontendEvent } from '@/lib/utils/event-transformer';
+import { CompactQRCode } from '@/components/features/qr-code';
 
 // Re-export the FrontendEvent as Event for backward compatibility
 export type Event = FrontendEvent;
@@ -41,7 +42,7 @@ export const EventCard: React.FC<EventCardProps> = ({
   showActions = true,
   className,
 }) => {
-  const eventTypeInfo = FILIPINO_EVENT_TYPES[event.event_type] || FILIPINO_EVENT_TYPES.other;
+  const eventTypeInfo = FILIPINO_EVENT_TYPES[event.eventType] || FILIPINO_EVENT_TYPES.other;
   const isExpired =
     event.status === 'expired' ||
     (event.expiresAt && new Date(event.expiresAt) < new Date());
@@ -111,16 +112,20 @@ export const EventCard: React.FC<EventCardProps> = ({
               )}
             </div>
           </div>
+          {/* QR Code Display */}
+          <div className="ml-4">
+            <CompactQRCode event={event} size="small" />
+          </div>
         </div>
       </CardHeader>
 
       <CardContent className="space-y-4">
         {/* Event Details */}
         <div className="space-y-2 text-sm text-muted-foreground">
-          {event.event_date && (
+          {event.eventDate && (
             <div className="flex items-center gap-2">
               <Calendar className="w-4 h-4" />
-              <span>{format(new Date(event.event_date), 'MMM dd, yyyy')}</span>
+              <span>{format(new Date(event.eventDate), 'MMM dd, yyyy')}</span>
             </div>
           )}
           {event.location && (
@@ -133,7 +138,7 @@ export const EventCard: React.FC<EventCardProps> = ({
             <Clock className="w-4 h-4" />
             <span>
               Created{' '}
-              {event.created_at ? formatDistanceToNow(new Date(event.created_at), {
+              {event.createdAt ? formatDistanceToNow(new Date(event.createdAt), {
                 addSuffix: true,
               }) : 'Unknown'}
             </span>
@@ -147,14 +152,14 @@ export const EventCard: React.FC<EventCardProps> = ({
               <Camera className="w-4 h-4" />
               <span className="text-sm">Photos</span>
             </div>
-            <div className="font-semibold text-lg">{event.total_photos}</div>
+            <div className="font-semibold text-lg">{event.totalPhotos}</div>
           </div>
           <div className="text-center">
             <div className="flex items-center justify-center gap-1 text-muted-foreground">
               <Video className="w-4 h-4" />
               <span className="text-sm">Videos</span>
             </div>
-            <div className="font-semibold text-lg">{event.total_videos}</div>
+            <div className="font-semibold text-lg">{event.totalVideos}</div>
           </div>
           <div className="text-center">
             <div className="flex items-center justify-center gap-1 text-muted-foreground">
@@ -162,7 +167,7 @@ export const EventCard: React.FC<EventCardProps> = ({
               <span className="text-sm">Contributors</span>
             </div>
             <div className="font-semibold text-lg">
-              {event.total_contributors}
+              {event.totalContributors}
             </div>
           </div>
         </div>

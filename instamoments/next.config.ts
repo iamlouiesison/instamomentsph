@@ -11,14 +11,20 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  experimental: {
-    optimizePackageImports: ['@supabase/supabase-js'],
-  },
-  webpack: (config) => {
+  webpack: (config, { isServer }) => {
     config.resolve.fallback = {
       ...config.resolve.fallback,
       fs: false,
     };
+    
+    // Handle Supabase modules properly
+    if (!isServer) {
+      config.resolve.alias = {
+        ...config.resolve.alias,
+        '@supabase/supabase-js': '@supabase/supabase-js/dist/main/index.js',
+      };
+    }
+    
     return config;
   },
 };
