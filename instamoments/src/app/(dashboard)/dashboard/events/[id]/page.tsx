@@ -264,44 +264,46 @@ export default function EventManagementPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-8">
-        {/* Header */}
-        <div className="mb-8">
+      <div className="container mx-auto px-4 py-6 max-w-6xl">
+        {/* Compact Header */}
+        <div className="mb-6">
           <Button
             variant="ghost"
             onClick={() => router.back()}
-            className="mb-4"
+            className="mb-3 -ml-2"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back
           </Button>
 
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex-1 min-w-0">
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 truncate">
                 {event.name}
               </h1>
-              <p className="text-gray-600 capitalize">
-                {event.eventType} Event
-              </p>
-            </div>
-            <div className="flex items-center gap-2">
-              <Badge variant={isExpired ? 'destructive' : 'default'}>
-                {isExpired ? 'Expired' : 'Active'}
-              </Badge>
-              <Badge variant="outline">
-                {event.subscriptionTier
-                  ? event.subscriptionTier.charAt(0).toUpperCase() +
-                    event.subscriptionTier.slice(1)
-                  : 'Unknown'}
-              </Badge>
+              <div className="flex items-center gap-3 mt-1">
+                <p className="text-gray-600 capitalize text-sm">
+                  {event.eventType} Event
+                </p>
+                <div className="flex items-center gap-2">
+                  <Badge variant={isExpired ? 'destructive' : 'default'} className="text-xs">
+                    {isExpired ? 'Expired' : 'Active'}
+                  </Badge>
+                  <Badge variant="outline" className="text-xs">
+                    {event.subscriptionTier
+                      ? event.subscriptionTier.charAt(0).toUpperCase() +
+                        event.subscriptionTier.slice(1)
+                      : 'Unknown'}
+                  </Badge>
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
         {/* Expiration Warnings */}
         {isExpiringSoon && !isExpired && (
-          <Alert className="mb-6">
+          <Alert className="mb-4">
             <AlertTriangle className="h-4 w-4" />
             <AlertDescription>
               This event expires{' '}
@@ -314,7 +316,7 @@ export default function EventManagementPage() {
         )}
 
         {isExpired && (
-          <Alert className="mb-6">
+          <Alert className="mb-4">
             <AlertTriangle className="h-4 w-4" />
             <AlertDescription>
               This event has expired. Photos and videos may be deleted soon.
@@ -323,186 +325,246 @@ export default function EventManagementPage() {
           </Alert>
         )}
 
-        {/* Event Details */}
-        <Card className="mb-8">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Calendar className="w-5 h-5" />
-              Event Details
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {event.eventDate && (
-                <div className="flex items-center gap-3">
-                  <Calendar className="w-5 h-5 text-gray-500" />
-                  <div>
-                    <p className="text-sm text-gray-600">Event Date</p>
-                    <p className="font-medium">
-                      {format(new Date(event.eventDate), 'MMM dd, yyyy')}
-                    </p>
+        {/* Main Content Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Left Column - Event Details & Stats */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* Compact Event Details */}
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <Calendar className="w-4 h-4" />
+                  Event Details
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="pt-0">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {event.eventDate && (
+                    <div className="flex items-center gap-3">
+                      <Calendar className="w-4 h-4 text-gray-500 flex-shrink-0" />
+                      <div className="min-w-0">
+                        <p className="text-xs text-gray-600">Event Date</p>
+                        <p className="font-medium text-sm">
+                          {format(new Date(event.eventDate), 'MMM dd, yyyy')}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
+                  {event.location && (
+                    <div className="flex items-center gap-3">
+                      <MapPin className="w-4 h-4 text-gray-500 flex-shrink-0" />
+                      <div className="min-w-0">
+                        <p className="text-xs text-gray-600">Location</p>
+                        <p className="font-medium text-sm truncate">{event.location}</p>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="flex items-center gap-3">
+                    <Clock className="w-4 h-4 text-gray-500 flex-shrink-0" />
+                    <div className="min-w-0">
+                      <p className="text-xs text-gray-600">Created</p>
+                      <p className="font-medium text-sm">
+                        {event.createdAt
+                          ? formatDistanceToNow(new Date(event.createdAt), {
+                              addSuffix: true,
+                            })
+                          : 'Unknown'}
+                      </p>
+                    </div>
                   </div>
                 </div>
-              )}
 
-              {event.location && (
-                <div className="flex items-center gap-3">
-                  <MapPin className="w-5 h-5 text-gray-500" />
-                  <div>
-                    <p className="text-sm text-gray-600">Location</p>
-                    <p className="font-medium">{event.location}</p>
+                {event.description && (
+                  <div className="mt-4 pt-4 border-t">
+                    <p className="text-xs text-gray-600 mb-1">Description</p>
+                    <p className="text-sm text-gray-900">{event.description}</p>
                   </div>
-                </div>
-              )}
-
-              <div className="flex items-center gap-3">
-                <Clock className="w-5 h-5 text-gray-500" />
-                <div>
-                  <p className="text-sm text-gray-600">Created</p>
-                  <p className="font-medium">
-                    {event.createdAt
-                      ? formatDistanceToNow(new Date(event.createdAt), {
-                          addSuffix: true,
-                        })
-                      : 'Unknown'}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {event.description && (
-              <div className="mt-6">
-                <p className="text-sm text-gray-600 mb-2">Description</p>
-                <p className="text-gray-900">{event.description}</p>
-              </div>
-            )}
-
-            {event.customMessage && (
-              <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-                <p className="text-sm text-blue-600 mb-2">Message for Guests</p>
-                <p className="text-blue-900">{event.customMessage}</p>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Statistics */}
-        {stats && (
-          <div className="mb-8">
-            <EventStats eventId={eventId} stats={stats} />
-          </div>
-        )}
-
-        {/* Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          <Button
-            onClick={handleViewGallery}
-            className="h-auto p-6 flex flex-col items-center gap-2"
-          >
-            <ExternalLink className="w-6 h-6" />
-            <span>View Gallery</span>
-            <span className="text-xs opacity-75">See all photos</span>
-          </Button>
-
-          <Button
-            variant="outline"
-            onClick={handleShare}
-            className="h-auto p-6 flex flex-col items-center gap-2"
-          >
-            <Share2 className="w-6 h-6" />
-            <span>Share Gallery</span>
-            <span className="text-xs opacity-75">Copy link</span>
-          </Button>
-
-          <Button
-            variant="outline"
-            onClick={() => setShowQRCode(!showQRCode)}
-            className="h-auto p-6 flex flex-col items-center gap-2"
-          >
-            <QrCode className="w-6 h-6" />
-            <span>QR Code</span>
-            <span className="text-xs opacity-75">Show QR code</span>
-          </Button>
-
-          <Button
-            variant="outline"
-            onClick={() => router.push(`/dashboard/events/${eventId}/settings`)}
-            className="h-auto p-6 flex flex-col items-center gap-2"
-          >
-            <Settings className="w-6 h-6" />
-            <span>Settings</span>
-            <span className="text-xs opacity-75">Configure event</span>
-          </Button>
-
-          <Button
-            variant="outline"
-            onClick={() => router.push(`/print/qr/${eventId}`)}
-            className="h-auto p-6 flex flex-col items-center gap-2"
-          >
-            <QrCode className="w-6 h-6" />
-            <span>Print QR</span>
-            <span className="text-xs opacity-75">Download codes</span>
-          </Button>
-        </div>
-
-        {/* QR Code Display */}
-        {showQRCode && event && (
-          <div className="mb-8">
-            <QRCodeDisplay
-              event={event}
-              size="large"
-              showInstructions={true}
-              showDownloadOptions={true}
-              branded={true}
-            />
-          </div>
-        )}
-
-        {/* Danger Zone */}
-        <Card className="border-red-200">
-          <CardHeader>
-            <CardTitle className="text-red-600 flex items-center gap-2">
-              <AlertTriangle className="w-5 h-5" />
-              Danger Zone
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="font-medium text-red-600">Delete Event</h3>
-                <p className="text-sm text-gray-600">
-                  Permanently delete this event and all its data. This action
-                  cannot be undone.
-                </p>
-                {event.totalPhotos > 0 || event.totalVideos > 0 ? (
-                  <p className="text-sm text-red-600 mt-1">
-                    Cannot delete event with {event.totalPhotos} photos and{' '}
-                    {event.totalVideos} videos.
-                  </p>
-                ) : null}
-              </div>
-              <Button
-                variant="destructive"
-                onClick={handleDelete}
-                disabled={
-                  isDeleting || event.totalPhotos > 0 || event.totalVideos > 0
-                }
-              >
-                {isDeleting ? (
-                  <>
-                    <LoadingSpinner className="w-4 h-4 mr-2" />
-                    Deleting...
-                  </>
-                ) : (
-                  <>
-                    <Trash2 className="w-4 h-4 mr-2" />
-                    Delete Event
-                  </>
                 )}
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+
+                {event.customMessage && (
+                  <div className="mt-4 p-3 bg-blue-50 rounded-lg">
+                    <p className="text-xs text-blue-600 mb-1">Message for Guests</p>
+                    <p className="text-sm text-blue-900">{event.customMessage}</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Statistics */}
+            {stats && (
+              <div>
+                <EventStats eventId={eventId} stats={stats} />
+              </div>
+            )}
+
+            {/* QR Code Display */}
+            {showQRCode && event && (
+              <div>
+                <QRCodeDisplay
+                  event={event}
+                  size="large"
+                  showInstructions={true}
+                  showDownloadOptions={true}
+                  branded={true}
+                />
+              </div>
+            )}
+          </div>
+
+          {/* Right Column - Actions & Quick Info */}
+          <div className="space-y-6">
+            {/* Quick Actions */}
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg">Quick Actions</CardTitle>
+              </CardHeader>
+              <CardContent className="pt-0 space-y-3">
+                <Button
+                  onClick={handleViewGallery}
+                  className="w-full justify-start"
+                  size="sm"
+                >
+                  <ExternalLink className="w-4 h-4 mr-2" />
+                  View Gallery
+                </Button>
+
+                <Button
+                  variant="outline"
+                  onClick={handleShare}
+                  className="w-full justify-start"
+                  size="sm"
+                >
+                  <Share2 className="w-4 h-4 mr-2" />
+                  Share Gallery
+                </Button>
+
+                <Button
+                  variant="outline"
+                  onClick={() => setShowQRCode(!showQRCode)}
+                  className="w-full justify-start"
+                  size="sm"
+                >
+                  <QrCode className="w-4 h-4 mr-2" />
+                  {showQRCode ? 'Hide QR Code' : 'Show QR Code'}
+                </Button>
+
+                <Button
+                  variant="outline"
+                  onClick={() => router.push(`/print/qr/${eventId}`)}
+                  className="w-full justify-start"
+                  size="sm"
+                >
+                  <Download className="w-4 h-4 mr-2" />
+                  Print QR Code
+                </Button>
+
+                <Button
+                  variant="outline"
+                  onClick={() => router.push(`/dashboard/events/${eventId}/settings`)}
+                  className="w-full justify-start"
+                  size="sm"
+                >
+                  <Settings className="w-4 h-4 mr-2" />
+                  Event Settings
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Quick Stats */}
+            {stats && (
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-lg">Quick Stats</CardTitle>
+                </CardHeader>
+                <CardContent className="pt-0">
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Camera className="w-4 h-4 text-gray-500" />
+                        <span className="text-sm text-gray-600">Photos</span>
+                      </div>
+                      <span className="font-semibold">{stats.totalPhotos}</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Video className="w-4 h-4 text-gray-500" />
+                        <span className="text-sm text-gray-600">Videos</span>
+                      </div>
+                      <span className="font-semibold">{stats.totalVideos}</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Users className="w-4 h-4 text-gray-500" />
+                        <span className="text-sm text-gray-600">Contributors</span>
+                      </div>
+                      <span className="font-semibold">{stats.totalContributors}</span>
+                    </div>
+                    {stats.daysRemaining > 0 && (
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Clock className="w-4 h-4 text-gray-500" />
+                          <span className="text-sm text-gray-600">Days Left</span>
+                        </div>
+                        <span className="font-semibold text-orange-600">
+                          {stats.daysRemaining}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Danger Zone */}
+            <Card className="border-red-200">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg text-red-600 flex items-center gap-2">
+                  <AlertTriangle className="w-4 h-4" />
+                  Danger Zone
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="pt-0">
+                <div className="space-y-3">
+                  <div>
+                    <h3 className="font-medium text-red-600 text-sm">Delete Event</h3>
+                    <p className="text-xs text-gray-600 mt-1">
+                      Permanently delete this event and all its data.
+                    </p>
+                    {event.totalPhotos > 0 || event.totalVideos > 0 ? (
+                      <p className="text-xs text-red-600 mt-1">
+                        Cannot delete event with {event.totalPhotos} photos and{' '}
+                        {event.totalVideos} videos.
+                      </p>
+                    ) : null}
+                  </div>
+                  <Button
+                    variant="destructive"
+                    onClick={handleDelete}
+                    disabled={
+                      isDeleting || event.totalPhotos > 0 || event.totalVideos > 0
+                    }
+                    size="sm"
+                    className="w-full"
+                  >
+                    {isDeleting ? (
+                      <>
+                        <LoadingSpinner className="w-4 h-4 mr-2" />
+                        Deleting...
+                      </>
+                    ) : (
+                      <>
+                        <Trash2 className="w-4 h-4 mr-2" />
+                        Delete Event
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
       </div>
     </div>
   );
