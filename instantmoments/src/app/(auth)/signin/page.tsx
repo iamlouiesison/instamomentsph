@@ -61,7 +61,7 @@ export default function SignInPage() {
       } else {
         router.push('/dashboard');
       }
-    } catch {
+    } catch (error) {
       setError('root', {
         message: 'Something went wrong. Please try again.',
       });

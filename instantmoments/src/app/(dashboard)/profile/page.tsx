@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/card';
 import { Alert } from '@/components/ui/alert';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { MainNavigation } from '@/components/layout';
 import { User, Phone, Mail, Camera, Save } from 'lucide-react';
 import {
   profileUpdateSchema,
@@ -78,26 +79,7 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-muted/20 to-background">
-      {/* Navigation */}
-      <nav className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center">
-                <User className="w-5 h-5 text-primary-foreground" />
-              </div>
-              <span className="text-xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-                InstaMoments
-              </span>
-            </div>
-            <div className="flex items-center space-x-4">
-              <Button asChild variant="outline" size="sm">
-                <Link href="/dashboard">Back to Dashboard</Link>
-              </Button>
-            </div>
-          </div>
-        </div>
-      </nav>
+      <MainNavigation />
 
       {/* Main Content */}
       <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">

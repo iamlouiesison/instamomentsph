@@ -17,15 +17,15 @@ import {
   LoadingSpinner,
   EmptyEvents,
 } from '@/components/instamoments';
+import { MainNavigation } from '@/components/layout';
 import {
-  LogOut,
-  User,
   Calendar,
   Camera,
   Search,
   Filter,
   Users,
   Video,
+  User,
 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -56,10 +56,6 @@ export default function DashboardPage() {
   const [eventsLoading, setEventsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
-
-  const handleSignOut = async () => {
-    await signOut();
-  };
 
   const fetchEvents = useCallback(async () => {
     try {
@@ -152,35 +148,7 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-muted/20 to-background">
       {/* Navigation */}
-      <nav className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center">
-                <Camera className="w-5 h-5 text-primary-foreground" />
-              </div>
-              <span className="text-xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-                InstaMoments
-              </span>
-            </div>
-
-            <div className="flex items-center space-x-4">
-              <span className="text-sm text-muted-foreground">
-                Hello, {profile?.full_name || user?.email}!
-              </span>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleSignOut}
-                className="flex items-center"
-              >
-                <LogOut className="w-4 h-4 mr-2" />
-                Sign Out
-              </Button>
-            </div>
-          </div>
-        </div>
-      </nav>
+      <MainNavigation />
 
       {/* Main Content */}
       <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">

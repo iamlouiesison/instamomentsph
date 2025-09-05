@@ -4,6 +4,10 @@ import {
   EventCreateSchema,
   generateGallerySlug,
 } from '@/lib/validations/event';
+import {
+  transformDatabaseEventsToFrontend,
+  transformDatabaseEventToFrontend,
+} from '@/lib/utils/event-transformer';
 import { z } from 'zod';
 
 // GET /api/events - Get user's events
@@ -57,9 +61,14 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    // Transform database events to frontend format
+    const transformedEvents = events
+      ? transformDatabaseEventsToFrontend(events)
+      : [];
+
     return NextResponse.json({
       success: true,
-      data: events || [],
+      data: transformedEvents,
       meta: {
         page,
         limit,
@@ -153,9 +162,12 @@ export async function POST(request: NextRequest) {
         );
       }
 
+      // Transform the created event to frontend format
+      const transformedEvent = transformDatabaseEventToFrontend(event);
+
       return NextResponse.json({
         success: true,
-        data: event,
+        data: transformedEvent,
       });
     }
 
@@ -192,9 +204,12 @@ export async function POST(request: NextRequest) {
     // TODO: Generate QR code and update event with QR code URL
     // This will be implemented in the QR code generation service
 
+    // Transform the created event to frontend format
+    const transformedEvent = transformDatabaseEventToFrontend(event);
+
     return NextResponse.json({
       success: true,
-      data: event,
+      data: transformedEvent,
     });
   } catch (error) {
     if (error instanceof z.ZodError) {

@@ -18,25 +18,10 @@ import {
 import { FILIPINO_EVENT_TYPES, type EventType } from '@/lib/validations/event';
 import { formatDistanceToNow, format } from 'date-fns';
 import { cn } from '@/lib/utils';
+import { FrontendEvent } from '@/lib/utils/event-transformer';
 
-export interface Event {
-  id: string;
-  name: string;
-  description?: string;
-  eventType: EventType;
-  eventDate?: string;
-  location?: string;
-  gallerySlug: string;
-  subscriptionTier: string;
-  totalPhotos: number;
-  totalVideos: number;
-  totalContributors: number;
-  status: 'active' | 'expired' | 'archived';
-  createdAt: string;
-  expiresAt?: string;
-  hasVideoAddon: boolean;
-  requiresModeration: boolean;
-}
+// Re-export the FrontendEvent as Event for backward compatibility
+export type Event = FrontendEvent;
 
 interface EventCardProps {
   event: Event;
