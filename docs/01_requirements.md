@@ -3,13 +3,13 @@
 ## What We're Building
 
 ### One-Line Vision
-**InstaMoments is a Progressive Web App that creates instant collaborative photo and video galleries for Filipino events through QR code access, enabling real-time memory sharing and personal video greetings for complete event experiences.**
+**InstaMoments is a Progressive Web App that creates instant collaborative photo and video galleries for events through QR code access, enabling real-time memory sharing and personal video greetings for complete event experiences.**
 
 ### Project Identity
 
 **Project Name**: **InstaMoments**
 
-**Executive Summary**: InstaMoments is a Progressive Web App designed specifically for Filipino event culture that enables instant collaborative photo and video galleries through QR code scanning. Attendees can immediately contribute photos, add personal messages, and record 20-second video greetings, creating comprehensive real-time event albums that everyone can view and interact with during and after celebrations.
+**Executive Summary**: InstaMoments is a Progressive Web App designed for event culture that enables instant collaborative photo and video galleries through QR code scanning. Attendees can immediately contribute photos, add personal messages, and record 20-second video greetings, creating comprehensive real-time event albums that everyone can view and interact with during and after celebrations.
 
 **Project Type**:
 - [x] PWA (Progressive Web App)
@@ -22,26 +22,26 @@
 ## Problem & Solution
 
 ### The Core Problem
-Photo and video sharing at Filipino events is completely broken. Guests forget to share photos after long celebrations end, hosts miss candid moments they weren't present for during busy events, photos are scattered everywhere across Facebook, Viber groups, individual phones, and messaging apps. Video messages get lost in different platforms and group chats, there's no easy central collection method, memories stay fragmented across devices, quality is lost through messaging apps and social media compression, app download friction prevents participation from all attendees, personal video greetings are difficult to organize and collect, and event memories fade because photos and videos never get properly organized or shared.
+Photo and video sharing at events is completely broken. Guests forget to share photos after long celebrations end, hosts miss candid moments they weren't present for during busy events, photos are scattered everywhere across Facebook, Viber groups, individual phones, and messaging apps. Video messages get lost in different platforms and group chats, there's no easy central collection method, memories stay fragmented across devices, quality is lost through messaging apps and social media compression, app download friction prevents participation from all attendees, personal video greetings are difficult to organize and collect, and event memories fade because photos and videos never get properly organized or shared.
 
 ### Why This Problem Matters Now
-The Philippine market has reached a perfect convergence point: mobile-first smartphone adoption is nearly universal with everyone comfortable using camera apps and QR codes (mainstream since COVID contact tracing), Filipino celebration culture involves long events with extensive family participation and photo-obsessed sharing behaviors, digital payment adoption through GCash and digital wallets became mainstream post-COVID, and there's high social media engagement where Filipinos love sharing moments and memories online. Additionally, video message traditions and personal greetings are deeply cultural, and the "pasalip" culture means everyone wants to contribute something special to celebrations.
+The market has reached a perfect convergence point: mobile-first smartphone adoption is nearly universal with everyone comfortable using camera apps and QR codes (mainstream since COVID contact tracing), celebration culture involves long events with extensive family participation and photo-obsessed sharing behaviors, digital payment adoption through various digital wallets became mainstream post-COVID, and there's high social media engagement where people love sharing moments and memories online. Additionally, video message traditions and personal greetings are deeply cultural, and the sharing culture means everyone wants to contribute something special to celebrations.
 
 ### Our Solution Approach
-InstaMoments uniquely solves this through a PWA approach that eliminates app download friction - users scan QR codes and their camera opens immediately in the browser. We create real-time galleries where people love seeing content appear live during events, implement smart photo limits that create upgrade pressure while controlling expenses, and offer video greeting uniqueness that no competitors provide in this specific QR + PWA + Video combination. Our approach is perfectly optimized for Filipino celebration culture with aggressive technical optimization that maintains quality while controlling storage costs.
+InstaMoments uniquely solves this through a PWA approach that eliminates app download friction - users scan QR codes and their camera opens immediately in the browser. We create real-time galleries where people love seeing content appear live during events, implement smart photo limits that create upgrade pressure while controlling expenses, and offer video greeting uniqueness that no competitors provide in this specific QR + PWA + Video combination. Our approach is perfectly optimized for celebration culture with aggressive technical optimization that maintains quality while controlling storage costs.
 
 ### Why We Can Win
-We have first-mover advantage in the Philippine market with this specific QR + PWA + Video approach, deep industry connections that provide immediate customer acquisition channels, price points optimized for Philippine market purchasing power, cultural understanding of Filipino celebration and memory-sharing habits, local payment method integration with GCash, PayMaya, and over-the-counter options, Philippines Data Privacy Act compliance that builds trust with local users, and video feature differentiation that provides unique emotional value proposition.
+We have first-mover advantage in the market with this specific QR + PWA + Video approach, deep industry connections that provide immediate customer acquisition channels, price points optimized for market purchasing power, cultural understanding of celebration and memory-sharing habits, local payment method integration with various digital wallets and over-the-counter options, data privacy compliance that builds trust with users, and video feature differentiation that provides unique emotional value proposition.
 
 ## Target Users
 
 ### Primary User Persona
-**Maria Santos, Wedding Planner & Event Coordinator, 32, manages 15-20 weddings per year in Metro Manila**
+**Maria Santos, Wedding Planner & Event Coordinator, 32, manages 15-20 weddings per year**
 
-- **Specific Demographics**: Female, 28-40 years old, college educated, manages events professionally or as side business, tech-savvy with social media, earns ₱40,000-80,000 monthly, based in Metro Manila or major Philippine cities
+- **Specific Demographics**: Female, 28-40 years old, college educated, manages events professionally or as side business, tech-savvy with social media, earns $800-1600 monthly, based in major cities
 - **Current Pain Points**: Manually collecting photos from 10+ vendors and 100+ guests after events, dealing with low-quality compressed images from messaging apps, spending hours organizing scattered photos across platforms, missing candid moments during busy event coordination, struggling to get video greetings from all important guests
 - **Current Solutions & Why They Fail**: Uses Facebook groups (guests don't post), Viber message forwarding (compression issues), manually asking photographers and guests (incomplete collection), Google Photos sharing (guests don't use), traditional video recording (difficult to organize and collect from everyone)
-- **Technical Proficiency**: High social media usage, comfortable with QR codes and mobile apps, uses digital payment methods like GCash regularly, familiar with cloud storage and photo sharing
+- **Technical Proficiency**: High social media usage, comfortable with QR codes and mobile apps, uses digital payment methods regularly, familiar with cloud storage and photo sharing
 - **Jobs to Be Done**: Capture complete event memories without missing moments, collect photos and videos from all attendees seamlessly, present professional memory packages to clients, reduce post-event administrative work, ensure no important memories are lost
 - **Trigger for Seeking Solution**: Frustrated client asking where all the photos are, realizing amazing moments weren't captured, spending entire weekends trying to collect photos from guests, competitors offering better memory services
 
