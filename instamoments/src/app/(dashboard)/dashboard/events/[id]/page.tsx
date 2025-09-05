@@ -6,7 +6,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { EventStats, LoadingSpinner, EmptyStates } from '@/components/instamoments';
+import { EventStats, LoadingSpinner } from '@/components/instamoments';
+import { MainNavigation } from '@/components/layout';
 import {
   ArrowLeft,
   Settings,
@@ -213,15 +214,24 @@ export default function EventManagementPage() {
       <div className="min-h-screen bg-background">
         <MainNavigation />
         <div className="container mx-auto px-4 py-8">
-          <EmptyStates
-            type="error"
-            title="Event Not Found"
-            description={error || 'The event you are looking for does not exist.'}
-            action={{
-              label: 'Back to Dashboard',
-              onClick: () => router.push('/dashboard'),
-            }}
-          />
+          <div className="flex items-center justify-center min-h-[400px]">
+            <Card className="w-full max-w-md">
+              <CardContent className="p-8 text-center space-y-4">
+                <div className="mx-auto w-16 h-16 bg-destructive/10 rounded-full flex items-center justify-center">
+                  <AlertTriangle className="h-8 w-8 text-destructive" />
+                </div>
+                <div className="space-y-2">
+                  <h3 className="font-semibold text-lg">Event Not Found</h3>
+                  <p className="text-muted-foreground">
+                    {error || 'The event you are looking for does not exist.'}
+                  </p>
+                </div>
+                <Button onClick={() => router.push('/dashboard')}>
+                  Back to Dashboard
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </div>
     );

@@ -77,9 +77,9 @@ export default function DashboardPage() {
       const totalStats = result.data.reduce(
         (acc: DashboardStats, event: Event) => {
           acc.totalEvents++;
-          acc.totalContributors += event.total_contributors;
-          acc.totalPhotos += event.total_photos;
-          acc.totalVideos += event.total_videos;
+          acc.totalContributors += event.total_contributors || 0;
+          acc.totalPhotos += event.total_photos || 0;
+          acc.totalVideos += event.total_videos || 0;
           if (event.status === 'active') acc.activeEvents++;
           if (event.status === 'expired') acc.expiredEvents++;
           return acc;
