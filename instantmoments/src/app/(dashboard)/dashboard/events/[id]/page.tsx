@@ -209,7 +209,10 @@ export default function EventDetailsPage() {
                 )}
                 <div className="flex items-center gap-1">
                   <Clock className="w-4 h-4" />
-                  Created {format(new Date(event.createdAt), 'MMM dd, yyyy')}
+                  Created{' '}
+                  {event.createdAt
+                    ? format(new Date(event.createdAt), 'MMM dd, yyyy')
+                    : 'Unknown date'}
                 </div>
               </div>
             </div>

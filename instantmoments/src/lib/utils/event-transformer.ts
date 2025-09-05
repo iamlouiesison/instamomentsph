@@ -49,8 +49,12 @@ export function transformDatabaseEventToFrontend(
     totalVideos: dbEvent.total_videos,
     totalContributors: dbEvent.total_contributors,
     status: dbEvent.status,
-    createdAt: dbEvent.created_at,
-    expiresAt: dbEvent.expires_at || undefined,
+    createdAt: dbEvent.created_at
+      ? new Date(dbEvent.created_at).toISOString()
+      : new Date().toISOString(),
+    expiresAt: dbEvent.expires_at
+      ? new Date(dbEvent.expires_at).toISOString()
+      : undefined,
     hasVideoAddon: dbEvent.has_video_addon,
     requiresModeration: dbEvent.requires_moderation,
   };
