@@ -235,8 +235,10 @@ export default function EventDetailsPage() {
                     : 'Active'}
               </Badge>
               <Badge variant="outline" className="text-sm">
-                {event.subscriptionTier.charAt(0).toUpperCase() +
-                  event.subscriptionTier.slice(1)}
+                {event.subscriptionTier
+                  ? event.subscriptionTier.charAt(0).toUpperCase() +
+                    event.subscriptionTier.slice(1)
+                  : 'Free'}
               </Badge>
               {event.hasVideoAddon && (
                 <Badge
@@ -346,8 +348,10 @@ export default function EventDetailsPage() {
                       <div>
                         <h4 className="font-semibold mb-2">Package</h4>
                         <p className="text-muted-foreground">
-                          {event.subscriptionTier.charAt(0).toUpperCase() +
-                            event.subscriptionTier.slice(1)}
+                          {event.subscriptionTier
+                            ? event.subscriptionTier.charAt(0).toUpperCase() +
+                              event.subscriptionTier.slice(1)
+                            : 'Free'}
                           {event.hasVideoAddon && ' + Video Add-on'}
                         </p>
                       </div>

@@ -44,7 +44,7 @@ export function transformDatabaseEventToFrontend(
     eventDate: dbEvent.event_date || undefined,
     location: dbEvent.location || undefined,
     gallerySlug: dbEvent.gallery_slug,
-    subscriptionTier: dbEvent.subscription_tier,
+    subscriptionTier: dbEvent.subscription_tier || 'free',
     totalPhotos: dbEvent.total_photos,
     totalVideos: dbEvent.total_videos,
     totalContributors: dbEvent.total_contributors,
