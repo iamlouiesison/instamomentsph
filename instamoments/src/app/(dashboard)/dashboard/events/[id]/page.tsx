@@ -13,7 +13,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Progress } from '@/components/ui/progress';
 import { QRCodeDisplay } from '@/components/features/qr-code';
-import { LoadingSpinner, EventStats } from '@/components/instamoments';
+import { LoadingSpinner } from '@/components/instamoments';
 import {
   ArrowLeft,
   Settings,
@@ -459,12 +459,11 @@ export default function EventManagementPage() {
           onValueChange={setActiveTab}
           className="space-y-6"
         >
-          <TabsList className="grid w-full grid-cols-2 lg:grid-cols-6">
+          <TabsList className="grid w-full grid-cols-2 lg:grid-cols-5">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="settings">Settings</TabsTrigger>
             <TabsTrigger value="privacy">Privacy</TabsTrigger>
             <TabsTrigger value="sharing">Sharing</TabsTrigger>
-            <TabsTrigger value="analytics">Analytics</TabsTrigger>
             <TabsTrigger value="actions">Actions</TabsTrigger>
           </TabsList>
 
@@ -938,23 +937,6 @@ export default function EventManagementPage() {
             </Card>
           </TabsContent>
 
-          {/* Analytics Tab */}
-          <TabsContent value="analytics" className="space-y-6">
-            <EventStats
-              eventId={eventId}
-              stats={{
-                totalPhotos: event.total_photos,
-                totalVideos: event.total_videos,
-                totalContributors: event.total_contributors,
-                maxPhotos: event.max_photos,
-                maxVideos: event.has_video_addon ? undefined : 0,
-                storageDays: event.storage_days,
-                daysRemaining: event.daysRemaining,
-                totalViews: 0, // TODO: Implement analytics tracking
-                totalDownloads: 0, // TODO: Implement analytics tracking
-              }}
-            />
-          </TabsContent>
 
           {/* Actions Tab */}
           <TabsContent value="actions" className="space-y-6">
