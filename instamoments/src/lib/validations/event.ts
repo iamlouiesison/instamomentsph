@@ -5,46 +5,57 @@ export const EVENT_TYPES = {
   wedding: {
     label: 'Wedding',
     description: 'Wedding celebration',
+    emoji: '💒',
   },
   birthday: {
     label: 'Birthday',
     description: 'Birthday party',
+    emoji: '🎂',
   },
   debut: {
     label: '18th Birthday',
     description: 'Coming of age celebration',
+    emoji: '👑',
   },
   christening: {
     label: 'Christening',
     description: 'Baptism ceremony',
+    emoji: '👶',
   },
   graduation: {
     label: 'Graduation',
     description: 'Graduation ceremony',
+    emoji: '🎓',
   },
   anniversary: {
     label: 'Anniversary',
     description: 'Anniversary celebration',
+    emoji: '💕',
   },
   corporate: {
     label: 'Company Event',
     description: 'Business gathering',
+    emoji: '🏢',
   },
   concert: {
     label: 'Concert',
     description: 'Musical performance event',
+    emoji: '🎵',
   },
   summit: {
     label: 'Summit',
     description: 'Conference or meeting event',
+    emoji: '🏛️',
   },
   reunion: {
     label: 'Reunion',
     description: 'Family or class reunion',
+    emoji: '👨‍👩‍👧‍👦',
   },
   other: {
     label: 'Other',
     description: 'Other celebration',
+    emoji: '🎉',
   },
 } as const;
 
