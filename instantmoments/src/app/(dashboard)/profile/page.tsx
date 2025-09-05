@@ -17,7 +17,6 @@ import {
 } from '@/components/ui/card';
 import { Alert } from '@/components/ui/alert';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { MainNavigation } from '@/components/layout';
 import { User, Phone, Mail, Camera, Save } from 'lucide-react';
 import {
   profileUpdateSchema,
@@ -79,8 +78,6 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <MainNavigation />
-
       {/* Main Content */}
       <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">

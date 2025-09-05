@@ -17,7 +17,6 @@ import {
   LoadingSpinner,
   EmptyEvents,
 } from '@/components/instamoments';
-import { MainNavigation } from '@/components/layout';
 import {
   Calendar,
   Camera,
@@ -58,6 +57,12 @@ export default function DashboardPage() {
   const [statusFilter, setStatusFilter] = useState<string>('all');
 
   const fetchEvents = useCallback(async () => {
+    // Don't fetch events if user is not authenticated
+    if (!user) {
+      console.log('No user authenticated - skipping events fetch');
+      return;
+    }
+
     try {
       setEventsLoading(true);
       const params = new URLSearchParams();
@@ -69,6 +74,12 @@ export default function DashboardPage() {
       const result = await response.json();
 
       if (!result.success) {
+        // If authentication is required, redirect to sign in instead of throwing error
+        if (result.error?.message === 'Authentication required') {
+          console.log('Authentication required - redirecting to sign in');
+          router.push('/signin');
+          return;
+        }
         throw new Error(result.error.message || 'Failed to fetch events');
       }
 
@@ -78,9 +89,9 @@ export default function DashboardPage() {
       const totalStats = result.data.reduce(
         (acc: DashboardStats, event: Event) => {
           acc.totalEvents++;
-          acc.totalContributors += event.totalContributors;
-          acc.totalPhotos += event.totalPhotos;
-          acc.totalVideos += event.totalVideos;
+          acc.totalContributors += event.totalContributors || 0;
+          acc.totalPhotos += event.totalPhotos || 0;
+          acc.totalVideos += event.totalVideos || 0;
           if (event.status === 'active') acc.activeEvents++;
           if (event.status === 'expired') acc.expiredEvents++;
           return acc;
@@ -102,13 +113,23 @@ export default function DashboardPage() {
     } finally {
       setEventsLoading(false);
     }
-  }, [statusFilter]);
+  }, [statusFilter, user]);
 
   useEffect(() => {
+    console.log('Dashboard useEffect - Auth state:', {
+      hasUser: !!user,
+      userId: user?.id,
+      loading,
+      profile: profile?.id,
+    });
+    
     if (user) {
       fetchEvents();
+    } else if (!loading) {
+      console.log('Dashboard - No user and not loading, redirecting to signin');
+      router.push('/signin');
     }
-  }, [user, statusFilter, fetchEvents]);
+  }, [user, statusFilter, fetchEvents, loading, router]);
 
   const handleEventEdit = (eventId: string) => {
     router.push(`/dashboard/events/${eventId}/edit`);
@@ -147,194 +168,159 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Navigation */}
-      <MainNavigation />
-
-      {/* Main Content */}
-      <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-8">
-          <h2 className="text-3xl font-bold mb-2">Welcome to InstaMoments!</h2>
-          <p className="text-muted-foreground text-lg">
-            Start creating and sharing your Filipino celebration moments.
-          </p>
-        </div>
-
-        {/* Quick Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <Card className="hover:shadow-lg transition-shadow border-0 bg-card/95 backdrop-blur">
-            <CardContent className="p-6">
-              <div className="flex items-center gap-4">
-                <div className="p-3 bg-blue-100 rounded-full">
-                  <Calendar className="w-6 h-6 text-blue-600" />
-                </div>
-                <div>
-                  <p className="text-2xl font-bold">{stats.totalEvents}</p>
-                  <p className="text-sm text-muted-foreground">Total Events</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="hover:shadow-lg transition-shadow border-0 bg-card/95 backdrop-blur">
-            <CardContent className="p-6">
-              <div className="flex items-center gap-4">
-                <div className="p-3 bg-green-100 rounded-full">
-                  <Users className="w-6 h-6 text-green-600" />
-                </div>
-                <div>
-                  <p className="text-2xl font-bold">
-                    {stats.totalContributors}
-                  </p>
-                  <p className="text-sm text-muted-foreground">
-                    Total Contributors
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="hover:shadow-lg transition-shadow border-0 bg-card/95 backdrop-blur">
-            <CardContent className="p-6">
-              <div className="flex items-center gap-4">
-                <div className="p-3 bg-purple-100 rounded-full">
-                  <Camera className="w-6 h-6 text-purple-600" />
-                </div>
-                <div>
-                  <p className="text-2xl font-bold">{stats.totalPhotos}</p>
-                  <p className="text-sm text-muted-foreground">Total Photos</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="hover:shadow-lg transition-shadow border-0 bg-card/95 backdrop-blur">
-            <CardContent className="p-6">
-              <div className="flex items-center gap-4">
-                <div className="p-3 bg-orange-100 rounded-full">
-                  <Video className="w-6 h-6 text-orange-600" />
-                </div>
-                <div>
-                  <p className="text-2xl font-bold">{stats.totalVideos}</p>
-                  <p className="text-sm text-muted-foreground">Total Videos</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <Card className="hover:shadow-lg transition-shadow border-0 bg-card/95 backdrop-blur">
-            <CardHeader>
-              <CardTitle className="flex items-center">
-                <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center mr-3">
-                  <Calendar className="w-5 h-5 text-primary" />
-                </div>
+      <main className="container mx-auto px-4 py-6 max-w-7xl">
+        {/* Compact Header */}
+        <div className="mb-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
+                Welcome to InstaMoments!
+              </h1>
+              <p className="text-gray-600 text-sm sm:text-base mt-1">
+                Start creating and sharing your Filipino celebration moments.
+              </p>
+            </div>
+            <Button asChild className="w-full sm:w-auto">
+              <Link href="/create-event">
+                <Calendar className="w-4 h-4 mr-2" />
                 Create Event
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Button
-                asChild
-                className="w-full text-primary-foreground"
-              >
-                <Link href="/create-event">Create New Event</Link>
-              </Button>
-            </CardContent>
-          </Card>
-
-          <Card className="hover:shadow-lg transition-shadow border-0 bg-card/95 backdrop-blur">
-            <CardHeader>
-              <CardTitle className="flex items-center">
-                <div className="w-10 h-10 bg-secondary/10 rounded-lg flex items-center justify-center mr-3">
-                  <Camera className="w-5 h-5 text-secondary" />
-                </div>
-                My Events
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Button
-                variant="outline"
-                className="w-full"
-                onClick={() => setStatusFilter('active')}
-              >
-                View Active Events
-              </Button>
-            </CardContent>
-          </Card>
-
-          <Card className="hover:shadow-lg transition-shadow border-0 bg-card/95 backdrop-blur">
-            <CardHeader>
-              <CardTitle className="flex items-center">
-                <div className="w-10 h-10 bg-accent/10 rounded-lg flex items-center justify-center mr-3">
-                  <User className="w-5 h-5 text-accent-foreground" />
-                </div>
-                Profile
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Button asChild variant="outline" className="w-full">
-                <Link href="/profile">View Profile</Link>
-              </Button>
-            </CardContent>
-          </Card>
+              </Link>
+            </Button>
+          </div>
         </div>
 
-        {/* Events Management */}
-        <Card className="border-0 bg-card/95 backdrop-blur">
-          <CardHeader>
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-              <CardTitle>Your Events</CardTitle>
-              <div className="flex flex-col sm:flex-row gap-2">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-                  <Input
-                    placeholder="Search events..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-10 w-full sm:w-64"
-                  />
+        {/* Main Content Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+          {/* Left Column - Stats & Quick Actions */}
+          <div className="lg:col-span-1 space-y-6">
+            {/* Compact Stats */}
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg">Overview</CardTitle>
+              </CardHeader>
+              <CardContent className="pt-0 space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Calendar className="w-4 h-4 text-blue-600" />
+                    <span className="text-sm text-gray-600">Events</span>
+                  </div>
+                  <span className="font-semibold text-lg">{stats.totalEvents}</span>
                 </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Users className="w-4 h-4 text-green-600" />
+                    <span className="text-sm text-gray-600">Contributors</span>
+                  </div>
+                  <span className="font-semibold text-lg">{stats.totalContributors}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Camera className="w-4 h-4 text-purple-600" />
+                    <span className="text-sm text-gray-600">Photos</span>
+                  </div>
+                  <span className="font-semibold text-lg">{stats.totalPhotos}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Video className="w-4 h-4 text-orange-600" />
+                    <span className="text-sm text-gray-600">Videos</span>
+                  </div>
+                  <span className="font-semibold text-lg">{stats.totalVideos}</span>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Quick Actions */}
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg">Quick Actions</CardTitle>
+              </CardHeader>
+              <CardContent className="pt-0 space-y-3">
+                <Button
+                  variant="outline"
+                  onClick={() => setStatusFilter('active')}
+                  className="w-full justify-start"
+                  size="sm"
+                >
+                  <Camera className="w-4 h-4 mr-2" />
+                  Active Events
+                </Button>
+                <Button asChild variant="outline" className="w-full justify-start" size="sm">
+                  <Link href="/profile">
+                    <User className="w-4 h-4 mr-2" />
+                    View Profile
+                  </Link>
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Status Filter */}
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg">Filter Events</CardTitle>
+              </CardHeader>
+              <CardContent className="pt-0">
                 <Select value={statusFilter} onValueChange={setStatusFilter}>
-                  <SelectTrigger className="w-full sm:w-32">
+                  <SelectTrigger className="w-full">
                     <Filter className="w-4 h-4 mr-2" />
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">All</SelectItem>
-                    <SelectItem value="active">Active</SelectItem>
-                    <SelectItem value="expired">Expired</SelectItem>
-                    <SelectItem value="archived">Archived</SelectItem>
+                    <SelectItem value="all">All Events</SelectItem>
+                    <SelectItem value="active">Active Only</SelectItem>
+                    <SelectItem value="expired">Expired Only</SelectItem>
+                    <SelectItem value="archived">Archived Only</SelectItem>
                   </SelectContent>
                 </Select>
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent>
-            {eventsLoading ? (
-              <div className="flex items-center justify-center py-12">
-                <LoadingSpinner className="w-8 h-8 mr-2" />
-                <span>Loading events...</span>
-              </div>
-            ) : filteredEvents.length === 0 ? (
-              <EmptyEvents onCreateEvent={() => router.push('/create-event')} />
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredEvents.map((event) => (
-                  <EventCard
-                    key={event.id}
-                    event={event}
-                    onEdit={handleEventEdit}
-                    onView={handleEventView}
-                    onShare={handleEventShare}
-                    onSettings={handleEventSettings}
-                    showActions={true}
-                  />
-                ))}
-              </div>
-            )}
-          </CardContent>
-        </Card>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Right Column - Events */}
+          <div className="lg:col-span-3">
+            <Card>
+              <CardHeader className="pb-4">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <CardTitle className="text-xl">Your Events</CardTitle>
+                  <div className="relative w-full sm:w-80">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+                    <Input
+                      placeholder="Search events..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="pl-10"
+                    />
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent className="pt-0">
+                {eventsLoading ? (
+                  <div className="flex items-center justify-center py-12">
+                    <LoadingSpinner className="w-8 h-8 mr-2" />
+                    <span>Loading events...</span>
+                  </div>
+                ) : filteredEvents.length === 0 ? (
+                  <EmptyEvents onCreateEvent={() => router.push('/create-event')} />
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                    {filteredEvents.map((event) => (
+                      <EventCard
+                        key={event.id}
+                        event={event}
+                        onEdit={handleEventEdit}
+                        onView={handleEventView}
+                        onShare={handleEventShare}
+                        onSettings={handleEventSettings}
+                        showActions={true}
+                        showQRCode={false}
+                      />
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+        </div>
       </main>
     </div>
   );

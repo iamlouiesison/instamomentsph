@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { ABeeZee, Lora, Fira_Code } from 'next/font/google';
 import './globals.css';
 import { AuthProvider } from '@/components/providers/AuthProvider';
+import { GlobalNavigation } from '@/components/layout';
 
 const abeeZee = ABeeZee({
   variable: '--font-sans',
@@ -110,7 +111,10 @@ export default function RootLayout({
       <body
         className={`${abeeZee.variable} ${lora.variable} ${firaCode.variable} antialiased`}
       >
-        <AuthProvider>{children}</AuthProvider>
+        <AuthProvider>
+          <GlobalNavigation />
+          {children}
+        </AuthProvider>
       </body>
     </html>
   );
