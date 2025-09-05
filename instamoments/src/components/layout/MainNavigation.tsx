@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useAuthContext } from '@/components/providers/AuthProvider';
 import { Button } from '@/components/ui/button';
 import {
@@ -31,10 +31,15 @@ interface MainNavigationProps {
 export function MainNavigation({ className }: MainNavigationProps) {
   const { user, profile, signOut } = useAuthContext();
   const pathname = usePathname();
+  const router = useRouter();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const handleSignOut = async () => {
-    await signOut();
+    const { error } = await signOut();
+    if (!error) {
+      // Redirect to sign-in page after successful logout
+      router.push('/signin');
+    }
     setIsMobileMenuOpen(false);
   };
 
