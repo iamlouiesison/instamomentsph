@@ -1,55 +1,49 @@
 import { z } from 'zod';
-import {
-  Heart,
-  Cake,
-  Crown,
-  Baby,
-  GraduationCap,
-  HeartHandshake,
-  Building2,
-  PartyPopper,
-} from 'lucide-react';
 
 // Event types for celebrations and gatherings
 export const EVENT_TYPES = {
   wedding: {
     label: 'Wedding',
-    icon: Heart,
     description: 'Wedding celebration',
   },
   birthday: {
     label: 'Birthday',
-    icon: Cake,
     description: 'Birthday party',
   },
   debut: {
     label: '18th Birthday',
-    icon: Crown,
     description: 'Coming of age celebration',
   },
   christening: {
     label: 'Christening',
-    icon: Baby,
     description: 'Baptism ceremony',
   },
   graduation: {
     label: 'Graduation',
-    icon: GraduationCap,
     description: 'Graduation ceremony',
   },
   anniversary: {
     label: 'Anniversary',
-    icon: HeartHandshake,
     description: 'Anniversary celebration',
   },
   corporate: {
     label: 'Company Event',
-    icon: Building2,
     description: 'Business gathering',
+  },
+  concert: {
+    label: 'Concert',
+    description: 'Musical performance event',
+  },
+  summit: {
+    label: 'Summit',
+    description: 'Conference or meeting event',
+  },
+  reunion: {
+    label: 'Reunion',
+    description: 'Family or class reunion',
   },
   other: {
     label: 'Other',
-    icon: PartyPopper,
     description: 'Other celebration',
   },
 } as const;

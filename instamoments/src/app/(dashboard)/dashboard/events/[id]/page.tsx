@@ -357,7 +357,6 @@ export default function EventManagementPage() {
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-3 mb-2">
-                <span className="text-2xl">{eventTypeConfig.icon}</span>
                 <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 truncate">
                   {event.name}
                 </h1>
@@ -662,7 +661,7 @@ export default function EventManagementPage() {
                       {Object.entries(EVENT_TYPES).map(
                         ([key, config]) => (
                           <option key={key} value={key}>
-                            {config.icon} {config.label}
+                            {config.label}
                           </option>
                         )
                       )}

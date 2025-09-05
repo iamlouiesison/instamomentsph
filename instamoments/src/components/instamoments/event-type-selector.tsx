@@ -38,9 +38,6 @@ export const EventTypeSelector: React.FC<EventTypeSelectorProps> = ({
             onClick={() => onSelect(key as EventType)}
           >
             <CardContent className="p-4 text-center">
-              <div className="flex justify-center mb-2">
-                <eventType.icon className="w-8 h-8 text-gray-700" />
-              </div>
               <h3 className="font-semibold text-sm mb-1">{eventType.label}</h3>
               <p className="text-xs text-muted-foreground leading-tight">
                 {eventType.description}

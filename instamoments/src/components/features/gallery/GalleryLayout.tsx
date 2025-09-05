@@ -124,7 +124,6 @@ export function GalleryLayout({
                       variant="secondary"
                       className="flex items-center gap-1"
                     >
-                      <eventTypeInfo.icon className="w-3 h-3 text-gray-700" />
                       {eventTypeInfo.label}
                     </Badge>
                   )}
