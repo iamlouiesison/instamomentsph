@@ -25,13 +25,20 @@ export function useAuth() {
   const supabase = createClient();
 
   useEffect(() => {
+    let mounted = true;
+
     // Get initial session
     const getInitialSession = async () => {
       try {
+        console.log('Getting initial session...');
         const {
           data: { session },
           error,
         } = await supabase.auth.getSession();
+
+        console.log('Initial session result:', { hasSession: !!session, hasUser: !!session?.user, error: error?.message });
+
+        if (!mounted) return;
 
         if (error) {
           setAuthState((prev) => ({
@@ -50,26 +57,35 @@ export function useAuth() {
             .eq('id', session.user.id)
             .single();
 
-          setAuthState({
-            user: session.user,
-            profile: profile || null,
-            loading: false,
-            error: profileError?.message || null,
-          });
+          console.log('Profile result:', { hasProfile: !!profile, error: profileError?.message });
+
+          if (mounted) {
+            setAuthState({
+              user: session.user,
+              profile: profile || null,
+              loading: false,
+              error: profileError?.message || null,
+            });
+          }
         } else {
-          setAuthState({
-            user: null,
-            profile: null,
-            loading: false,
-            error: null,
-          });
+          if (mounted) {
+            setAuthState({
+              user: null,
+              profile: null,
+              loading: false,
+              error: null,
+            });
+          }
         }
       } catch (error) {
-        setAuthState((prev) => ({
-          ...prev,
-          error: error instanceof Error ? error.message : 'An error occurred',
-          loading: false,
-        }));
+        console.error('Error getting initial session:', error);
+        if (mounted) {
+          setAuthState((prev) => ({
+            ...prev,
+            error: error instanceof Error ? error.message : 'An error occurred',
+            loading: false,
+          }));
+        }
       }
     };
 
@@ -77,14 +93,16 @@ export function useAuth() {
 
     // Fallback timeout to prevent infinite loading
     const timeout = setTimeout(() => {
-      setAuthState((prev) => {
-        if (prev.loading) {
-          console.warn('Auth loading timeout - setting loading to false');
-          return { ...prev, loading: false };
-        }
-        return prev;
-      });
-    }, 10000); // 10 second timeout
+      if (mounted) {
+        console.warn('Auth loading timeout - setting loading to false');
+        setAuthState((prev) => {
+          if (prev.loading) {
+            return { ...prev, loading: false };
+          }
+          return prev;
+        });
+      }
+    }, 5000); // 5 second timeout
 
     // Listen for auth changes
     const {
@@ -92,6 +110,8 @@ export function useAuth() {
     } = supabase.auth.onAuthStateChange(async (event, session) => {
       console.log('Auth state change:', event, !!session?.user);
       
+      if (!mounted) return;
+
       if (event === 'SIGNED_IN' && session?.user) {
         // Get user profile
         const { data: profile, error: profileError } = await supabase
@@ -153,6 +173,7 @@ export function useAuth() {
     });
 
     return () => {
+      mounted = false;
       clearTimeout(timeout);
       subscription.unsubscribe();
     };
