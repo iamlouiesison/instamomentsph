@@ -9,9 +9,7 @@ import {
   Users,
   Camera,
   Video,
-  Settings,
   ExternalLink,
-  QrCode,
   Clock,
 } from 'lucide-react';
 import { CalendarIcon } from '@/components/ui/calendar-icon';
@@ -27,8 +25,6 @@ interface EventCardProps {
   event: Event;
   onEdit?: (eventId: string) => void;
   onView?: (eventId: string) => void;
-  onShare?: (eventId: string) => void;
-  onSettings?: (eventId: string) => void;
   showActions?: boolean;
   showQRCode?: boolean;
   className?: string;
@@ -37,8 +33,6 @@ interface EventCardProps {
 export const EventCard: React.FC<EventCardProps> = ({
   event,
   onView,
-  onShare,
-  onSettings,
   showActions = true,
   showQRCode = true,
   className,
@@ -179,27 +173,11 @@ export const EventCard: React.FC<EventCardProps> = ({
             <Button
               variant="outline"
               size="sm"
-              onClick={() => onShare?.(event.id)}
-              className="flex-1"
-            >
-              <QrCode className="w-4 h-4 mr-1" />
-              Share QR
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
               onClick={() => onView?.(event.id)}
-              className="flex-1"
+              className="w-full"
             >
               <ExternalLink className="w-4 h-4 mr-1" />
               View
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => onSettings?.(event.id)}
-            >
-              <Settings className="w-4 h-4" />
             </Button>
           </div>
         )}
