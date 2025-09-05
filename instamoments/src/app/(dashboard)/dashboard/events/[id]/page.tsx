@@ -35,7 +35,7 @@ interface Event {
   location?: string;
   eventType: string;
   eventDate?: string;
-  subscriptionTier: string;
+  subscriptionTier?: string;
   totalPhotos: number;
   totalVideos: number;
   totalContributors: number;
@@ -114,7 +114,7 @@ export default function EventManagementPage() {
     }
   };
 
-  const getMaxPhotos = (tier: string): number => {
+  const getMaxPhotos = (tier?: string): number => {
     const limits = {
       free: 30,
       basic: 50,
@@ -125,7 +125,7 @@ export default function EventManagementPage() {
     return limits[tier as keyof typeof limits] || 30;
   };
 
-  const getMaxVideos = (tier: string): number => {
+  const getMaxVideos = (tier?: string): number => {
     const limits = {
       free: 0,
       basic: 0,
@@ -136,7 +136,7 @@ export default function EventManagementPage() {
     return limits[tier as keyof typeof limits] || 0;
   };
 
-  const getStorageDays = (tier: string): number => {
+  const getStorageDays = (tier?: string): number => {
     const limits = {
       free: 3,
       basic: 7,
@@ -263,7 +263,10 @@ export default function EventManagementPage() {
                 {isExpired ? 'Expired' : 'Active'}
               </Badge>
               <Badge variant="outline">
-                {event.subscriptionTier.charAt(0).toUpperCase() + event.subscriptionTier.slice(1)}
+                {event.subscriptionTier ? 
+                  event.subscriptionTier.charAt(0).toUpperCase() + event.subscriptionTier.slice(1) : 
+                  'Unknown'
+                }
               </Badge>
             </div>
           </div>

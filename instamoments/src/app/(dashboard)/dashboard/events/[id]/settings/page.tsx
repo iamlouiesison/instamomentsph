@@ -47,7 +47,7 @@ interface Event {
   location?: string;
   eventType: string;
   eventDate?: string;
-  subscriptionTier: string;
+  subscriptionTier?: string;
   totalPhotos: number;
   totalVideos: number;
   totalContributors: number;
@@ -212,7 +212,10 @@ export default function EventSettingsPage() {
                 {isExpired ? 'Expired' : 'Active'}
               </Badge>
               <Badge variant="outline">
-                {event.subscriptionTier.charAt(0).toUpperCase() + event.subscriptionTier.slice(1)}
+                {event.subscriptionTier ? 
+                  event.subscriptionTier.charAt(0).toUpperCase() + event.subscriptionTier.slice(1) : 
+                  'Unknown'
+                }
               </Badge>
             </div>
           </div>
