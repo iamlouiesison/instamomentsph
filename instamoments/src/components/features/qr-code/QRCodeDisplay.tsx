@@ -342,7 +342,7 @@ export function QRCodeDisplay({
           <div className="bg-muted/50 rounded-lg p-4">
             <h4 className="font-semibold mb-3 flex items-center gap-2">
               <Smartphone className="h-4 w-4" />
-              Paano gamitin ng mga bisita:
+              How guests can use this:
             </h4>
             <ol className="space-y-2 text-sm text-muted-foreground">
               <li className="flex items-start gap-2">
