@@ -15,7 +15,6 @@ import {
   PackageSelector,
   LoadingSpinner,
 } from '@/components/instamoments';
-import { MainNavigation } from '@/components/layout';
 import {
   EventCreateSchema,
   type EventType,
@@ -145,7 +144,6 @@ export default function CreateEventPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <MainNavigation />
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">

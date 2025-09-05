@@ -20,6 +20,12 @@ export async function GET(request: NextRequest) {
     } = await supabase.auth.getUser();
 
     if (authError || !user) {
+      console.log('API Route - Authentication failed:', {
+        authError: authError?.message,
+        hasUser: !!user,
+        userAgent: request.headers.get('user-agent'),
+        cookies: request.headers.get('cookie'),
+      });
       return NextResponse.json(
         {
           success: false,

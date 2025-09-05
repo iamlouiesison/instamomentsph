@@ -6,7 +6,6 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { MainNavigation } from '@/components/layout';
 import { EventStats, LoadingSpinner, EmptyStates } from '@/components/instamoments';
 import {
   ArrowLeft,
@@ -236,7 +235,6 @@ export default function EventManagementPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <MainNavigation />
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">

@@ -17,7 +17,6 @@ import {
   LoadingSpinner,
   EmptyEvents,
 } from '@/components/instamoments';
-import { MainNavigation } from '@/components/layout';
 import {
   Calendar,
   Camera,
@@ -105,10 +104,21 @@ export default function DashboardPage() {
   }, [statusFilter]);
 
   useEffect(() => {
+    console.log('Dashboard useEffect - User state:', {
+      hasUser: !!user,
+      userId: user?.id,
+      userEmail: user?.email,
+      loading,
+      profile: profile?.id,
+    });
+    
     if (user) {
       fetchEvents();
+    } else if (!loading) {
+      console.log('Dashboard - No user and not loading, redirecting to signin');
+      router.push('/signin');
     }
-  }, [user, statusFilter, fetchEvents]);
+  }, [user, statusFilter, fetchEvents, loading, router]);
 
   const handleEventEdit = (eventId: string) => {
     router.push(`/dashboard/events/${eventId}/edit`);
@@ -147,9 +157,6 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Navigation */}
-      <MainNavigation />
-
       {/* Main Content */}
       <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
