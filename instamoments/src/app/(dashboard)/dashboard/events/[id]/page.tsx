@@ -452,26 +452,6 @@ export default function EventManagementPage() {
           </Alert>
         )}
 
-        {/* QR Code Display */}
-        {showQRCode && (
-          <Card className="mb-6">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <QrCode className="w-5 h-5" />
-                QR Code for Guests
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <QRCodeDisplay
-                event={event}
-                size="large"
-                showInstructions={true}
-                showDownloadOptions={true}
-                branded={true}
-              />
-            </CardContent>
-          </Card>
-        )}
 
         {/* Main Content Tabs */}
         <Tabs
