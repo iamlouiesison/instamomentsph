@@ -12,15 +12,7 @@ export async function middleware(request: NextRequest) {
     },
   });
 
-  // Create Supabase client
-  const supabase = await createClient();
-
-  // Get the current user
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  // Define protected routes
+  // Only check authentication for protected routes to avoid interfering with client-side auth
   const protectedRoutes = [
     '/dashboard',
     '/create-event',
@@ -29,31 +21,28 @@ export async function middleware(request: NextRequest) {
     '/complete-profile',
   ];
 
-  // Define auth routes (should redirect if already authenticated)
-  const authRoutes = ['/signin', '/signup', '/reset-password'];
-
-  // Define public routes (always accessible)
-  const publicRoutes = [
-    '/',
-    '/gallery',
-    '/about',
-    '/contact',
-    '/privacy',
-    '/terms',
-  ];
-
-  // Check if the current path is protected
   const isProtectedRoute = protectedRoutes.some((route) =>
     pathname.startsWith(route)
   );
 
+  // Skip auth check for non-protected routes
+  if (!isProtectedRoute) {
+    return response;
+  }
+
+  // Create Supabase client only when needed
+  const supabase = await createClient();
+
+  // Get the current user
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  // Define auth routes (should redirect if already authenticated)
+  const authRoutes = ['/signin', '/signup', '/reset-password'];
+
   // Check if the current path is an auth route
   const isAuthRoute = authRoutes.some((route) => pathname.startsWith(route));
-
-  // Check if the current path is public
-  // const isPublicRoute = publicRoutes.some(
-  //   (route) => pathname === route || pathname.startsWith(route + '/')
-  // );
 
   // Handle protected routes
   if (isProtectedRoute && !user) {
