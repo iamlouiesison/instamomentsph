@@ -12,7 +12,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { LoadingSpinner, EmptyStates } from '@/components/instamoments';
+import { LoadingSpinner, EmptyEvents, EmptyPhotos, EmptyGallery, EmptyGuests, EmptySearch, EmptyNotifications, EmptyComments } from '@/components/instamoments';
+import { MainNavigation } from '@/components/layout';
 import {
   ArrowLeft,
   Save,
@@ -165,8 +166,7 @@ export default function EventSettingsPage() {
       <div className="min-h-screen bg-background">
         <MainNavigation />
         <div className="container mx-auto px-4 py-8">
-          <EmptyStates
-            type="error"
+          <EmptyEvents
             title="Event Not Found"
             description={error || 'The event you are looking for does not exist.'}
             action={{

@@ -2,7 +2,7 @@
  * Event expiration handling and cleanup service
  */
 
-import { createClient } from '@/lib/supabase/admin';
+import { createAdminClient } from '@/lib/supabase/admin';
 import { getSubscriptionLimits } from './subscription-limits';
 
 export interface ExpiredEvent {
@@ -28,7 +28,7 @@ export interface ExpirationStats {
  * Find events that have expired
  */
 export async function findExpiredEvents(): Promise<ExpiredEvent[]> {
-  const supabase = createClient();
+  const supabase = createAdminClient();
   const now = new Date().toISOString();
 
   const { data: events, error } = await supabase
@@ -59,7 +59,7 @@ export async function findExpiredEvents(): Promise<ExpiredEvent[]> {
  * Mark an event as expired
  */
 export async function markEventAsExpired(eventId: string): Promise<void> {
-  const supabase = createClient();
+  const supabase = createAdminClient();
 
   const { error } = await supabase
     .from('events')
@@ -83,7 +83,7 @@ export async function deleteEventContent(eventId: string): Promise<{
   videosDeleted: number;
   storageFreed: number;
 }> {
-  const supabase = createClient();
+  const supabase = createAdminClient();
   let photosDeleted = 0;
   let videosDeleted = 0;
   let storageFreed = 0;
@@ -253,7 +253,7 @@ export function isEventExpiringSoon(
 export async function getEventsExpiringSoon(
   hoursThreshold: number = 24
 ): Promise<ExpiredEvent[]> {
-  const supabase = createClient();
+  const supabase = createAdminClient();
   const now = new Date();
   const threshold = new Date(now.getTime() + hoursThreshold * 60 * 60 * 1000);
 
@@ -289,7 +289,7 @@ export async function extendEventExpiration(
   eventId: string,
   newSubscriptionTier: string
 ): Promise<void> {
-  const supabase = createClient();
+  const supabase = createAdminClient();
   const newExpirationDate = calculateExpirationDate(
     new Date().toISOString(),
     newSubscriptionTier
@@ -314,7 +314,7 @@ export async function extendEventExpiration(
  * Archive an event (soft delete)
  */
 export async function archiveEvent(eventId: string): Promise<void> {
-  const supabase = createClient();
+  const supabase = createAdminClient();
 
   const { error } = await supabase
     .from('events')
@@ -334,7 +334,7 @@ export async function archiveEvent(eventId: string): Promise<void> {
  * Restore an archived event
  */
 export async function restoreEvent(eventId: string): Promise<void> {
-  const supabase = createClient();
+  const supabase = createAdminClient();
 
   const { error } = await supabase
     .from('events')

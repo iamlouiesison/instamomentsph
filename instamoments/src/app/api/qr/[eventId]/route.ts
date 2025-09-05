@@ -40,19 +40,34 @@ export async function GET(
       .from('events')
       .select('*')
       .eq('id', eventId)
-      .eq('status', 'active')
       .single();
 
     if (eventError || !event) {
+      console.error('Event fetch error:', eventError);
       return NextResponse.json(
         {
           success: false,
           error: {
             code: 'EVENT_NOT_FOUND',
-            message: 'Event not found or inactive',
+            message: 'Event not found',
+            details: eventError?.message || 'No event found with this ID',
           },
         },
         { status: 404 }
+      );
+    }
+
+    // Check if event is active (if status column exists)
+    if (event.status && event.status !== 'active') {
+      return NextResponse.json(
+        {
+          success: false,
+          error: {
+            code: 'EVENT_INACTIVE',
+            message: 'Event is not active',
+          },
+        },
+        { status: 410 }
       );
     }
 
@@ -125,8 +140,17 @@ export async function GET(
     });
 
     if (typeof qrCodeData === 'string') {
-      return new NextResponse(qrCodeData, { headers });
+      // If it's a data URL, convert it to binary
+      if (qrCodeData.startsWith('data:')) {
+        const base64Data = qrCodeData.split(',')[1];
+        const binaryData = Buffer.from(base64Data, 'base64');
+        return new NextResponse(binaryData, { headers });
+      } else {
+        // If it's SVG or other text format
+        return new NextResponse(qrCodeData, { headers });
+      }
     } else {
+      // If it's already binary data
       return new NextResponse(qrCodeData, { headers });
     }
   } catch (error) {
