@@ -57,6 +57,12 @@ export default function DashboardPage() {
   const [statusFilter, setStatusFilter] = useState<string>('all');
 
   const fetchEvents = useCallback(async () => {
+    // Don't fetch events if user is not authenticated
+    if (!user) {
+      console.log('No user authenticated - skipping events fetch');
+      return;
+    }
+
     try {
       setEventsLoading(true);
       const params = new URLSearchParams();
@@ -68,6 +74,12 @@ export default function DashboardPage() {
       const result = await response.json();
 
       if (!result.success) {
+        // If authentication is required, redirect to sign in instead of throwing error
+        if (result.error?.message === 'Authentication required') {
+          console.log('Authentication required - redirecting to sign in');
+          router.push('/signin');
+          return;
+        }
         throw new Error(result.error.message || 'Failed to fetch events');
       }
 
@@ -101,7 +113,7 @@ export default function DashboardPage() {
     } finally {
       setEventsLoading(false);
     }
-  }, [statusFilter]);
+  }, [statusFilter, user]);
 
   useEffect(() => {
     console.log('Dashboard useEffect - Auth state:', {
