@@ -11,7 +11,7 @@ import {
 } from 'lucide-react';
 
 // Event types for celebrations and gatherings
-export const FILIPINO_EVENT_TYPES = {
+export const EVENT_TYPES = {
   wedding: {
     label: 'Wedding',
     icon: Heart,
@@ -233,6 +233,6 @@ export type EventUpdateData = z.infer<typeof EventUpdateSchema>;
 export type EventUpgradeData = z.infer<typeof EventUpgradeSchema>;
 export type EventSettingsData = z.infer<typeof EventSettingsSchema>;
 
-export type EventType = keyof typeof FILIPINO_EVENT_TYPES;
+export type EventType = keyof typeof EVENT_TYPES;
 export type SubscriptionTier = keyof typeof SUBSCRIPTION_TIERS;
 export type PaymentMethod = 'gcash' | 'paymaya' | 'card' | 'otc';

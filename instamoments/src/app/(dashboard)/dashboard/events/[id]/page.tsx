@@ -80,56 +80,12 @@ interface Event {
   videoLimitReached: boolean;
 }
 
-// Filipino Event Types Configuration
-const FILIPINO_EVENT_TYPES = {
-  wedding: {
-    label: 'Kasal',
-    icon: '💒',
-    color: 'bg-rose-50 border-rose-200 text-rose-900',
-    description: 'Wedding celebration',
-  },
-  birthday: {
-    label: 'Kaarawan',
-    icon: '🎂',
-    color: 'bg-blue-50 border-blue-200 text-blue-900',
-    description: 'Birthday party',
-  },
-  debut: {
-    label: '18th Birthday',
-    icon: '👑',
-    color: 'bg-purple-50 border-purple-200 text-purple-900',
-    description: 'Coming of age celebration',
-  },
-  christening: {
-    label: 'Binyag',
-    icon: '👶',
-    color: 'bg-green-50 border-green-200 text-green-900',
-    description: 'Baptism ceremony',
-  },
-  graduation: {
-    label: 'Pagtatapos',
-    icon: '🎓',
-    color: 'bg-emerald-50 border-emerald-200 text-emerald-900',
-    description: 'Graduation ceremony',
-  },
-  corporate: {
-    label: 'Company Event',
-    icon: '🏢',
-    color: 'bg-gray-50 border-gray-200 text-gray-900',
-    description: 'Business gathering',
-  },
-  other: {
-    label: 'Other',
-    icon: '🎉',
-    color: 'bg-yellow-50 border-yellow-200 text-yellow-900',
-    description: 'Special occasion',
-  },
-};
+import { EVENT_TYPES } from '@/lib/validations/event';
 
 const getEventTypeConfig = (eventType: string) => {
   return (
-    FILIPINO_EVENT_TYPES[eventType as keyof typeof FILIPINO_EVENT_TYPES] ||
-    FILIPINO_EVENT_TYPES.other
+    EVENT_TYPES[eventType as keyof typeof EVENT_TYPES] ||
+    EVENT_TYPES.other
   );
 };
 
@@ -703,7 +659,7 @@ export default function EventManagementPage() {
                       }
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
-                      {Object.entries(FILIPINO_EVENT_TYPES).map(
+                      {Object.entries(EVENT_TYPES).map(
                         ([key, config]) => (
                           <option key={key} value={key}>
                             {config.icon} {config.label}

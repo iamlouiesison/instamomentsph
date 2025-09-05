@@ -27,7 +27,7 @@ import {
   Clock,
 } from 'lucide-react';
 import { Event } from '@/types/database';
-import { FILIPINO_EVENT_TYPES } from '@/lib/validations/event';
+import { EVENT_TYPES } from '@/lib/validations/event';
 import { QRScanner } from '@/components/features/qr-code/QRScanner';
 import { PhotoGallery } from './PhotoGallery';
 import { toast } from 'sonner';
@@ -46,7 +46,7 @@ export function GalleryPage({ event }: GalleryPageProps) {
   });
   const router = useRouter();
 
-  const eventTypeInfo = FILIPINO_EVENT_TYPES[event.event_type];
+  const eventTypeInfo = EVENT_TYPES[event.event_type];
 
   // Check if event is still active
   const isEventActive =

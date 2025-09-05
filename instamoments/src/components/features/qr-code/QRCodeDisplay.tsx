@@ -21,7 +21,7 @@ import {
   Smartphone,
 } from 'lucide-react';
 import { Event } from '@/types/database';
-import { FILIPINO_EVENT_TYPES } from '@/lib/validations/event';
+import { EVENT_TYPES } from '@/lib/validations/event';
 import { toast } from 'sonner';
 
 interface QRCodeDisplayProps {
@@ -191,7 +191,7 @@ export function QRCodeDisplay({
             <div class="qr-container">
               <div class="event-info">
                 <h1>${event.name}</h1>
-                <p>${FILIPINO_EVENT_TYPES[event.event_type]?.label || event.event_type}</p>
+                <p>${EVENT_TYPES[event.event_type]?.label || event.event_type}</p>
                 ${event.event_date ? `<p>${new Date(event.event_date).toLocaleDateString('en-PH')}</p>` : ''}
               </div>
               <img src="/api/qr/${event.id}?format=print&size=512&branded=${branded}" 
@@ -216,7 +216,7 @@ export function QRCodeDisplay({
     }
   };
 
-  const eventTypeInfo = FILIPINO_EVENT_TYPES[event.event_type];
+  const eventTypeInfo = EVENT_TYPES[event.event_type];
 
   if (error) {
     return (

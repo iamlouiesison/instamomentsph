@@ -3,7 +3,7 @@
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { FILIPINO_EVENT_TYPES, type EventType } from '@/lib/validations/event';
+import { EVENT_TYPES, type EventType } from '@/lib/validations/event';
 import { cn } from '@/lib/utils';
 
 interface EventTypeSelectorProps {
@@ -24,7 +24,7 @@ export const EventTypeSelector: React.FC<EventTypeSelectorProps> = ({
         className
       )}
     >
-      {Object.entries(FILIPINO_EVENT_TYPES).map(([key, eventType]) => {
+      {Object.entries(EVENT_TYPES).map(([key, eventType]) => {
         const isSelected = selectedType === key;
         return (
           <Card

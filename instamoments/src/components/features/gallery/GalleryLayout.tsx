@@ -28,7 +28,7 @@ import {
 import { PhotoGallery } from './PhotoGallery';
 import { GalleryOptimization } from './GalleryOptimization';
 import { Event } from '@/types/database';
-import { FILIPINO_EVENT_TYPES } from '@/lib/validations/event';
+import { EVENT_TYPES } from '@/lib/validations/event';
 import { format } from 'date-fns';
 
 interface GalleryLayoutProps {
@@ -46,7 +46,7 @@ export function GalleryLayout({
 }: GalleryLayoutProps) {
   const [activeTab, setActiveTab] = useState('gallery');
 
-  const eventTypeInfo = FILIPINO_EVENT_TYPES[event.event_type];
+  const eventTypeInfo = EVENT_TYPES[event.event_type];
 
   // Check if event is still active
   const isEventActive =

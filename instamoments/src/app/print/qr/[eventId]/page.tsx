@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import { createClient } from '@/lib/supabase/client';
 import { Event } from '@/types/database';
-import { FILIPINO_EVENT_TYPES } from '@/lib/validations/event';
+import { EVENT_TYPES } from '@/lib/validations/event';
 import { format } from 'date-fns';
 import { useEffect, useState } from 'react';
 import { LoadingSpinner } from '@/components/instamoments';
@@ -69,7 +69,7 @@ export default function PrintQRPage({
     notFound();
   }
 
-  const eventTypeInfo = FILIPINO_EVENT_TYPES[event.event_type];
+  const eventTypeInfo = EVENT_TYPES[event.event_type];
   const qrCodeUrl = `/api/qr/${event.id}?format=print&size=512&branded=true`;
 
   // Size configurations
