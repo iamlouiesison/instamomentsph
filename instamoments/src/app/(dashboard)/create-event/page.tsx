@@ -80,7 +80,8 @@ export default function CreateEventPage() {
     handleSubmit,
     watch,
     setValue,
-    formState: { errors },
+    trigger,
+    formState: { errors, isValid },
   } = form;
   const watchedValues = watch();
 
@@ -97,6 +98,7 @@ export default function CreateEventPage() {
   };
 
   const onSubmit = async (data: Record<string, unknown>) => {
+    console.log('Form submission started with data:', data);
     setIsSubmitting(true);
 
     try {
@@ -109,6 +111,7 @@ export default function CreateEventPage() {
       });
 
       const result = await response.json();
+      console.log('API response:', result);
 
       if (!result.success) {
         throw new Error(result.error.message || 'Failed to create event');
@@ -428,6 +431,18 @@ export default function CreateEventPage() {
                     type="submit" 
                     size="lg"
                     disabled={isSubmitting}
+                    onClick={async () => {
+                      console.log('Create Event button clicked');
+                      console.log('Form errors:', errors);
+                      console.log('Form is valid:', isValid);
+                      console.log('Watched values:', watchedValues);
+                      console.log('Selected event type:', selectedEventType);
+                      console.log('Selected tier:', selectedTier);
+                      
+                      // Trigger validation
+                      const isFormValid = await trigger();
+                      console.log('Form validation result:', isFormValid);
+                    }}
                     className="px-8"
                   >
                     {isSubmitting ? (
