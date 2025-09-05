@@ -12,7 +12,6 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Progress } from '@/components/ui/progress';
-import { MainNavigation } from '@/components/layout';
 import { QRCodeDisplay } from '@/components/features/qr-code';
 import {
   ArrowLeft,
@@ -349,7 +348,6 @@ export default function EventManagementPage() {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background">
-        <MainNavigation />
         <div className="container mx-auto px-4 py-8">
           <div className="flex items-center justify-center min-h-[400px]">
             <div className="text-center">
@@ -365,7 +363,6 @@ export default function EventManagementPage() {
   if (error || !event) {
     return (
       <div className="min-h-screen bg-background">
-        <MainNavigation />
         <div className="container mx-auto px-4 py-8">
           <div className="flex items-center justify-center min-h-[400px]">
             <Card className="w-full max-w-md">
@@ -402,7 +399,6 @@ export default function EventManagementPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-      <MainNavigation />
       <div className="container mx-auto px-4 py-6 max-w-7xl">
         {/* Header */}
         <div className="mb-8">
