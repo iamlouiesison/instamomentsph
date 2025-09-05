@@ -1,9 +1,9 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { CalendarIcon } from '@/components/ui/calendar-icon';
 import {
   Camera,
-  Calendar,
   Users,
   Image as ImageIcon,
   Plus,
@@ -60,7 +60,7 @@ interface EmptyEventsProps {
 export function EmptyEvents({ onCreateEvent, className }: EmptyEventsProps) {
   return (
     <EmptyState
-      icon={<Calendar className="h-8 w-8 text-muted-foreground" />}
+      icon={<CalendarIcon size="xl" variant="muted" />}
       title="No Events Yet"
       description="Create your first event to start collecting memories from your celebrations."
       action={

@@ -20,7 +20,7 @@ export const EventTypeSelector: React.FC<EventTypeSelectorProps> = ({
   return (
     <div
       className={cn(
-        'grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3',
+        'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4',
         className
       )}
     >
@@ -30,20 +30,26 @@ export const EventTypeSelector: React.FC<EventTypeSelectorProps> = ({
           <Card
             key={key}
             className={cn(
-              'cursor-pointer transition-all duration-200 hover:shadow-md',
+              'cursor-pointer transition-all duration-200 hover:shadow-lg border-2',
               isSelected
-                ? 'ring-2 ring-primary bg-primary/5'
-                : 'hover:bg-muted/50'
+                ? 'ring-2 ring-primary bg-primary/5 border-primary/20 shadow-md'
+                : 'hover:bg-muted/50 border-border hover:border-primary/30'
             )}
             onClick={() => onSelect(key as EventType)}
           >
-            <CardContent className="p-4 text-center">
-              <h3 className="font-semibold text-sm mb-1">{eventType.label}</h3>
-              <p className="text-xs text-muted-foreground leading-tight">
+            <CardContent className="p-6 text-center">
+              <div className="text-2xl mb-3">{eventType.emoji}</div>
+              <h3 className="font-semibold text-base mb-2 text-foreground">
+                {eventType.label}
+              </h3>
+              <p className="text-sm text-muted-foreground leading-relaxed">
                 {eventType.description}
               </p>
               {isSelected && (
-                <Badge variant="default" className="mt-2 text-xs">
+                <Badge 
+                  variant="default" 
+                  className="mt-3 text-xs px-3 py-1"
+                >
                   Selected
                 </Badge>
               )}

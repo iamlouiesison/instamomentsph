@@ -30,11 +30,11 @@ import {
   ZoomIn,
   ZoomOut,
   RotateCw,
-  Calendar,
   User,
   Wifi,
   WifiOff,
 } from 'lucide-react';
+import { CalendarIcon } from '@/components/ui/calendar-icon';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
 import { useGalleryRealtime } from '@/hooks/useGalleryRealtime';
@@ -581,7 +581,7 @@ export function PhotoGallery({
                 )}
                 <div className="flex items-center gap-4 text-xs text-muted-foreground">
                   <div className="flex items-center gap-1">
-                    <Calendar className="h-3 w-3" />
+                    <CalendarIcon size="xs" variant="muted" />
                     {format(
                       new Date(selectedItem.uploaded_at),
                       'MMM d, yyyy h:mm a'

@@ -37,9 +37,9 @@ export const PackageSelector: React.FC<PackageSelectorProps> = ({
   };
 
   return (
-    <div className={cn('space-y-6', className)}>
+    <div className={cn('space-y-8', className)}>
       {/* Package Tiers */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {Object.entries(SUBSCRIPTION_TIERS).map(([key, tier]) => {
           const isSelected = selectedTier === key;
           const isPopular = key === 'standard';
@@ -48,55 +48,66 @@ export const PackageSelector: React.FC<PackageSelectorProps> = ({
             <Card
               key={key}
               className={cn(
-                'relative cursor-pointer transition-all duration-200 hover:shadow-lg',
+                'relative cursor-pointer transition-all duration-200 hover:shadow-xl border-2',
                 isSelected
-                  ? 'ring-2 ring-primary bg-primary/5'
-                  : 'hover:bg-muted/50',
-                isPopular && 'border-primary/20'
+                  ? 'ring-2 ring-primary bg-primary/5 border-primary/20 shadow-lg'
+                  : 'hover:bg-muted/50 border-border hover:border-primary/30',
+                isPopular && 'border-primary/30'
               )}
               onClick={() => onSelectTier(key as SubscriptionTier)}
             >
               {isPopular && (
                 <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                  <Badge className="bg-primary text-primary-foreground">
+                  <Badge className="bg-primary text-primary-foreground px-3 py-1">
                     <Star className="w-3 h-3 mr-1" />
                     Most Popular
                   </Badge>
                 </div>
               )}
 
-              <CardHeader className="text-center pb-3">
-                <CardTitle className="text-lg">{tier.label}</CardTitle>
-                <div className="text-2xl font-bold text-primary">
+              <CardHeader className="text-center pb-4 pt-6">
+                <CardTitle className="text-xl font-bold text-foreground">
+                  {tier.label}
+                </CardTitle>
+                <div className="text-3xl font-bold text-primary mt-2">
                   {formatPrice(tier.price)}
                 </div>
                 {tier.price === 0 && (
-                  <Badge variant="secondary" className="w-fit mx-auto">
+                  <Badge variant="secondary" className="w-fit mx-auto mt-2">
                     Free Forever
                   </Badge>
                 )}
               </CardHeader>
 
-              <CardContent className="space-y-3">
-                <div className="space-y-2">
+              <CardContent className="space-y-4">
+                <div className="space-y-3">
                   {tier.features.map((feature, index) => (
-                    <div key={index} className="flex items-center text-sm">
-                      <Check className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
-                      <span>{feature}</span>
+                    <div key={index} className="flex items-start text-sm">
+                      <Check className="w-4 h-4 text-green-500 mr-3 flex-shrink-0 mt-0.5" />
+                      <span className="text-foreground">{feature}</span>
                     </div>
                   ))}
                 </div>
 
-                <div className="pt-3 border-t">
-                  <div className="text-xs text-muted-foreground space-y-1">
-                    <div>• {tier.maxPhotos} photos total</div>
-                    <div>• {tier.maxPhotosPerUser} photos per person</div>
-                    <div>• {tier.storageDays} days storage</div>
+                <div className="pt-4 border-t border-border">
+                  <div className="text-sm text-muted-foreground space-y-2">
+                    <div className="flex justify-between">
+                      <span>Photos total:</span>
+                      <span className="font-medium">{tier.maxPhotos}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Per person:</span>
+                      <span className="font-medium">{tier.maxPhotosPerUser}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Storage:</span>
+                      <span className="font-medium">{tier.storageDays} days</span>
+                    </div>
                   </div>
                 </div>
 
                 {isSelected && (
-                  <Button className="w-full mt-3" size="sm">
+                  <Button className="w-full mt-4" size="lg">
                     Selected
                   </Button>
                 )}
@@ -108,25 +119,26 @@ export const PackageSelector: React.FC<PackageSelectorProps> = ({
 
       {/* Video Addon */}
       {selectedTier && selectedTier !== 'free' && (
-        <Card className="border-dashed">
-          <CardContent className="p-4">
+        <Card className="border-2 border-dashed border-primary/30 bg-primary/5">
+          <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div className="flex-1">
-                <h3 className="font-semibold flex items-center gap-2">
-                  <Video className="w-4 h-4 text-gray-700" />
+                <h3 className="font-semibold text-lg flex items-center gap-3 text-foreground">
+                  <Video className="w-5 h-5 text-primary" />
                   Video Greetings Add-on
-                  <Badge variant="outline" className="ml-2">
+                  <Badge variant="outline" className="ml-2 px-3 py-1">
                     +{formatPrice(VIDEO_ADDON_PRICING[selectedTier])}
                   </Badge>
                 </h3>
-                <p className="text-sm text-muted-foreground mt-1">
+                <p className="text-sm text-muted-foreground mt-2">
                   Let guests record 20-second video messages for the host
                 </p>
               </div>
               <Button
                 variant={hasVideoAddon ? 'default' : 'outline'}
-                size="sm"
+                size="lg"
                 onClick={() => onToggleVideoAddon(!hasVideoAddon)}
+                className="ml-4"
               >
                 {hasVideoAddon ? 'Added' : 'Add'}
               </Button>
@@ -137,16 +149,16 @@ export const PackageSelector: React.FC<PackageSelectorProps> = ({
 
       {/* Total Price */}
       {selectedTier && (
-        <Card className="bg-primary/5 border-primary/20">
-          <CardContent className="p-4">
+        <Card className="bg-primary/10 border-2 border-primary/30 shadow-lg">
+          <CardContent className="p-6">
             <div className="flex justify-between items-center">
-              <span className="font-semibold">Total Price:</span>
-              <span className="text-2xl font-bold text-primary">
+              <span className="font-bold text-lg text-foreground">Total Price:</span>
+              <span className="text-3xl font-bold text-primary">
                 {formatPrice(calculateEventPrice(selectedTier, hasVideoAddon))}
               </span>
             </div>
             {hasVideoAddon && (
-              <div className="text-sm text-muted-foreground mt-1">
+              <div className="text-sm text-muted-foreground mt-2 text-center">
                 Includes video greetings add-on
               </div>
             )}

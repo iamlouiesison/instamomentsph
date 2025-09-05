@@ -5,7 +5,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
-  Calendar,
   MapPin,
   Users,
   Camera,
@@ -15,6 +14,7 @@ import {
   QrCode,
   Clock,
 } from 'lucide-react';
+import { CalendarIcon } from '@/components/ui/calendar-icon';
 import { formatDistanceToNow, format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { FrontendEvent } from '@/lib/utils/event-transformer';
@@ -123,7 +123,7 @@ export const EventCard: React.FC<EventCardProps> = ({
         <div className="space-y-2 text-sm text-muted-foreground">
           {event.eventDate && (
             <div className="flex items-center gap-2">
-              <Calendar className="w-4 h-4" />
+              <CalendarIcon size="sm" variant="muted" />
               <span>{format(new Date(event.eventDate), 'MMM dd, yyyy')}</span>
             </div>
           )}

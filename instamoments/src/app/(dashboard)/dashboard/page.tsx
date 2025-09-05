@@ -17,8 +17,8 @@ import {
   LoadingSpinner,
   EmptyEvents,
 } from '@/components/instamoments';
+import { CalendarIcon } from '@/components/ui/calendar-icon';
 import {
-  Calendar,
   Camera,
   Search,
   Filter,
@@ -182,7 +182,7 @@ export default function DashboardPage() {
             </div>
             <Button asChild className="w-full sm:w-auto">
               <Link href="/create-event">
-                <Calendar className="w-4 h-4 mr-2" />
+                <CalendarIcon size="sm" variant="default" className="mr-2" />
                 Create Event
               </Link>
             </Button>
@@ -201,7 +201,7 @@ export default function DashboardPage() {
               <CardContent className="pt-0 space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <Calendar className="w-4 h-4 text-blue-600" />
+                    <CalendarIcon size="sm" variant="primary" />
                     <span className="text-sm text-gray-600">Events</span>
                   </div>
                   <span className="font-semibold text-lg">

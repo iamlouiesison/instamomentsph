@@ -17,10 +17,10 @@ import {
   RefreshCw,
   Share2,
   Copy,
-  Calendar,
   Users,
   Smartphone,
 } from 'lucide-react';
+import { CalendarIcon } from '@/components/ui/calendar-icon';
 import { Event } from '@/types/database';
 import { QRCodeDisplay } from './QRCodeDisplay';
 import { toast } from 'sonner';
@@ -260,7 +260,7 @@ export function QRCodeManagement({
               <Card>
                 <CardContent className="p-6">
                   <div className="flex items-center gap-2">
-                    <Calendar className="h-5 w-5 text-primary" />
+                    <CalendarIcon size="md" variant="primary" />
                     <div>
                       <p className="text-2xl font-bold">
                         {analytics.scansToday}

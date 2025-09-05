@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Progress } from '@/components/ui/progress';
+import { DatePicker } from '@/components/ui/date-picker';
 import {
   EventTypeSelector,
   PackageSelector,
@@ -165,124 +166,146 @@ export default function CreateEventPage() {
         </div>
 
         {/* Progress */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-4">
+        <div className="mb-12">
+          <div className="flex items-center justify-between mb-6">
             {STEPS.map((step, index) => (
               <div key={step.id} className="flex items-center">
                 <div
-                  className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold ${
+                  className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-200 ${
                     currentStep >= step.id
-                      ? 'bg-primary text-primary-foreground'
-                      : 'bg-gray-200 text-gray-600'
+                      ? 'bg-primary text-primary-foreground shadow-lg'
+                      : 'bg-muted text-muted-foreground'
                   }`}
                 >
                   {currentStep > step.id ? (
-                    <Check className="w-4 h-4" />
+                    <Check className="w-5 h-5" />
                   ) : (
                     step.id
                   )}
                 </div>
-                <div className="ml-3 hidden sm:block">
-                  <div className="text-sm font-medium text-gray-900">
+                <div className="ml-4 hidden sm:block">
+                  <div className="text-sm font-semibold text-foreground">
                     {step.title}
                   </div>
-                  <div className="text-xs text-gray-500">
+                  <div className="text-xs text-muted-foreground">
                     {step.description}
                   </div>
                 </div>
                 {index < STEPS.length - 1 && (
-                  <div className="w-12 h-0.5 bg-gray-200 mx-4 hidden sm:block" />
+                  <div className={`w-16 h-1 mx-6 hidden sm:block rounded-full transition-colors duration-200 ${
+                    currentStep > step.id ? 'bg-primary' : 'bg-muted'
+                  }`} />
                 )}
               </div>
             ))}
           </div>
-          <Progress value={progress} className="h-2" />
+          <Progress value={progress} className="h-3 bg-muted" />
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit(onSubmit)} className="max-w-4xl mx-auto">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <div className="w-8 h-8 flex items-center justify-center">
+        <form onSubmit={handleSubmit(onSubmit)} className="max-w-5xl mx-auto">
+          <Card className="shadow-lg border-2">
+            <CardHeader className="pb-6">
+              <CardTitle className="flex items-center gap-3 text-2xl">
+                <div className="w-10 h-10 flex items-center justify-center rounded-full bg-primary/10">
                   {STEPS[currentStep - 1].id === 1 && (
-                    <FileText className="w-6 h-6 text-gray-700" />
+                    <FileText className="w-6 h-6 text-primary" />
                   )}
                   {STEPS[currentStep - 1].id === 2 && (
-                    <PartyPopper className="w-6 h-6 text-gray-700" />
+                    <PartyPopper className="w-6 h-6 text-primary" />
                   )}
                   {STEPS[currentStep - 1].id === 3 && (
-                    <Gem className="w-6 h-6 text-gray-700" />
+                    <Gem className="w-6 h-6 text-primary" />
                   )}
                   {STEPS[currentStep - 1].id === 4 && (
-                    <CheckCircle className="w-6 h-6 text-gray-700" />
+                    <CheckCircle className="w-6 h-6 text-primary" />
                   )}
                 </div>
                 {STEPS[currentStep - 1].title}
               </CardTitle>
-              <p className="text-muted-foreground">
+              <p className="text-muted-foreground text-lg">
                 {STEPS[currentStep - 1].description}
               </p>
             </CardHeader>
 
-            <CardContent className="space-y-6">
+            <CardContent className="space-y-8">
               {/* Step 1: Event Details */}
               {currentStep === 1 && (
-                <div className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                      <Label htmlFor="name">Event Name *</Label>
+                <div className="space-y-8">
+                  {/* Event Name and Date Row */}
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div className="space-y-3">
+                      <Label htmlFor="name" className="text-sm font-semibold text-foreground">
+                        Event Name *
+                      </Label>
                       <Input
                         id="name"
                         placeholder="e.g., Maria's Wedding"
+                        className="h-11 text-base"
                         {...form.register('name')}
                       />
                       {errors.name && (
-                        <p className="text-sm text-red-500">
+                        <p className="text-sm text-destructive mt-1">
                           {errors.name.message}
                         </p>
                       )}
                     </div>
 
-                    <div className="space-y-2">
-                      <Label htmlFor="eventDate">Event Date</Label>
-                      <Input
+                    <div className="space-y-3">
+                      <Label htmlFor="eventDate" className="text-sm font-semibold text-foreground">
+                        Event Date *
+                      </Label>
+                      <DatePicker
                         id="eventDate"
-                        type="date"
-                        {...form.register('eventDate')}
+                        placeholder="Select event date"
+                        value={watchedValues.eventDate ? new Date(watchedValues.eventDate) : undefined}
+                        onChange={(date) => {
+                          if (date) {
+                            setValue('eventDate', date.toISOString().split('T')[0]);
+                          }
+                        }}
+                        className="w-full"
                       />
                       {errors.eventDate && (
-                        <p className="text-sm text-red-500">
+                        <p className="text-sm text-destructive mt-1">
                           {errors.eventDate.message}
                         </p>
                       )}
                     </div>
                   </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="location">Location</Label>
+                  {/* Location Row */}
+                  <div className="space-y-3">
+                    <Label htmlFor="location" className="text-sm font-semibold text-foreground">
+                      Location
+                    </Label>
                     <Input
                       id="location"
                       placeholder="e.g., Manila Hotel, Makati City"
+                      className="h-11 text-base"
                       {...form.register('location')}
                     />
                     {errors.location && (
-                      <p className="text-sm text-red-500">
+                      <p className="text-sm text-destructive mt-1">
                         {errors.location.message}
                       </p>
                     )}
                   </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="description">Description</Label>
+                  {/* Description Row */}
+                  <div className="space-y-3">
+                    <Label htmlFor="description" className="text-sm font-semibold text-foreground">
+                      Description
+                    </Label>
                     <Textarea
                       id="description"
                       placeholder="Tell your guests about your event..."
-                      rows={3}
+                      rows={4}
+                      className="text-base resize-none"
                       {...form.register('description')}
                     />
                     {errors.description && (
-                      <p className="text-sm text-red-500">
+                      <p className="text-sm text-destructive mt-1">
                         {errors.description.message}
                       </p>
                     )}
@@ -373,12 +396,14 @@ export default function CreateEventPage() {
               )}
 
               {/* Navigation */}
-              <div className="flex justify-between pt-6">
+              <div className="flex justify-between pt-8 border-t border-border">
                 <Button
                   type="button"
                   variant="outline"
+                  size="lg"
                   onClick={prevStep}
                   disabled={currentStep === 1}
+                  className="px-8"
                 >
                   <ArrowLeft className="w-4 h-4 mr-2" />
                   Previous
@@ -387,17 +412,24 @@ export default function CreateEventPage() {
                 {currentStep < STEPS.length ? (
                   <Button
                     type="button"
+                    size="lg"
                     onClick={nextStep}
                     disabled={
                       (currentStep === 1 && !watchedValues.name) ||
                       (currentStep === 2 && !selectedEventType)
                     }
+                    className="px-8"
                   >
                     Next
                     <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>
                 ) : (
-                  <Button type="submit" disabled={isSubmitting}>
+                  <Button 
+                    type="submit" 
+                    size="lg"
+                    disabled={isSubmitting}
+                    className="px-8"
+                  >
                     {isSubmitting ? (
                       <>
                         <LoadingSpinner className="w-4 h-4 mr-2" />

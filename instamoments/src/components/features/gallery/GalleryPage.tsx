@@ -16,7 +16,6 @@ import {
   Camera,
   Video,
   Upload,
-  Calendar,
   MapPin,
   Users,
   Heart,
@@ -26,6 +25,7 @@ import {
   Smartphone,
   Clock,
 } from 'lucide-react';
+import { CalendarIcon } from '@/components/ui/calendar-icon';
 import { Event } from '@/types/database';
 import { EVENT_TYPES } from '@/lib/validations/event';
 import { QRScanner } from '@/components/features/qr-code/QRScanner';
@@ -241,7 +241,7 @@ export function GalleryPage({ event }: GalleryPageProps) {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
               {event.event_date && (
                 <div className="flex items-center gap-2 text-muted-foreground">
-                  <Calendar className="h-4 w-4" />
+                  <CalendarIcon size="sm" variant="muted" />
                   <span>
                     {format(new Date(event.event_date), 'MMMM d, yyyy')}
                   </span>

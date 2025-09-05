@@ -12,13 +12,14 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Progress } from '@/components/ui/progress';
+import { DatePicker } from '@/components/ui/date-picker';
+import { CalendarIcon } from '@/components/ui/calendar-icon';
 import { QRCodeDisplay } from '@/components/features/qr-code';
 import { LoadingSpinner } from '@/components/instamoments';
 import {
   ArrowLeft,
   Settings,
   QrCode,
-  Calendar,
   MapPin,
   Users,
   Camera,
@@ -429,7 +430,7 @@ export default function EventManagementPage() {
               <Card className="lg:col-span-2">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Calendar className="w-5 h-5" />
+                    <CalendarIcon size="md" variant="default" />
                     Event Details
                   </CardTitle>
                 </CardHeader>
@@ -437,7 +438,7 @@ export default function EventManagementPage() {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {event.event_date && (
                       <div className="flex items-center gap-3">
-                        <Calendar className="w-4 h-4 text-gray-500 flex-shrink-0" />
+                        <CalendarIcon size="sm" variant="muted" className="flex-shrink-0" />
                         <div className="min-w-0">
                           <p className="text-xs text-gray-600">Event Date</p>
                           <p className="font-medium text-sm">
@@ -697,13 +698,16 @@ export default function EventManagementPage() {
 
                   <div className="space-y-2">
                     <Label htmlFor="eventDate">Event Date</Label>
-                    <Input
+                    <DatePicker
                       id="eventDate"
-                      type="date"
-                      value={formData.eventDate}
-                      onChange={(e) =>
-                        setFormData({ ...formData, eventDate: e.target.value })
-                      }
+                      placeholder="Select event date"
+                      value={formData.eventDate ? new Date(formData.eventDate) : undefined}
+                      onChange={(date) => {
+                        if (date) {
+                          setFormData({ ...formData, eventDate: date.toISOString().split('T')[0] });
+                        }
+                      }}
+                      className="w-full"
                     />
                   </div>
                 </div>
