@@ -75,10 +75,23 @@ export function useAuth() {
 
     getInitialSession();
 
+    // Fallback timeout to prevent infinite loading
+    const timeout = setTimeout(() => {
+      setAuthState((prev) => {
+        if (prev.loading) {
+          console.warn('Auth loading timeout - setting loading to false');
+          return { ...prev, loading: false };
+        }
+        return prev;
+      });
+    }, 10000); // 10 second timeout
+
     // Listen for auth changes
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log('Auth state change:', event, !!session?.user);
+      
       if (event === 'SIGNED_IN' && session?.user) {
         // Get user profile
         const { data: profile, error: profileError } = await supabase
@@ -100,10 +113,49 @@ export function useAuth() {
           loading: false,
           error: null,
         });
+      } else if (event === 'TOKEN_REFRESHED' && session?.user) {
+        // Handle token refresh - user is still authenticated
+        const { data: profile, error: profileError } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', session.user.id)
+          .single();
+
+        setAuthState({
+          user: session.user,
+          profile: profile || null,
+          loading: false,
+          error: profileError?.message || null,
+        });
+      } else if (event === 'INITIAL_SESSION' && session?.user) {
+        // Handle initial session - user is authenticated
+        const { data: profile, error: profileError } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', session.user.id)
+          .single();
+
+        setAuthState({
+          user: session.user,
+          profile: profile || null,
+          loading: false,
+          error: profileError?.message || null,
+        });
+      } else if (event === 'INITIAL_SESSION' && !session) {
+        // No initial session - user is not authenticated
+        setAuthState({
+          user: null,
+          profile: null,
+          loading: false,
+          error: null,
+        });
       }
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      clearTimeout(timeout);
+      subscription.unsubscribe();
+    };
   }, [supabase]);
 
   const signIn = async (email: string, password: string) => {
