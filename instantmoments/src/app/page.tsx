@@ -33,10 +33,10 @@ export default function Home() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center">
+              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
                 <Camera className="w-5 h-5 text-primary-foreground" />
               </div>
-              <span className="text-xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+              <span className="text-xl font-bold text-primary">
                 InstaMoments
               </span>
             </div>
@@ -81,7 +81,7 @@ export default function Home() {
                 </Badge>
                 <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight">
                   Create Instant Photo Galleries for Your{' '}
-                  <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                  <span className="text-primary">
                     Filipino Celebrations
                   </span>
                 </h1>
@@ -134,7 +134,7 @@ export default function Home() {
 
             <div className="relative">
               <div className="relative z-10">
-                <div className="w-full h-96 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-2xl flex items-center justify-center">
+                <div className="w-full h-96 bg-primary/20 rounded-2xl flex items-center justify-center">
                   <div className="text-center space-y-4">
                     <QrCode className="w-24 h-24 text-primary mx-auto" />
                     <p className="text-muted-foreground">
@@ -146,7 +146,7 @@ export default function Home() {
                   <QrCode className="w-8 h-8" />
                 </div>
               </div>
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-2xl -rotate-3 scale-105"></div>
+              <div className="absolute inset-0 bg-primary/20 rounded-2xl -rotate-3 scale-105"></div>
             </div>
           </div>
         </div>
@@ -499,7 +499,7 @@ export default function Home() {
               </div>
             </Card>
 
-            <Card className="celebration-card border-primary relative transform scale-105 shadow-xl bg-gradient-to-br from-primary/5 to-secondary/5">
+            <Card className="celebration-card border-primary relative transform scale-105 shadow-xl bg-primary/5">
               <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
                 <Badge className="bg-primary text-primary-foreground">
                   Most Popular
@@ -646,7 +646,7 @@ export default function Home() {
                 <Button
                   asChild
                   size="lg"
-                  className="w-full bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90"
+                  className="w-full"
                 >
                   <Link href="/signup">Go Pro</Link>
                 </Button>
@@ -679,7 +679,7 @@ export default function Home() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-br from-primary/10 via-secondary/5 to-accent/10">
+      <section className="py-20 bg-primary/10">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="max-w-3xl mx-auto space-y-8">
             <h2 className="text-3xl sm:text-4xl font-bold">
@@ -710,7 +710,7 @@ export default function Home() {
           <div className="grid md:grid-cols-4 gap-8">
             <div className="space-y-4">
               <div className="flex items-center space-x-2">
-                <div className="w-8 h-8 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center">
+                <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
                   <Camera className="w-5 h-5 text-primary-foreground" />
                 </div>
                 <span className="text-xl font-bold">InstaMoments</span>

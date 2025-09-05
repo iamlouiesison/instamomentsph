@@ -225,7 +225,7 @@ export function GalleryPageLoading({ className }: GalleryPageLoadingProps) {
   return (
     <div
       className={cn(
-        'min-h-screen bg-gradient-to-br from-pink-50 to-purple-50',
+        'min-h-screen bg-background',
         className
       )}
     >

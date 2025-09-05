@@ -61,11 +61,11 @@ export default function ResetPasswordPage() {
 
   if (isSuccess) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-emerald-100 p-4">
+      <div className="min-h-screen flex items-center justify-center bg-background p-4">
         <div className="w-full max-w-md">
           <Card className="shadow-lg">
             <CardHeader className="text-center space-y-2">
-              <div className="mx-auto w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center">
+              <div className="mx-auto w-16 h-16 bg-green-500 rounded-full flex items-center justify-center">
                 <CheckCircle className="w-8 h-8 text-white" />
               </div>
               <CardTitle className="text-2xl font-bold text-gray-900">
@@ -116,11 +116,11 @@ export default function ResetPasswordPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-background p-4">
       <div className="w-full max-w-md">
         <Card className="shadow-lg">
           <CardHeader className="text-center space-y-2">
-            <div className="mx-auto w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center">
+            <div className="mx-auto w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center">
               <Mail className="w-8 h-8 text-white" />
             </div>
             <CardTitle className="text-2xl font-bold text-gray-900">
@@ -159,7 +159,7 @@ export default function ResetPasswordPage() {
 
               <Button
                 type="submit"
-                className="w-full h-12 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-semibold"
+                className="w-full h-12 bg-blue-500 hover:bg-blue-600 text-white font-semibold"
                 disabled={isLoading}
               >
                 {isLoading ? 'Sending email...' : 'Send Reset Link'}

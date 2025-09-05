@@ -102,16 +102,16 @@ export default function SignUpPage() {
 
   if (isSuccess) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-background via-muted/20 to-background">
+      <div className="min-h-screen bg-background">
         {/* Navigation */}
         <nav className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-16">
               <div className="flex items-center space-x-2">
-                <div className="w-8 h-8 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center">
+                <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
                   <Smartphone className="w-5 h-5 text-primary-foreground" />
                 </div>
-                <span className="text-xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                <span className="text-xl font-bold text-primary">
                   InstaMoments
                 </span>
               </div>
@@ -124,7 +124,7 @@ export default function SignUpPage() {
           <div className="w-full max-w-md">
             <Card className="shadow-lg border-0 bg-card/95 backdrop-blur">
               <CardHeader className="text-center space-y-4">
-                <div className="mx-auto w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center">
+                <div className="mx-auto w-16 h-16 bg-green-500 rounded-full flex items-center justify-center">
                   <CheckCircle className="w-8 h-8 text-white" />
                 </div>
                 <div className="space-y-2">
@@ -147,7 +147,7 @@ export default function SignUpPage() {
                   <div className="space-y-2">
                     <Button
                       onClick={() => router.push('/signin')}
-                      className="w-full h-12 bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-primary-foreground font-semibold"
+                      className="w-full h-12 text-primary-foreground font-semibold"
                     >
                       {'Sign In'}
                     </Button>
@@ -170,16 +170,16 @@ export default function SignUpPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-muted/20 to-background">
+    <div className="min-h-screen bg-background">
       {/* Navigation */}
       <nav className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center">
+              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
                 <Smartphone className="w-5 h-5 text-primary-foreground" />
               </div>
-              <span className="text-xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+              <span className="text-xl font-bold text-primary">
                 InstaMoments
               </span>
             </div>
@@ -197,7 +197,7 @@ export default function SignUpPage() {
         <div className="w-full max-w-md">
           <Card className="shadow-lg border-0 bg-card/95 backdrop-blur">
             <CardHeader className="text-center space-y-4">
-              <div className="mx-auto w-16 h-16 bg-gradient-to-br from-primary to-secondary rounded-full flex items-center justify-center">
+              <div className="mx-auto w-16 h-16 bg-primary rounded-full flex items-center justify-center">
                 <Smartphone className="w-8 h-8 text-primary-foreground" />
               </div>
               <div className="space-y-2">
@@ -331,7 +331,7 @@ export default function SignUpPage() {
 
                 <Button
                   type="submit"
-                  className="w-full h-12 bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-primary-foreground font-semibold"
+                  className="w-full h-12 text-primary-foreground font-semibold"
                   disabled={isLoading}
                 >
                   {isLoading ? 'Creating account...' : 'Sign Up'}

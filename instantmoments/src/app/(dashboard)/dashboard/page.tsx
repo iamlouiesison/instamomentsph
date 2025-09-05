@@ -136,7 +136,7 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-background via-muted/20 to-background flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <LoadingSpinner className="w-12 h-12 mx-auto mb-4" />
           <p className="text-muted-foreground">Loading dashboard...</p>
@@ -146,7 +146,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-muted/20 to-background">
+    <div className="min-h-screen bg-background">
       {/* Navigation */}
       <MainNavigation />
 
@@ -236,7 +236,7 @@ export default function DashboardPage() {
             <CardContent>
               <Button
                 asChild
-                className="w-full bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-primary-foreground"
+                className="w-full text-primary-foreground"
               >
                 <Link href="/create-event">Create New Event</Link>
               </Button>

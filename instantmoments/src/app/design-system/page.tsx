@@ -80,7 +80,7 @@ export default function DesignSystemPage() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header Section */}
-      <div className="bg-gradient-to-r from-primary/10 via-secondary/10 to-accent/10 border-b">
+      <div className="bg-primary/10 border-b">
         <div className="max-w-7xl mx-auto px-4 py-12">
           <div className="text-center space-y-6">
             <div className="space-y-2">

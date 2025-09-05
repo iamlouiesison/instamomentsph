@@ -78,7 +78,7 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-muted/20 to-background">
+    <div className="min-h-screen bg-background">
       <MainNavigation />
 
       {/* Main Content */}
@@ -213,7 +213,7 @@ export default function ProfilePage() {
                 <div className="flex justify-end">
                   <Button
                     type="submit"
-                    className="h-12 px-8 bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-primary-foreground font-semibold"
+                    className="h-12 px-8 text-primary-foreground font-semibold"
                     disabled={isLoading}
                   >
                     <Save className="w-4 h-4 mr-2" />

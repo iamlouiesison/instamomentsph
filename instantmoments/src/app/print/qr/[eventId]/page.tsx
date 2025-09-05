@@ -336,7 +336,7 @@ export default function PrintQRPage({
         <div className="print-container">
           <div className="max-w-lg w-full">
             {/* Invitation Style */}
-            <div className="bg-gradient-to-br from-pink-50 to-purple-50 p-8 rounded-lg border border-gray-200">
+            <div className="bg-background p-8 rounded-lg border border-gray-200">
               {/* Header */}
               <div className="text-center mb-8">
                 <h1 className="text-3xl font-bold text-gray-900 mb-2">

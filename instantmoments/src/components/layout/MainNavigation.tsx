@@ -79,10 +79,10 @@ export function MainNavigation({ className }: MainNavigationProps) {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link href="/dashboard" className="flex items-center space-x-2 group">
-            <div className="w-8 h-8 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform">
+            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform">
               <Camera className="w-5 h-5 text-primary-foreground" />
             </div>
-            <span className="text-xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+            <span className="text-xl font-bold text-primary">
               InstaMoments
             </span>
           </Link>

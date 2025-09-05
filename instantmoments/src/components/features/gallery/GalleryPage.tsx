@@ -108,7 +108,7 @@ export function GalleryPage({ event }: GalleryPageProps) {
 
   if (!isEventActive) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-pink-50 to-purple-50 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
         <Card className="w-full max-w-md">
           <CardHeader className="text-center">
             <CardTitle className="flex items-center justify-center gap-2">
@@ -131,7 +131,7 @@ export function GalleryPage({ event }: GalleryPageProps) {
 
   if (showQRScanner) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-pink-50 to-purple-50 p-4">
+      <div className="min-h-screen bg-background p-4">
         <div className="max-w-2xl mx-auto">
           <Button
             variant="outline"
@@ -148,7 +148,7 @@ export function GalleryPage({ event }: GalleryPageProps) {
 
   if (showUpload) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-pink-50 to-purple-50 p-4">
+      <div className="min-h-screen bg-background p-4">
         <div className="max-w-4xl mx-auto">
           <Button
             variant="outline"
@@ -177,7 +177,7 @@ export function GalleryPage({ event }: GalleryPageProps) {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-50 to-purple-50">
+    <div className="min-h-screen bg-background">
       {/* Header */}
       <div className="bg-white shadow-sm border-b">
         <div className="max-w-6xl mx-auto px-4 py-6">
