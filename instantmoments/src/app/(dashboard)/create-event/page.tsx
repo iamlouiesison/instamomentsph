@@ -21,7 +21,15 @@ import {
   type EventType,
   type SubscriptionTier,
 } from '@/lib/validations/event';
-import { ArrowLeft, ArrowRight, Check } from 'lucide-react';
+import {
+  ArrowLeft,
+  ArrowRight,
+  Check,
+  FileText,
+  PartyPopper,
+  Gem,
+  CheckCircle,
+} from 'lucide-react';
 import { toast } from 'sonner';
 
 const STEPS = [
@@ -198,12 +206,20 @@ export default function CreateEventPage() {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <span className="text-2xl">
-                  {STEPS[currentStep - 1].id === 1 && '📝'}
-                  {STEPS[currentStep - 1].id === 2 && '🎉'}
-                  {STEPS[currentStep - 1].id === 3 && '💎'}
-                  {STEPS[currentStep - 1].id === 4 && '✅'}
-                </span>
+                <div className="w-8 h-8 flex items-center justify-center">
+                  {STEPS[currentStep - 1].id === 1 && (
+                    <FileText className="w-6 h-6 text-gray-700" />
+                  )}
+                  {STEPS[currentStep - 1].id === 2 && (
+                    <PartyPopper className="w-6 h-6 text-gray-700" />
+                  )}
+                  {STEPS[currentStep - 1].id === 3 && (
+                    <Gem className="w-6 h-6 text-gray-700" />
+                  )}
+                  {STEPS[currentStep - 1].id === 4 && (
+                    <CheckCircle className="w-6 h-6 text-gray-700" />
+                  )}
+                </div>
                 {STEPS[currentStep - 1].title}
               </CardTitle>
               <p className="text-muted-foreground">
@@ -317,9 +333,14 @@ export default function CreateEventPage() {
                       </div>
                       <div>
                         <p className="text-sm text-gray-600">Event Type</p>
-                        <p className="font-medium">
-                          {selectedEventType &&
-                            `🎉 ${selectedEventType.charAt(0).toUpperCase() + selectedEventType.slice(1)}`}
+                        <p className="font-medium flex items-center gap-2">
+                          {selectedEventType && (
+                            <>
+                              <PartyPopper className="w-4 h-4 text-gray-700" />
+                              {selectedEventType.charAt(0).toUpperCase() +
+                                selectedEventType.slice(1)}
+                            </>
+                          )}
                         </p>
                       </div>
                       {watchedValues.eventDate && (

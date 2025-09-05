@@ -4,7 +4,7 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Check, Star } from 'lucide-react';
+import { Check, Star, Video } from 'lucide-react';
 import {
   SUBSCRIPTION_TIERS,
   VIDEO_ADDON_PRICING,
@@ -112,8 +112,9 @@ export const PackageSelector: React.FC<PackageSelectorProps> = ({
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div className="flex-1">
-                <h3 className="font-semibold flex items-center">
-                  🎥 Video Greetings Add-on
+                <h3 className="font-semibold flex items-center gap-2">
+                  <Video className="w-4 h-4 text-gray-700" />
+                  Video Greetings Add-on
                   <Badge variant="outline" className="ml-2">
                     +{formatPrice(VIDEO_ADDON_PRICING[selectedTier])}
                   </Badge>

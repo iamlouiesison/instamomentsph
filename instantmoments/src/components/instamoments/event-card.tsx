@@ -94,15 +94,19 @@ export const EventCard: React.FC<EventCardProps> = ({
         <div className="flex items-start justify-between">
           <div className="flex-1">
             <CardTitle className="text-lg flex items-center gap-2">
-              <span className="text-xl">{eventTypeInfo.icon}</span>
+              <eventTypeInfo.icon className="w-5 h-5 text-gray-700" />
               {event.name}
             </CardTitle>
             <div className="flex items-center gap-2 mt-1">
               {getStatusBadge()}
               {getTierBadge()}
               {event.hasVideoAddon && (
-                <Badge variant="outline" className="text-xs">
-                  🎥 Video
+                <Badge
+                  variant="outline"
+                  className="text-xs flex items-center gap-1"
+                >
+                  <Video className="w-3 h-3" />
+                  Video
                 </Badge>
               )}
             </div>

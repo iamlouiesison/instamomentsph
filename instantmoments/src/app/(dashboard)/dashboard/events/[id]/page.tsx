@@ -189,7 +189,9 @@ export default function EventDetailsPage() {
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             <div>
               <h1 className="text-3xl font-bold text-gray-900 mb-2 flex items-center gap-3">
-                <span className="text-3xl">{eventTypeInfo?.icon}</span>
+                {eventTypeInfo?.icon && (
+                  <eventTypeInfo.icon className="w-8 h-8 text-gray-700" />
+                )}
                 {event.name}
               </h1>
               <div className="flex items-center gap-4 text-sm text-muted-foreground">
@@ -234,8 +236,12 @@ export default function EventDetailsPage() {
                   event.subscriptionTier.slice(1)}
               </Badge>
               {event.hasVideoAddon && (
-                <Badge variant="outline" className="text-sm">
-                  🎥 Video
+                <Badge
+                  variant="outline"
+                  className="text-sm flex items-center gap-1"
+                >
+                  <Video className="w-3 h-3" />
+                  Video
                 </Badge>
               )}
             </div>
@@ -327,8 +333,11 @@ export default function EventDetailsPage() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <h4 className="font-semibold mb-2">Event Type</h4>
-                        <p className="text-muted-foreground">
-                          {eventTypeInfo?.icon} {eventTypeInfo?.label}
+                        <p className="text-muted-foreground flex items-center gap-2">
+                          {eventTypeInfo?.icon && (
+                            <eventTypeInfo.icon className="w-4 h-4 text-gray-700" />
+                          )}
+                          {eventTypeInfo?.label}
                         </p>
                       </div>
                       <div>

@@ -1,37 +1,63 @@
 import { z } from 'zod';
+import {
+  Heart,
+  Cake,
+  Crown,
+  Baby,
+  GraduationCap,
+  HeartHandshake,
+  Building2,
+  PartyPopper,
+} from 'lucide-react';
 
-// Event types specific to Filipino culture
+// Event types for celebrations and gatherings
 export const FILIPINO_EVENT_TYPES = {
-  wedding: { label: 'Kasal', icon: '💒', description: 'Wedding celebration' },
-  birthday: { label: 'Kaarawan', icon: '🎂', description: 'Birthday party' },
+  wedding: {
+    label: 'Wedding',
+    icon: Heart,
+    description: 'Wedding celebration',
+  },
+  birthday: {
+    label: 'Birthday',
+    icon: Cake,
+    description: 'Birthday party',
+  },
   debut: {
     label: '18th Birthday',
-    icon: '👑',
+    icon: Crown,
     description: 'Coming of age celebration',
   },
-  christening: { label: 'Binyag', icon: '👶', description: 'Baptism ceremony' },
+  christening: {
+    label: 'Christening',
+    icon: Baby,
+    description: 'Baptism ceremony',
+  },
   graduation: {
-    label: 'Pagtatapos',
-    icon: '🎓',
+    label: 'Graduation',
+    icon: GraduationCap,
     description: 'Graduation ceremony',
   },
   anniversary: {
-    label: 'Anibersaryo',
-    icon: '💕',
+    label: 'Anniversary',
+    icon: HeartHandshake,
     description: 'Anniversary celebration',
   },
   corporate: {
     label: 'Company Event',
-    icon: '🏢',
+    icon: Building2,
     description: 'Business gathering',
   },
-  other: { label: 'Iba pa', icon: '🎉', description: 'Other celebration' },
+  other: {
+    label: 'Other',
+    icon: PartyPopper,
+    description: 'Other celebration',
+  },
 } as const;
 
-// Subscription tiers with Filipino pricing
+// Subscription tiers with pricing
 export const SUBSCRIPTION_TIERS = {
   free: {
-    label: 'Libre',
+    label: 'Free',
     price: 0,
     maxPhotos: 30,
     maxPhotosPerUser: 3,

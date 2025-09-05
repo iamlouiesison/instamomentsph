@@ -134,7 +134,7 @@ export default function PrintQRPage({
               </h1>
               {eventTypeInfo && (
                 <div className="flex items-center justify-center gap-2 mb-2">
-                  <span className="text-2xl">{eventTypeInfo.icon}</span>
+                  <eventTypeInfo.icon className="w-8 h-8 text-gray-700" />
                   <span className="text-lg text-gray-600">
                     {eventTypeInfo.label}
                   </span>
@@ -190,7 +190,7 @@ export default function PrintQRPage({
               </h1>
               {eventTypeInfo && (
                 <div className="flex items-center justify-center gap-2 mb-4">
-                  <span className="text-3xl">{eventTypeInfo.icon}</span>
+                  <eventTypeInfo.icon className="w-10 h-10 text-gray-700" />
                   <span className="text-xl text-gray-600">
                     {eventTypeInfo.label}
                   </span>
@@ -314,8 +314,9 @@ export default function PrintQRPage({
               <div className="border-t border-gray-200 pt-6">
                 <h3 className="text-lg font-semibold mb-2">{event.name}</h3>
                 {eventTypeInfo && (
-                  <p className="text-sm text-gray-600 mb-4">
-                    {eventTypeInfo.icon} {eventTypeInfo.label}
+                  <p className="text-sm text-gray-600 mb-4 flex items-center gap-2">
+                    <eventTypeInfo.icon className="w-4 h-4 text-gray-700" />
+                    {eventTypeInfo.label}
                   </p>
                 )}
 
@@ -343,7 +344,7 @@ export default function PrintQRPage({
                 </h1>
                 {eventTypeInfo && (
                   <div className="flex items-center justify-center gap-2 mb-4">
-                    <span className="text-2xl">{eventTypeInfo.icon}</span>
+                    <eventTypeInfo.icon className="w-8 h-8 text-gray-700" />
                     <span className="text-lg text-gray-600">
                       {eventTypeInfo.label}
                     </span>

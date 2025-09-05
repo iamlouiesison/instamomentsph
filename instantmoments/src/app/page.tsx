@@ -21,6 +21,8 @@ import {
   Instagram,
   Mail,
   Phone,
+  Cake,
+  GraduationCap,
 } from 'lucide-react';
 
 export default function Home() {
@@ -347,7 +349,7 @@ export default function Home() {
               <CardHeader>
                 <div className="flex items-center space-x-4 mb-4">
                   <div className="w-12 h-12 bg-secondary/10 rounded-full flex items-center justify-center">
-                    <span className="text-lg">🎂</span>
+                    <Cake className="w-6 h-6 text-gray-700" />
                   </div>
                   <div>
                     <h4 className="font-semibold">Roberto Cruz</h4>
@@ -368,7 +370,7 @@ export default function Home() {
               <CardHeader>
                 <div className="flex items-center space-x-4 mb-4">
                   <div className="w-12 h-12 bg-accent/10 rounded-full flex items-center justify-center">
-                    <span className="text-lg">🎓</span>
+                    <GraduationCap className="w-6 h-6 text-gray-700" />
                   </div>
                   <div>
                     <h4 className="font-semibold">Ana Dela Cruz</h4>
