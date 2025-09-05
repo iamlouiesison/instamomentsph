@@ -131,12 +131,21 @@ export async function POST(request: NextRequest) {
       const uniqueSlug = `${gallerySlug}-${timestamp}`;
 
       const eventData = {
-        ...validatedData,
-        host_id: user.id,
-        gallery_slug: uniqueSlug,
+        name: validatedData.name,
+        description: validatedData.description,
+        event_type: validatedData.eventType,
         event_date: validatedData.eventDate
           ? new Date(validatedData.eventDate).toISOString().split('T')[0]
           : null,
+        location: validatedData.location,
+        host_id: user.id,
+        gallery_slug: uniqueSlug,
+        subscription_tier: validatedData.subscriptionTier,
+        has_video_addon: validatedData.hasVideoAddon,
+        requires_moderation: validatedData.requiresModeration,
+        allow_downloads: validatedData.allowDownloads,
+        is_public: validatedData.isPublic,
+        custom_message: validatedData.customMessage,
         qr_code_url: '', // Will be generated after event creation
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
@@ -173,12 +182,21 @@ export async function POST(request: NextRequest) {
 
     // Create event with original slug
     const eventData = {
-      ...validatedData,
-      host_id: user.id,
-      gallery_slug: gallerySlug,
+      name: validatedData.name,
+      description: validatedData.description,
+      event_type: validatedData.eventType,
       event_date: validatedData.eventDate
         ? new Date(validatedData.eventDate).toISOString().split('T')[0]
         : null,
+      location: validatedData.location,
+      host_id: user.id,
+      gallery_slug: gallerySlug,
+      subscription_tier: validatedData.subscriptionTier,
+      has_video_addon: validatedData.hasVideoAddon,
+      requires_moderation: validatedData.requiresModeration,
+      allow_downloads: validatedData.allowDownloads,
+      is_public: validatedData.isPublic,
+      custom_message: validatedData.customMessage,
       qr_code_url: '', // Will be generated after event creation
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
