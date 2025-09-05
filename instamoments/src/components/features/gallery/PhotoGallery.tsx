@@ -448,15 +448,12 @@ export function PhotoGallery({
 
                   {/* Type Indicator */}
                   <div className="absolute top-2 left-2">
-                    <div className="flex items-center gap-1 px-2 py-1 bg-black/60 rounded-md">
+                    <div className="flex items-center justify-center w-6 h-6 bg-black/60 rounded-md">
                       {item.type === 'video' ? (
                         <Video className="h-3 w-3 text-white" />
                       ) : (
                         <Camera className="h-3 w-3 text-white" />
                       )}
-                      <span className="text-xs text-white font-medium">
-                        {item.type === 'video' ? 'VIDEO' : 'PHOTO'}
-                      </span>
                     </div>
                   </div>
                 </div>
@@ -505,11 +502,8 @@ export function PhotoGallery({
       <Dialog open={isLightboxOpen} onOpenChange={setIsLightboxOpen}>
         <DialogContent className="max-w-7xl w-full h-[90vh] p-0">
           <DialogHeader className="p-6 pb-0">
-            <div className="flex items-center justify-between">
-              <DialogTitle className="flex items-center gap-2">
-                {/* Contributor name and pagination removed */}
-              </DialogTitle>
-              <div className="flex items-center gap-2">
+            <div className="flex items-center justify-center">
+              <div className="flex items-center gap-3">
                 <Button
                   variant="outline"
                   size="sm"
@@ -517,7 +511,7 @@ export function PhotoGallery({
                 >
                   <ZoomOut className="h-4 w-4" />
                 </Button>
-                <span className="text-sm text-muted-foreground">
+                <span className="text-sm text-muted-foreground min-w-[3rem] text-center">
                   {Math.round(zoom * 100)}%
                 </span>
                 <Button
@@ -527,6 +521,7 @@ export function PhotoGallery({
                 >
                   <ZoomIn className="h-4 w-4" />
                 </Button>
+                <div className="w-px h-6 bg-border mx-1" />
                 <Button
                   variant="outline"
                   size="sm"
@@ -534,6 +529,7 @@ export function PhotoGallery({
                 >
                   <RotateCw className="h-4 w-4" />
                 </Button>
+                <div className="w-px h-6 bg-border mx-1" />
                 {allowDownloads && (
                   <Button
                     variant="outline"
