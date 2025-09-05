@@ -165,18 +165,27 @@ export async function PUT(
       );
     }
 
-    // Prepare update data
+    // Prepare update data with snake_case field names
     const updateData: Record<string, unknown> = {
-      ...validatedData,
       updated_at: new Date().toISOString(),
     };
 
-    // Convert event date if provided
-    if (validatedData.eventDate) {
+    // Convert camelCase to snake_case for database fields
+    if (validatedData.name !== undefined) updateData.name = validatedData.name;
+    if (validatedData.description !== undefined) updateData.description = validatedData.description;
+    if (validatedData.eventType !== undefined) updateData.event_type = validatedData.eventType;
+    if (validatedData.eventDate !== undefined) {
       updateData.event_date = new Date(validatedData.eventDate)
         .toISOString()
         .split('T')[0];
     }
+    if (validatedData.location !== undefined) updateData.location = validatedData.location;
+    if (validatedData.subscriptionTier !== undefined) updateData.subscription_tier = validatedData.subscriptionTier;
+    if (validatedData.hasVideoAddon !== undefined) updateData.has_video_addon = validatedData.hasVideoAddon;
+    if (validatedData.requiresModeration !== undefined) updateData.requires_moderation = validatedData.requiresModeration;
+    if (validatedData.allowDownloads !== undefined) updateData.allow_downloads = validatedData.allowDownloads;
+    if (validatedData.isPublic !== undefined) updateData.is_public = validatedData.isPublic;
+    if (validatedData.customMessage !== undefined) updateData.custom_message = validatedData.customMessage;
 
     const { data: event, error } = await supabase
       .from('events')
