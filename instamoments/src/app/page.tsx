@@ -28,7 +28,6 @@ import {
 export default function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-muted/20 to-background">
-
       {/* Hero Section */}
       <section className="relative py-20 sm:py-32 overflow-hidden">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -40,9 +39,7 @@ export default function Home() {
                 </Badge>
                 <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight">
                   Create Instant Photo Galleries for Your{' '}
-                  <span className="text-primary">
-                    Filipino Celebrations
-                  </span>
+                  <span className="text-primary">Filipino Celebrations</span>
                 </h1>
                 <p className="text-xl text-muted-foreground max-w-2xl">
                   No app downloads needed! Guests scan your QR code and
@@ -602,11 +599,7 @@ export default function Home() {
                     <span className="text-sm">Priority processing</span>
                   </div>
                 </div>
-                <Button
-                  asChild
-                  size="lg"
-                  className="w-full"
-                >
+                <Button asChild size="lg" className="w-full">
                   <Link href="/signup">Go Pro</Link>
                 </Button>
                 <div className="text-center">

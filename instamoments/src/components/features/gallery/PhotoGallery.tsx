@@ -59,7 +59,6 @@ type GalleryItem = MediaItem | VideoItem;
 export function PhotoGallery({
   eventId,
   allowDownloads = true,
-  maxPhotos = 100,
 }: PhotoGalleryProps) {
   const [selectedItem, setSelectedItem] = useState<GalleryItem | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -142,23 +141,23 @@ export function PhotoGallery({
   };
 
   // Handle lightbox navigation
-  const handlePrevious = () => {
+  const handlePrevious = useCallback(() => {
     const newIndex =
       lightboxIndex > 0 ? lightboxIndex - 1 : filteredItems.length - 1;
     setLightboxIndex(newIndex);
     setSelectedItem(filteredItems[newIndex]);
     setZoom(1);
     setRotation(0);
-  };
+  }, [lightboxIndex, filteredItems]);
 
-  const handleNext = () => {
+  const handleNext = useCallback(() => {
     const newIndex =
       lightboxIndex < filteredItems.length - 1 ? lightboxIndex + 1 : 0;
     setLightboxIndex(newIndex);
     setSelectedItem(filteredItems[newIndex]);
     setZoom(1);
     setRotation(0);
-  };
+  }, [lightboxIndex, filteredItems]);
 
   // Handle keyboard navigation
   useEffect(() => {
@@ -190,7 +189,13 @@ export function PhotoGallery({
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isLightboxOpen, lightboxIndex, filteredItems.length]);
+  }, [
+    isLightboxOpen,
+    lightboxIndex,
+    filteredItems.length,
+    handleNext,
+    handlePrevious,
+  ]);
 
   // Handle download
   const handleDownload = async (item: GalleryItem) => {
@@ -322,7 +327,9 @@ export function PhotoGallery({
 
             <Select
               value={sortBy}
-              onValueChange={(value: any) => setSortBy(value)}
+              onValueChange={(value: 'newest' | 'oldest' | 'contributor') =>
+                setSortBy(value)
+              }
             >
               <SelectTrigger className="w-full sm:w-48">
                 <SelectValue placeholder="Sort by" />
@@ -541,8 +548,8 @@ export function PhotoGallery({
                     src={selectedItem.file_url}
                     alt={
                       (selectedItem.type === 'photo'
-                        ? (selectedItem as any).caption
-                        : (selectedItem as any).message) ||
+                        ? (selectedItem as MediaItem).caption
+                        : (selectedItem as VideoItem).message) ||
                       `${selectedItem.type === 'photo' ? 'Photo' : 'Video'} by ${selectedItem.contributor_name}`
                     }
                     width={800}
@@ -564,12 +571,12 @@ export function PhotoGallery({
             <div className="p-6 pt-0 border-t">
               <div className="space-y-2">
                 {(selectedItem.type === 'photo'
-                  ? (selectedItem as any).caption
-                  : (selectedItem as any).message) && (
+                  ? (selectedItem as MediaItem).caption
+                  : (selectedItem as VideoItem).message) && (
                   <p className="text-sm">
                     {selectedItem.type === 'photo'
-                      ? (selectedItem as any).caption
-                      : (selectedItem as any).message}
+                      ? (selectedItem as MediaItem).caption
+                      : (selectedItem as VideoItem).message}
                   </p>
                 )}
                 <div className="flex items-center gap-4 text-xs text-muted-foreground">

@@ -40,11 +40,11 @@ async function applySchema() {
     // Remove comments and split by semicolon
     const statements = schema
       .split('\n')
-      .filter(line => !line.trim().startsWith('--') && line.trim() !== '')
+      .filter((line) => !line.trim().startsWith('--') && line.trim() !== '')
       .join('\n')
       .split(';')
-      .map(stmt => stmt.trim())
-      .filter(stmt => stmt.length > 0);
+      .map((stmt) => stmt.trim())
+      .filter((stmt) => stmt.length > 0);
 
     console.log(`📝 Found ${statements.length} SQL statements to execute`);
 
@@ -54,15 +54,17 @@ async function applySchema() {
     // Execute each statement
     for (let i = 0; i < statements.length; i++) {
       const statement = statements[i];
-      
+
       if (statement.length === 0) continue;
 
       try {
         console.log(`\n${i + 1}/${statements.length} Executing statement...`);
-        console.log(`   ${statement.substring(0, 100)}${statement.length > 100 ? '...' : ''}`);
+        console.log(
+          `   ${statement.substring(0, 100)}${statement.length > 100 ? '...' : ''}`
+        );
 
         const { error } = await supabase.rpc('exec_sql', { sql: statement });
-        
+
         if (error) {
           // Try direct execution if RPC fails
           const { error: directError } = await supabase
@@ -71,7 +73,9 @@ async function applySchema() {
             .eq('sql', statement);
 
           if (directError) {
-            console.log(`   ⚠️  Statement may already exist or be invalid: ${error.message}`);
+            console.log(
+              `   ⚠️  Statement may already exist or be invalid: ${error.message}`
+            );
             // Continue with other statements
           } else {
             console.log(`   ✅ Statement executed successfully`);
@@ -93,29 +97,37 @@ async function applySchema() {
 
     // Test the schema by checking if tables exist
     console.log('\n🔍 Verifying schema application...');
-    
-    const tables = ['profiles', 'events', 'photos', 'videos', 'event_contributors', 'payments', 'analytics_events'];
-    
+
+    const tables = [
+      'profiles',
+      'events',
+      'photos',
+      'videos',
+      'event_contributors',
+      'payments',
+      'analytics_events',
+    ];
+
     for (const table of tables) {
       try {
-        const { data, error } = await supabase
-          .from(table)
-          .select('*')
-          .limit(1);
-        
+        const { data, error } = await supabase.from(table).select('*').limit(1);
+
         if (error) {
-          console.log(`   ❌ Table '${table}' not accessible: ${error.message}`);
+          console.log(
+            `   ❌ Table '${table}' not accessible: ${error.message}`
+          );
         } else {
           console.log(`   ✅ Table '${table}' exists and is accessible`);
         }
       } catch (err) {
-        console.log(`   ❌ Table '${table}' verification failed: ${err.message}`);
+        console.log(
+          `   ❌ Table '${table}' verification failed: ${err.message}`
+        );
       }
     }
 
     console.log('\n🎉 Schema application completed!');
     console.log('💡 You can now test the sign-in functionality.');
-
   } catch (error) {
     console.error('❌ Schema application failed:', error.message);
     process.exit(1);

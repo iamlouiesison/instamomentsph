@@ -1,11 +1,23 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { CheckCircle, AlertCircle, Info, QrCode, Download, Printer } from 'lucide-react';
-import { generateQRCodeDataUrl, generateQRCodeSVG, generateQRCodeBuffer } from '@/lib/qr-code';
+import {
+  CheckCircle,
+  AlertCircle,
+  Info,
+  QrCode,
+  Download,
+  Printer,
+} from 'lucide-react';
+import {
+  generateQRCodeDataUrl,
+  generateQRCodeSVG,
+  generateQRCodeBuffer,
+} from '@/lib/qr-code';
 
 export default function TestQRSimplePage() {
   const [qrCodeDataUrl, setQrCodeDataUrl] = useState<string>('');
@@ -29,37 +41,36 @@ export default function TestQRSimplePage() {
     try {
       setIsLoading(true);
       setError(null);
-      
+
       // Test Data URL generation
       try {
         const dataUrl = await generateQRCodeDataUrl(testUrl);
         setQrCodeDataUrl(dataUrl);
-        setTestResults(prev => ({ ...prev, dataUrl: true }));
+        setTestResults((prev) => ({ ...prev, dataUrl: true }));
       } catch (err) {
         console.error('Data URL generation failed:', err);
-        setTestResults(prev => ({ ...prev, dataUrl: false }));
+        setTestResults((prev) => ({ ...prev, dataUrl: false }));
       }
 
       // Test SVG generation
       try {
         const svg = await generateQRCodeSVG(testUrl);
         setQrCodeSvg(svg);
-        setTestResults(prev => ({ ...prev, svg: true }));
+        setTestResults((prev) => ({ ...prev, svg: true }));
       } catch (err) {
         console.error('SVG generation failed:', err);
-        setTestResults(prev => ({ ...prev, svg: false }));
+        setTestResults((prev) => ({ ...prev, svg: false }));
       }
 
       // Test Buffer generation
       try {
         const buffer = await generateQRCodeBuffer(testUrl);
         console.log('Buffer generated successfully, size:', buffer.length);
-        setTestResults(prev => ({ ...prev, buffer: true }));
+        setTestResults((prev) => ({ ...prev, buffer: true }));
       } catch (err) {
         console.error('Buffer generation failed:', err);
-        setTestResults(prev => ({ ...prev, buffer: false }));
+        setTestResults((prev) => ({ ...prev, buffer: false }));
       }
-
     } catch (err) {
       console.error('QR Code generation test failed:', err);
       setError(err instanceof Error ? err.message : 'Unknown error');
@@ -144,15 +155,21 @@ export default function TestQRSimplePage() {
     testQRCodeGeneration();
   }, []);
 
-  const allTestsPassed = Object.values(testResults).every(result => result === true);
-  const anyTestFailed = Object.values(testResults).some(result => result === false);
+  const allTestsPassed = Object.values(testResults).every(
+    (result) => result === true
+  );
+  const anyTestFailed = Object.values(testResults).some(
+    (result) => result === false
+  );
 
   return (
     <div className="min-h-screen bg-background p-4">
       <div className="max-w-4xl mx-auto space-y-6">
         {/* Header */}
         <div className="text-center space-y-4">
-          <h1 className="text-3xl font-bold">QR Code Generation Test (Simple)</h1>
+          <h1 className="text-3xl font-bold">
+            QR Code Generation Test (Simple)
+          </h1>
           <p className="text-muted-foreground">
             Test the QR code generation library functions directly
           </p>
@@ -177,8 +194,11 @@ export default function TestQRSimplePage() {
                   <AlertCircle className="h-4 w-4 text-red-600" />
                 )}
                 <span className="text-sm">
-                  {testResults.dataUrl === null ? 'Testing...' : 
-                   testResults.dataUrl ? 'Passed' : 'Failed'}
+                  {testResults.dataUrl === null
+                    ? 'Testing...'
+                    : testResults.dataUrl
+                      ? 'Passed'
+                      : 'Failed'}
                 </span>
               </div>
             </CardContent>
@@ -201,8 +221,11 @@ export default function TestQRSimplePage() {
                   <AlertCircle className="h-4 w-4 text-red-600" />
                 )}
                 <span className="text-sm">
-                  {testResults.svg === null ? 'Testing...' : 
-                   testResults.svg ? 'Passed' : 'Failed'}
+                  {testResults.svg === null
+                    ? 'Testing...'
+                    : testResults.svg
+                      ? 'Passed'
+                      : 'Failed'}
                 </span>
               </div>
             </CardContent>
@@ -225,8 +248,11 @@ export default function TestQRSimplePage() {
                   <AlertCircle className="h-4 w-4 text-red-600" />
                 )}
                 <span className="text-sm">
-                  {testResults.buffer === null ? 'Testing...' : 
-                   testResults.buffer ? 'Passed' : 'Failed'}
+                  {testResults.buffer === null
+                    ? 'Testing...'
+                    : testResults.buffer
+                      ? 'Passed'
+                      : 'Failed'}
                 </span>
               </div>
             </CardContent>
@@ -238,7 +264,8 @@ export default function TestQRSimplePage() {
           <Alert>
             <CheckCircle className="h-4 w-4" />
             <AlertDescription>
-              <strong>All tests passed!</strong> QR code generation library is working correctly.
+              <strong>All tests passed!</strong> QR code generation library is
+              working correctly.
             </AlertDescription>
           </Alert>
         )}
@@ -247,7 +274,8 @@ export default function TestQRSimplePage() {
           <Alert variant="destructive">
             <AlertCircle className="h-4 w-4" />
             <AlertDescription>
-              <strong>Some tests failed.</strong> Check the error details below and fix the issues.
+              <strong>Some tests failed.</strong> Check the error details below
+              and fix the issues.
             </AlertDescription>
           </Alert>
         )}
@@ -270,10 +298,12 @@ export default function TestQRSimplePage() {
             </CardHeader>
             <CardContent className="text-center">
               <div className="flex justify-center mb-4">
-                <img
+                <Image
                   src={qrCodeDataUrl}
                   alt="Test QR Code"
-                  className="w-64 h-64 border rounded-lg"
+                  width={256}
+                  height={256}
+                  className="border rounded-lg"
                 />
               </div>
               <p className="text-sm text-muted-foreground mb-4">
@@ -291,7 +321,7 @@ export default function TestQRSimplePage() {
               <CardTitle>Generated QR Code (SVG)</CardTitle>
             </CardHeader>
             <CardContent className="text-center">
-              <div 
+              <div
                 className="flex justify-center mb-4"
                 dangerouslySetInnerHTML={{ __html: qrCodeSvg }}
               />
@@ -334,7 +364,9 @@ export default function TestQRSimplePage() {
           <Info className="h-4 w-4" />
           <AlertDescription>
             <div className="space-y-2">
-              <p><strong>Test Instructions:</strong></p>
+              <p>
+                <strong>Test Instructions:</strong>
+              </p>
               <ul className="list-disc list-inside space-y-1 text-sm">
                 <li>Check if the QR code library functions work correctly</li>
                 <li>Verify QR code image is generated and displayed</li>

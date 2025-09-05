@@ -10,7 +10,6 @@ import {
   Shield,
   Download,
   Eye,
-  EyeOff,
   MessageSquare,
   AlertTriangle,
   CheckCircle,
@@ -38,9 +37,11 @@ export const EventSettings: React.FC<EventSettingsProps> = ({
   onUpdate,
   className,
 }) => {
-  const isExpired = event.status === 'expired' || 
+  const isExpired =
+    event.status === 'expired' ||
     (event.expiresAt && new Date(event.expiresAt) < new Date());
-  const isExpiringSoon = event.expiresAt && 
+  const isExpiringSoon =
+    event.expiresAt &&
     new Date(event.expiresAt) < new Date(Date.now() + 24 * 60 * 60 * 1000) &&
     !isExpired;
 
@@ -69,13 +70,16 @@ export const EventSettings: React.FC<EventSettingsProps> = ({
               id="isPublic"
               checked={event.isPublic}
               onCheckedChange={(checked) => onUpdate('isPublic', checked)}
-              disabled={isExpired}
+              disabled={!!isExpired}
             />
           </div>
 
           <div className="flex items-center justify-between">
             <div className="space-y-1">
-              <Label htmlFor="requiresModeration" className="flex items-center gap-2">
+              <Label
+                htmlFor="requiresModeration"
+                className="flex items-center gap-2"
+              >
                 <Shield className="w-4 h-4" />
                 Content Moderation
               </Label>
@@ -86,14 +90,19 @@ export const EventSettings: React.FC<EventSettingsProps> = ({
             <Switch
               id="requiresModeration"
               checked={event.requiresModeration}
-              onCheckedChange={(checked) => onUpdate('requiresModeration', checked)}
-              disabled={isExpired}
+              onCheckedChange={(checked) =>
+                onUpdate('requiresModeration', checked)
+              }
+              disabled={!!isExpired}
             />
           </div>
 
           <div className="flex items-center justify-between">
             <div className="space-y-1">
-              <Label htmlFor="allowDownloads" className="flex items-center gap-2">
+              <Label
+                htmlFor="allowDownloads"
+                className="flex items-center gap-2"
+              >
                 <Download className="w-4 h-4" />
                 Allow Downloads
               </Label>
@@ -105,7 +114,7 @@ export const EventSettings: React.FC<EventSettingsProps> = ({
               id="allowDownloads"
               checked={event.allowDownloads}
               onCheckedChange={(checked) => onUpdate('allowDownloads', checked)}
-              disabled={isExpired}
+              disabled={!!isExpired}
             />
           </div>
         </CardContent>
@@ -127,11 +136,12 @@ export const EventSettings: React.FC<EventSettingsProps> = ({
               placeholder="Add a special message that will be shown to guests when they scan the QR code..."
               value={event.customMessage || ''}
               onChange={(e) => onUpdate('customMessage', e.target.value)}
-              disabled={isExpired}
+              disabled={!!isExpired}
               className="w-full min-h-[80px] px-3 py-2 border border-input rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-ring disabled:opacity-50"
             />
             <p className="text-xs text-muted-foreground">
-              This message will be displayed to guests when they access your event gallery
+              This message will be displayed to guests when they access your
+              event gallery
             </p>
           </div>
         </CardContent>
@@ -202,7 +212,9 @@ export const EventSettings: React.FC<EventSettingsProps> = ({
             </div>
             <div className="flex items-center justify-between">
               <span className="text-sm">Content Moderation</span>
-              <Badge variant={event.requiresModeration ? 'default' : 'secondary'}>
+              <Badge
+                variant={event.requiresModeration ? 'default' : 'secondary'}
+              >
                 {event.requiresModeration ? 'Enabled' : 'Disabled'}
               </Badge>
             </div>

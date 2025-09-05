@@ -21,7 +21,6 @@ import {
   X,
   Home,
   BarChart3,
-  Smartphone,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -40,10 +39,11 @@ export function GlobalNavigation({ className }: GlobalNavigationProps) {
   };
 
   // Determine if we're on a public page (landing, auth pages)
-  const isPublicPage = pathname === '/' || pathname.startsWith('/signin') || pathname.startsWith('/signup') || pathname.startsWith('/reset-password');
-  
-  // Determine if we're on a dashboard page
-  const isDashboardPage = pathname.startsWith('/dashboard') || pathname.startsWith('/create-event') || pathname.startsWith('/profile');
+  const isPublicPage =
+    pathname === '/' ||
+    pathname.startsWith('/signin') ||
+    pathname.startsWith('/signup') ||
+    pathname.startsWith('/reset-password');
 
   // Navigation items for authenticated users
   const authenticatedNavItems = [
@@ -129,53 +129,53 @@ export function GlobalNavigation({ className }: GlobalNavigationProps) {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <Link href={user ? '/dashboard' : '/'} className="flex items-center space-x-2 group">
+          <Link
+            href={user ? '/dashboard' : '/'}
+            className="flex items-center space-x-2 group"
+          >
             <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform">
               <Camera className="w-5 h-5 text-primary-foreground" />
             </div>
-            <span className="text-xl font-bold text-primary">
-              InstaMoments
-            </span>
+            <span className="text-xl font-bold text-primary">InstaMoments</span>
           </Link>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-1">
-            {user ? (
-              // Authenticated navigation
-              authenticatedNavItems.map((item) => {
-                const Icon = item.icon;
-                return (
+            {user
+              ? // Authenticated navigation
+                authenticatedNavItems.map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <Link key={item.name} href={item.href}>
+                      <Button
+                        variant={isActiveRoute(item.href) ? 'default' : 'ghost'}
+                        size="sm"
+                        className={cn(
+                          'flex items-center space-x-2 transition-all',
+                          isActiveRoute(item.href)
+                            ? 'bg-primary text-primary-foreground shadow-sm'
+                            : 'hover:bg-accent hover:text-accent-foreground'
+                        )}
+                      >
+                        <Icon className="w-4 h-4" />
+                        <span>{item.name}</span>
+                      </Button>
+                    </Link>
+                  );
+                })
+              : // Public navigation (only on landing page)
+                isPublicPage &&
+                publicNavItems.map((item) => (
                   <Link key={item.name} href={item.href}>
                     <Button
-                      variant={isActiveRoute(item.href) ? 'default' : 'ghost'}
+                      variant="ghost"
                       size="sm"
-                      className={cn(
-                        'flex items-center space-x-2 transition-all',
-                        isActiveRoute(item.href)
-                          ? 'bg-primary text-primary-foreground shadow-sm'
-                          : 'hover:bg-accent hover:text-accent-foreground'
-                      )}
+                      className="text-sm font-medium hover:text-primary transition-colors"
                     >
-                      <Icon className="w-4 h-4" />
-                      <span>{item.name}</span>
+                      {item.name}
                     </Button>
                   </Link>
-                );
-              })
-            ) : (
-              // Public navigation (only on landing page)
-              isPublicPage && publicNavItems.map((item) => (
-                <Link key={item.name} href={item.href}>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="text-sm font-medium hover:text-primary transition-colors"
-                  >
-                    {item.name}
-                  </Button>
-                </Link>
-              ))
-            )}
+                ))}
           </div>
 
           {/* Right side actions */}
@@ -207,7 +207,9 @@ export function GlobalNavigation({ className }: GlobalNavigationProps) {
                       <p className="text-sm font-medium">
                         {profile?.full_name || 'User'}
                       </p>
-                      <p className="text-xs text-muted-foreground">{user?.email}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {user?.email}
+                      </p>
                     </div>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem asChild>
@@ -287,7 +289,9 @@ export function GlobalNavigation({ className }: GlobalNavigationProps) {
                         onClick={() => setIsMobileMenuOpen(false)}
                       >
                         <Button
-                          variant={isActiveRoute(item.href) ? 'default' : 'ghost'}
+                          variant={
+                            isActiveRoute(item.href) ? 'default' : 'ghost'
+                          }
                           size="sm"
                           className={cn(
                             'w-full justify-start flex items-center space-x-3',
@@ -307,7 +311,9 @@ export function GlobalNavigation({ className }: GlobalNavigationProps) {
                     <p className="text-sm font-medium">
                       {profile?.full_name || 'User'}
                     </p>
-                    <p className="text-xs text-muted-foreground">{user?.email}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {user?.email}
+                    </p>
                     <Button
                       variant="outline"
                       size="sm"
@@ -322,29 +328,41 @@ export function GlobalNavigation({ className }: GlobalNavigationProps) {
               ) : (
                 // Public mobile menu
                 <>
-                  {isPublicPage && publicNavItems.map((item) => (
-                    <Link
-                      key={item.name}
-                      href={item.href}
-                      onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="w-full justify-start text-sm font-medium hover:text-primary transition-colors"
+                  {isPublicPage &&
+                    publicNavItems.map((item) => (
+                      <Link
+                        key={item.name}
+                        href={item.href}
+                        onClick={() => setIsMobileMenuOpen(false)}
                       >
-                        {item.name}
-                      </Button>
-                    </Link>
-                  ))}
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="w-full justify-start text-sm font-medium hover:text-primary transition-colors"
+                        >
+                          {item.name}
+                        </Button>
+                      </Link>
+                    ))}
                   <div className="px-3 py-2 border-t mt-2 space-y-2">
-                    <Button asChild variant="outline" size="sm" className="w-full">
-                      <Link href="/signin" onClick={() => setIsMobileMenuOpen(false)}>
+                    <Button
+                      asChild
+                      variant="outline"
+                      size="sm"
+                      className="w-full"
+                    >
+                      <Link
+                        href="/signin"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
                         Sign In
                       </Link>
                     </Button>
                     <Button asChild size="sm" className="w-full">
-                      <Link href="/signup" onClick={() => setIsMobileMenuOpen(false)}>
+                      <Link
+                        href="/signup"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
                         Start Free
                       </Link>
                     </Button>

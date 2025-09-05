@@ -50,10 +50,15 @@ async function createSimpleTestEvent() {
     console.log('   Status:', event.status);
     console.log('');
     console.log('🔗 Test URLs:');
-    console.log('   QR Code API:', `http://localhost:3000/api/qr/${event.id}?format=png&size=256&branded=true`);
-    console.log('   Gallery URL:', `http://localhost:3000/gallery/${event.gallery_slug}`);
+    console.log(
+      '   QR Code API:',
+      `http://localhost:3000/api/qr/${event.id}?format=png&size=256&branded=true`
+    );
+    console.log(
+      '   Gallery URL:',
+      `http://localhost:3000/gallery/${event.gallery_slug}`
+    );
     console.log('   Test Page:', `http://localhost:3000/test-qr-basic`);
-
   } catch (error) {
     console.error('❌ Unexpected error:', error);
   }

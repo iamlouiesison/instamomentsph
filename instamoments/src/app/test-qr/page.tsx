@@ -1,34 +1,48 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { QRCodeDisplay } from '@/components/features/qr-code';
-import { CheckCircle, AlertCircle, Info, QrCode, Download, Printer } from 'lucide-react';
+import {
+  CheckCircle,
+  AlertCircle,
+  Info,
+  QrCode,
+  Download,
+  Printer,
+} from 'lucide-react';
 
 // Mock event data for testing
 const MOCK_EVENT = {
   id: '123e4567-e89b-12d3-a456-426614174000',
   name: 'Test Wedding Event',
+  description: 'A beautiful wedding celebration',
   event_type: 'wedding' as const,
   event_date: '2024-12-25',
   gallery_slug: 'test-wedding-2024',
+  qr_code_url: 'https://example.com/qr/test-wedding-2024.png',
   location: 'Manila, Philippines',
   host_id: 'test-host-id',
   subscription_tier: 'premium' as const,
-  status: 'active' as const,
-  requires_moderation: false,
   max_photos: 100,
   max_photos_per_user: 3,
+  storage_days: 30,
   has_video_addon: true,
+  requires_moderation: false,
+  allow_downloads: true,
   is_public: true,
+  custom_message: 'Welcome to our wedding!',
   total_photos: 0,
   total_videos: 0,
   total_contributors: 0,
+  status: 'active' as const,
   created_at: new Date().toISOString(),
   updated_at: new Date().toISOString(),
+  expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
 };
 
 export default function TestQRPage() {
@@ -52,23 +66,34 @@ export default function TestQRPage() {
     try {
       setIsLoading(true);
       setError(null);
-      
-      const response = await fetch(`/api/qr/${MOCK_EVENT.id}?format=png&size=256&branded=true`);
-      
+
+      const response = await fetch(
+        `/api/qr/${MOCK_EVENT.id}?format=png&size=256&branded=true`
+      );
+
       if (!response.ok) {
-        throw new Error(`API returned ${response.status}: ${response.statusText}`);
+        throw new Error(
+          `API returned ${response.status}: ${response.statusText}`
+        );
       }
-      
+
       const blob = await response.blob();
       const url = URL.createObjectURL(blob);
       setQrCodeUrl(url);
-      
-      setTestResults(prev => ({ ...prev, apiTest: true, qrGeneration: true }));
-      
+
+      setTestResults((prev) => ({
+        ...prev,
+        apiTest: true,
+        qrGeneration: true,
+      }));
     } catch (err) {
       console.error('QR Code API test failed:', err);
       setError(err instanceof Error ? err.message : 'Unknown error');
-      setTestResults(prev => ({ ...prev, apiTest: false, qrGeneration: false }));
+      setTestResults((prev) => ({
+        ...prev,
+        apiTest: false,
+        qrGeneration: false,
+      }));
     } finally {
       setIsLoading(false);
     }
@@ -77,7 +102,9 @@ export default function TestQRPage() {
   // Test download functionality
   const testDownload = async () => {
     try {
-      const response = await fetch(`/api/qr/${MOCK_EVENT.id}?format=png&size=256&branded=true`);
+      const response = await fetch(
+        `/api/qr/${MOCK_EVENT.id}?format=png&size=256&branded=true`
+      );
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -87,11 +114,11 @@ export default function TestQRPage() {
       a.click();
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
-      
-      setTestResults(prev => ({ ...prev, downloadTest: true }));
+
+      setTestResults((prev) => ({ ...prev, downloadTest: true }));
     } catch (err) {
       console.error('Download test failed:', err);
-      setTestResults(prev => ({ ...prev, downloadTest: false }));
+      setTestResults((prev) => ({ ...prev, downloadTest: false }));
     }
   };
 
@@ -134,12 +161,12 @@ export default function TestQRPage() {
         printWindow.document.write(printContent);
         printWindow.document.close();
         printWindow.print();
-        
-        setTestResults(prev => ({ ...prev, printTest: true }));
+
+        setTestResults((prev) => ({ ...prev, printTest: true }));
       }
     } catch (err) {
       console.error('Print test failed:', err);
-      setTestResults(prev => ({ ...prev, printTest: false }));
+      setTestResults((prev) => ({ ...prev, printTest: false }));
     }
   };
 
@@ -148,8 +175,12 @@ export default function TestQRPage() {
     testQRCodeAPI();
   }, []);
 
-  const allTestsPassed = Object.values(testResults).every(result => result === true);
-  const anyTestFailed = Object.values(testResults).some(result => result === false);
+  const allTestsPassed = Object.values(testResults).every(
+    (result) => result === true
+  );
+  const anyTestFailed = Object.values(testResults).some(
+    (result) => result === false
+  );
 
   return (
     <div className="min-h-screen bg-background p-4">
@@ -177,7 +208,9 @@ export default function TestQRPage() {
               </div>
               <div className="flex justify-between">
                 <span className="text-sm text-muted-foreground">Slug:</span>
-                <span className="text-sm font-mono">{MOCK_EVENT.gallery_slug}</span>
+                <span className="text-sm font-mono">
+                  {MOCK_EVENT.gallery_slug}
+                </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-sm text-muted-foreground">Date:</span>
@@ -208,8 +241,11 @@ export default function TestQRPage() {
                   <AlertCircle className="h-4 w-4 text-red-600" />
                 )}
                 <span className="text-sm">
-                  {testResults.apiTest === null ? 'Testing...' : 
-                   testResults.apiTest ? 'Passed' : 'Failed'}
+                  {testResults.apiTest === null
+                    ? 'Testing...'
+                    : testResults.apiTest
+                      ? 'Passed'
+                      : 'Failed'}
                 </span>
               </div>
             </CardContent>
@@ -232,8 +268,11 @@ export default function TestQRPage() {
                   <AlertCircle className="h-4 w-4 text-red-600" />
                 )}
                 <span className="text-sm">
-                  {testResults.qrGeneration === null ? 'Testing...' : 
-                   testResults.qrGeneration ? 'Passed' : 'Failed'}
+                  {testResults.qrGeneration === null
+                    ? 'Testing...'
+                    : testResults.qrGeneration
+                      ? 'Passed'
+                      : 'Failed'}
                 </span>
               </div>
             </CardContent>
@@ -256,8 +295,11 @@ export default function TestQRPage() {
                   <AlertCircle className="h-4 w-4 text-red-600" />
                 )}
                 <span className="text-sm">
-                  {testResults.downloadTest === null ? 'Not tested' : 
-                   testResults.downloadTest ? 'Passed' : 'Failed'}
+                  {testResults.downloadTest === null
+                    ? 'Not tested'
+                    : testResults.downloadTest
+                      ? 'Passed'
+                      : 'Failed'}
                 </span>
               </div>
             </CardContent>
@@ -280,8 +322,11 @@ export default function TestQRPage() {
                   <AlertCircle className="h-4 w-4 text-red-600" />
                 )}
                 <span className="text-sm">
-                  {testResults.printTest === null ? 'Not tested' : 
-                   testResults.printTest ? 'Passed' : 'Failed'}
+                  {testResults.printTest === null
+                    ? 'Not tested'
+                    : testResults.printTest
+                      ? 'Passed'
+                      : 'Failed'}
                 </span>
               </div>
             </CardContent>
@@ -293,7 +338,8 @@ export default function TestQRPage() {
           <Alert>
             <CheckCircle className="h-4 w-4" />
             <AlertDescription>
-              <strong>All tests passed!</strong> QR code generation is working correctly.
+              <strong>All tests passed!</strong> QR code generation is working
+              correctly.
             </AlertDescription>
           </Alert>
         )}
@@ -302,7 +348,8 @@ export default function TestQRPage() {
           <Alert variant="destructive">
             <AlertCircle className="h-4 w-4" />
             <AlertDescription>
-              <strong>Some tests failed.</strong> Check the error details below and fix the issues.
+              <strong>Some tests failed.</strong> Check the error details below
+              and fix the issues.
             </AlertDescription>
           </Alert>
         )}
@@ -325,16 +372,21 @@ export default function TestQRPage() {
             </CardHeader>
             <CardContent className="text-center">
               <div className="flex justify-center mb-4">
-                <img
+                <Image
                   src={qrCodeUrl}
                   alt="Test QR Code"
-                  className="w-64 h-64 border rounded-lg"
+                  width={256}
+                  height={256}
+                  className="border rounded-lg"
                 />
               </div>
               <p className="text-sm text-muted-foreground mb-4">
                 This QR code should link to: <br />
                 <code className="bg-muted px-2 py-1 rounded">
-                  {typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000'}/gallery/{MOCK_EVENT.gallery_slug}
+                  {typeof window !== 'undefined'
+                    ? window.location.origin
+                    : 'http://localhost:3000'}
+                  /gallery/{MOCK_EVENT.gallery_slug}
                 </code>
               </p>
             </CardContent>
@@ -374,11 +426,7 @@ export default function TestQRPage() {
             <Download className="h-4 w-4 mr-2" />
             Test Download
           </Button>
-          <Button
-            onClick={testPrint}
-            disabled={!qrCodeUrl}
-            variant="outline"
-          >
+          <Button onClick={testPrint} disabled={!qrCodeUrl} variant="outline">
             <Printer className="h-4 w-4 mr-2" />
             Test Print
           </Button>
@@ -389,7 +437,9 @@ export default function TestQRPage() {
           <Info className="h-4 w-4" />
           <AlertDescription>
             <div className="space-y-2">
-              <p><strong>Test Instructions:</strong></p>
+              <p>
+                <strong>Test Instructions:</strong>
+              </p>
               <ul className="list-disc list-inside space-y-1 text-sm">
                 <li>Check if the QR code API endpoint responds correctly</li>
                 <li>Verify QR code image is generated and displayed</li>

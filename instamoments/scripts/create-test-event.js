@@ -11,17 +11,19 @@ async function createTestEvent() {
     console.log('🧪 Creating test event for QR code testing...');
 
     // First, let's check if we have any users
-    const { data: users, error: usersError } = await supabase.auth.admin.listUsers();
-    
+    const { data: users, error: usersError } =
+      await supabase.auth.admin.listUsers();
+
     if (usersError || !users.data || users.data.length === 0) {
       console.log('❌ No users found. Creating a test user first...');
-      
+
       // Create a test user
-      const { data: userData, error: userError } = await supabase.auth.admin.createUser({
-        email: 'test@instamoments.ph',
-        password: 'testpassword123',
-        email_confirm: true,
-      });
+      const { data: userData, error: userError } =
+        await supabase.auth.admin.createUser({
+          email: 'test@instamoments.ph',
+          password: 'testpassword123',
+          email_confirm: true,
+        });
 
       if (userError && userError.code !== 'email_exists') {
         console.error('❌ Error creating test user:', userError);
@@ -40,24 +42,22 @@ async function createTestEvent() {
         const { data: existingUsers } = await supabase.auth.admin.listUsers();
         userId = existingUsers?.data?.[0]?.id;
       }
-      
+
       if (!userId) {
         console.error('❌ Could not get user ID');
         return;
       }
-      
+
       console.log('✅ Using user ID:', userId);
 
       // Create a profile for the user (ignore if already exists)
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .insert({
-          id: userId,
-          email: 'test@instamoments.ph',
-          full_name: 'Test User',
-          user_type: 'host',
-          subscription_tier: 'free',
-        });
+      const { error: profileError } = await supabase.from('profiles').insert({
+        id: userId,
+        email: 'test@instamoments.ph',
+        full_name: 'Test User',
+        user_type: 'host',
+        subscription_tier: 'free',
+      });
 
       if (profileError && profileError.code !== '23505') {
         console.error('❌ Error creating profile:', profileError);
@@ -74,7 +74,8 @@ async function createTestEvent() {
     }
 
     // Get the first user (or the one we just created)
-    const { data: usersList, error: usersError2 } = await supabase.auth.admin.listUsers();
+    const { data: usersList, error: usersError2 } =
+      await supabase.auth.admin.listUsers();
     const testUser = usersList.data[0];
 
     // Create a test event
@@ -117,10 +118,15 @@ async function createTestEvent() {
     console.log('   Status:', event.status);
     console.log('');
     console.log('🔗 Test URLs:');
-    console.log('   QR Code API:', `http://localhost:3000/api/qr/${event.id}?format=png&size=256&branded=true`);
-    console.log('   Gallery URL:', `http://localhost:3000/gallery/${event.gallery_slug}`);
+    console.log(
+      '   QR Code API:',
+      `http://localhost:3000/api/qr/${event.id}?format=png&size=256&branded=true`
+    );
+    console.log(
+      '   Gallery URL:',
+      `http://localhost:3000/gallery/${event.gallery_slug}`
+    );
     console.log('   Test Page:', `http://localhost:3000/test-qr-basic`);
-
   } catch (error) {
     console.error('❌ Unexpected error:', error);
   }

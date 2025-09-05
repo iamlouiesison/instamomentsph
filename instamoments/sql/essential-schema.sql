@@ -137,8 +137,66 @@ CREATE POLICY "Contributors can insert photos to active events" ON photos
     )
   );
 
+-- Create videos table
+CREATE TABLE IF NOT EXISTS videos (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  event_id UUID REFERENCES events(id) ON DELETE CASCADE NOT NULL,
+  uploaded_by UUID REFERENCES auth.users(id) ON DELETE SET NULL,
+  file_name TEXT NOT NULL,
+  file_url TEXT NOT NULL,
+  thumbnail_url TEXT,
+  file_size BIGINT NOT NULL,
+  duration INTEGER NOT NULL DEFAULT 0, -- in seconds
+  mime_type TEXT NOT NULL,
+  caption TEXT,
+  is_greeting BOOLEAN DEFAULT FALSE,
+  status TEXT DEFAULT 'processing', -- processing, completed, failed
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Enable RLS on videos
+ALTER TABLE videos ENABLE ROW LEVEL SECURITY;
+
+-- Create RLS policies for videos
+CREATE POLICY "Event videos viewable by all for public events" ON videos
+  FOR SELECT USING (
+    EXISTS (
+      SELECT 1 FROM events 
+      WHERE events.id = videos.event_id 
+      AND events.is_public = TRUE
+      AND events.status = 'active'
+    )
+  );
+
+CREATE POLICY "Event hosts can view all videos in their events" ON videos
+  FOR SELECT USING (
+    EXISTS (
+      SELECT 1 FROM events 
+      WHERE events.id = videos.event_id 
+      AND events.host_id = auth.uid()
+    )
+  );
+
+CREATE POLICY "Contributors can insert videos to active events" ON videos
+  FOR INSERT WITH CHECK (
+    EXISTS (
+      SELECT 1 FROM events 
+      WHERE events.id = videos.event_id 
+      AND events.status = 'active'
+    )
+  );
+
+-- Update events table to include video limits
+ALTER TABLE events ADD COLUMN IF NOT EXISTS video_limit INTEGER DEFAULT 20;
+ALTER TABLE events ADD COLUMN IF NOT EXISTS max_videos_per_user INTEGER DEFAULT 5;
+
 -- Create indexes for performance
 CREATE INDEX IF NOT EXISTS idx_events_host_id ON events(host_id);
 CREATE INDEX IF NOT EXISTS idx_events_gallery_slug ON events(gallery_slug);
 CREATE INDEX IF NOT EXISTS idx_photos_event_id ON photos(event_id);
 CREATE INDEX IF NOT EXISTS idx_photos_uploaded_at ON photos(uploaded_at);
+CREATE INDEX IF NOT EXISTS idx_videos_event_id ON videos(event_id);
+CREATE INDEX IF NOT EXISTS idx_videos_uploaded_by ON videos(uploaded_by);
+CREATE INDEX IF NOT EXISTS idx_videos_created_at ON videos(created_at);
+CREATE INDEX IF NOT EXISTS idx_videos_status ON videos(status);

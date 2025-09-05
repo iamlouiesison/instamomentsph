@@ -223,12 +223,7 @@ interface GalleryPageLoadingProps {
 
 export function GalleryPageLoading({ className }: GalleryPageLoadingProps) {
   return (
-    <div
-      className={cn(
-        'min-h-screen bg-background',
-        className
-      )}
-    >
+    <div className={cn('min-h-screen bg-background', className)}>
       <div className="max-w-6xl mx-auto px-4 py-8">
         <div className="space-y-8">
           {/* Header Skeleton */}

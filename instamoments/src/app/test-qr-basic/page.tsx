@@ -1,18 +1,27 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import Image from 'next/image';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { CheckCircle, AlertCircle, QrCode, Download, RefreshCw } from 'lucide-react';
+import {
+  CheckCircle,
+  AlertCircle,
+  QrCode,
+  Download,
+  RefreshCw,
+} from 'lucide-react';
 
 export default function TestQRBasicPage() {
   const [qrCodeUrl, setQrCodeUrl] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [testText, setTestText] = useState('https://instamoments.ph/gallery/test-event');
+  const [testText, setTestText] = useState(
+    'https://instamoments.ph/gallery/test-event'
+  );
   const [testResults, setTestResults] = useState<{
     apiTest: boolean | null;
     qrGeneration: boolean | null;
@@ -22,25 +31,28 @@ export default function TestQRBasicPage() {
   });
 
   // Test QR code generation
-  const testQRCodeGeneration = async () => {
+  const testQRCodeGeneration = useCallback(async () => {
     try {
       setIsLoading(true);
       setError(null);
       setTestResults({ apiTest: null, qrGeneration: null });
-      
-      const response = await fetch(`/api/test-qr?text=${encodeURIComponent(testText)}&format=png&size=256`);
-      
+
+      const response = await fetch(
+        `/api/test-qr?text=${encodeURIComponent(testText)}&format=png&size=256`
+      );
+
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(`API returned ${response.status}: ${errorData.error?.message || response.statusText}`);
+        throw new Error(
+          `API returned ${response.status}: ${errorData.error?.message || response.statusText}`
+        );
       }
-      
+
       const blob = await response.blob();
       const url = URL.createObjectURL(blob);
       setQrCodeUrl(url);
-      
+
       setTestResults({ apiTest: true, qrGeneration: true });
-      
     } catch (err) {
       console.error('QR Code generation test failed:', err);
       setError(err instanceof Error ? err.message : 'Unknown error');
@@ -48,12 +60,14 @@ export default function TestQRBasicPage() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [testText]);
 
   // Test download functionality
   const testDownload = async () => {
     try {
-      const response = await fetch(`/api/test-qr?text=${encodeURIComponent(testText)}&format=png&size=256`);
+      const response = await fetch(
+        `/api/test-qr?text=${encodeURIComponent(testText)}&format=png&size=256`
+      );
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -72,10 +86,14 @@ export default function TestQRBasicPage() {
   // Run initial test
   useEffect(() => {
     testQRCodeGeneration();
-  }, []);
+  }, [testQRCodeGeneration]);
 
-  const allTestsPassed = Object.values(testResults).every(result => result === true);
-  const anyTestFailed = Object.values(testResults).some(result => result === false);
+  const allTestsPassed = Object.values(testResults).every(
+    (result) => result === true
+  );
+  const anyTestFailed = Object.values(testResults).some(
+    (result) => result === false
+  );
 
   return (
     <div className="min-h-screen bg-background p-4">
@@ -143,8 +161,11 @@ export default function TestQRBasicPage() {
                   <AlertCircle className="h-4 w-4 text-red-600" />
                 )}
                 <span className="text-sm">
-                  {testResults.apiTest === null ? 'Testing...' : 
-                   testResults.apiTest ? 'Passed' : 'Failed'}
+                  {testResults.apiTest === null
+                    ? 'Testing...'
+                    : testResults.apiTest
+                      ? 'Passed'
+                      : 'Failed'}
                 </span>
               </div>
             </CardContent>
@@ -167,8 +188,11 @@ export default function TestQRBasicPage() {
                   <AlertCircle className="h-4 w-4 text-red-600" />
                 )}
                 <span className="text-sm">
-                  {testResults.qrGeneration === null ? 'Testing...' : 
-                   testResults.qrGeneration ? 'Passed' : 'Failed'}
+                  {testResults.qrGeneration === null
+                    ? 'Testing...'
+                    : testResults.qrGeneration
+                      ? 'Passed'
+                      : 'Failed'}
                 </span>
               </div>
             </CardContent>
@@ -180,7 +204,8 @@ export default function TestQRBasicPage() {
           <Alert>
             <CheckCircle className="h-4 w-4" />
             <AlertDescription>
-              <strong>All tests passed!</strong> QR code generation is working correctly.
+              <strong>All tests passed!</strong> QR code generation is working
+              correctly.
             </AlertDescription>
           </Alert>
         )}
@@ -189,7 +214,8 @@ export default function TestQRBasicPage() {
           <Alert variant="destructive">
             <AlertCircle className="h-4 w-4" />
             <AlertDescription>
-              <strong>Some tests failed.</strong> Check the error details below and fix the issues.
+              <strong>Some tests failed.</strong> Check the error details below
+              and fix the issues.
             </AlertDescription>
           </Alert>
         )}
@@ -212,10 +238,12 @@ export default function TestQRBasicPage() {
             </CardHeader>
             <CardContent className="text-center">
               <div className="flex justify-center mb-4">
-                <img
+                <Image
                   src={qrCodeUrl}
                   alt="Test QR Code"
-                  className="w-64 h-64 border rounded-lg"
+                  width={256}
+                  height={256}
+                  className="border rounded-lg"
                 />
               </div>
               <p className="text-sm text-muted-foreground mb-4">
@@ -224,11 +252,7 @@ export default function TestQRBasicPage() {
                   {testText}
                 </code>
               </p>
-              <Button
-                onClick={testDownload}
-                variant="outline"
-                className="mt-2"
-              >
+              <Button onClick={testDownload} variant="outline" className="mt-2">
                 <Download className="h-4 w-4 mr-2" />
                 Download QR Code
               </Button>
@@ -241,10 +265,12 @@ export default function TestQRBasicPage() {
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>
             <div className="space-y-2">
-              <p><strong>Test Instructions:</strong></p>
+              <p>
+                <strong>Test Instructions:</strong>
+              </p>
               <ul className="list-disc list-inside space-y-1 text-sm">
                 <li>Enter any text or URL in the input field above</li>
-                <li>Click "Generate QR Code" to test the API</li>
+                <li>Click &quot;Generate QR Code&quot; to test the API</li>
                 <li>Verify the QR code image is generated and displayed</li>
                 <li>Test download functionality</li>
                 <li>Scan the QR code with your phone to verify it works</li>

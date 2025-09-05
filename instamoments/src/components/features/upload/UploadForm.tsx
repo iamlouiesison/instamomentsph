@@ -44,7 +44,6 @@ type ContributorFormData = {
 };
 
 interface UploadFormProps {
-  eventId: string;
   eventName: string;
   maxPhotosPerUser: number;
   requiresModeration: boolean;
@@ -57,7 +56,6 @@ interface UploadFormProps {
 }
 
 export const UploadForm: React.FC<UploadFormProps> = ({
-  eventId,
   eventName,
   maxPhotosPerUser,
   requiresModeration,

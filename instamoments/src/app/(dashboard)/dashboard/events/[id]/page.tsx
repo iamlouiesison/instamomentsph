@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -18,7 +18,6 @@ import {
   ArrowLeft,
   Settings,
   Share2,
-  Download,
   QrCode,
   ExternalLink,
   Calendar,
@@ -29,30 +28,32 @@ import {
   Clock,
   AlertTriangle,
   Trash2,
-  Edit,
   Save,
   Copy,
   Archive,
   BarChart3,
-  Globe,
   Lock,
-  Heart,
-  Star,
   Zap,
-  Crown,
   Eye,
   Download as DownloadIcon,
   RefreshCw,
 } from 'lucide-react';
 import { toast } from 'sonner';
-import { formatDistanceToNow, format } from 'date-fns';
+import { formatDistanceToNow } from 'date-fns';
 
 interface Event {
   id: string;
   name: string;
   description: string | null;
   location: string | null;
-  event_type: 'wedding' | 'birthday' | 'corporate' | 'graduation' | 'anniversary' | 'debut' | 'other';
+  event_type:
+    | 'wedding'
+    | 'birthday'
+    | 'corporate'
+    | 'graduation'
+    | 'anniversary'
+    | 'debut'
+    | 'other';
   event_date: string | null;
   host_id: string;
   qr_code_url: string;
@@ -128,7 +129,10 @@ const FILIPINO_EVENT_TYPES = {
 };
 
 const getEventTypeConfig = (eventType: string) => {
-  return FILIPINO_EVENT_TYPES[eventType as keyof typeof FILIPINO_EVENT_TYPES] || FILIPINO_EVENT_TYPES.other;
+  return (
+    FILIPINO_EVENT_TYPES[eventType as keyof typeof FILIPINO_EVENT_TYPES] ||
+    FILIPINO_EVENT_TYPES.other
+  );
 };
 
 const formatDate = (dateString: string) => {
@@ -139,22 +143,38 @@ const formatDate = (dateString: string) => {
   });
 };
 
-const calculateDaysRemaining = (expiresAt?: string) => {
-  if (!expiresAt) return 0;
-  const now = new Date();
-  const expiry = new Date(expiresAt);
-  const diffTime = expiry.getTime() - now.getTime();
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-  return Math.max(0, diffDays);
-};
-
 const getSubscriptionTierInfo = (tier?: string) => {
   const tiers = {
-    free: { label: 'Free', icon: '🆓', color: 'text-gray-600', features: ['Basic features'] },
-    basic: { label: 'Basic', icon: '⭐', color: 'text-blue-600', features: ['Enhanced storage'] },
-    standard: { label: 'Standard', icon: '💎', color: 'text-purple-600', features: ['Video support', 'Priority support'] },
-    premium: { label: 'Premium', icon: '👑', color: 'text-yellow-600', features: ['Unlimited storage', 'Advanced analytics'] },
-    pro: { label: 'Pro', icon: '🚀', color: 'text-red-600', features: ['White-label', 'API access'] },
+    free: {
+      label: 'Free',
+      icon: '🆓',
+      color: 'text-gray-600',
+      features: ['Basic features'],
+    },
+    basic: {
+      label: 'Basic',
+      icon: '⭐',
+      color: 'text-blue-600',
+      features: ['Enhanced storage'],
+    },
+    standard: {
+      label: 'Standard',
+      icon: '💎',
+      color: 'text-purple-600',
+      features: ['Video support', 'Priority support'],
+    },
+    premium: {
+      label: 'Premium',
+      icon: '👑',
+      color: 'text-yellow-600',
+      features: ['Unlimited storage', 'Advanced analytics'],
+    },
+    pro: {
+      label: 'Pro',
+      icon: '🚀',
+      color: 'text-red-600',
+      features: ['White-label', 'API access'],
+    },
   };
   return tiers[tier as keyof typeof tiers] || tiers.free;
 };
@@ -185,11 +205,7 @@ export default function EventManagementPage() {
     isPublic: true,
   });
 
-  useEffect(() => {
-    fetchEvent();
-  }, [eventId]);
-
-  const fetchEvent = async () => {
+  const fetchEvent = useCallback(async () => {
     try {
       setIsLoading(true);
       const response = await fetch(`/api/events/${eventId}`);
@@ -220,7 +236,11 @@ export default function EventManagementPage() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [eventId]);
+
+  useEffect(() => {
+    fetchEvent();
+  }, [eventId, fetchEvent]);
 
   const handleSave = async () => {
     if (!event) return;
@@ -245,7 +265,9 @@ export default function EventManagementPage() {
       await fetchEvent(); // Refresh data
     } catch (error) {
       console.error('Error updating event:', error);
-      toast.error(error instanceof Error ? error.message : 'Failed to update event');
+      toast.error(
+        error instanceof Error ? error.message : 'Failed to update event'
+      );
     } finally {
       setIsSaving(false);
     }
@@ -255,11 +277,17 @@ export default function EventManagementPage() {
     if (!event) return;
 
     if (event.total_photos > 0 || event.total_videos > 0) {
-      toast.error('Cannot delete event with photos or videos. Archive instead.');
+      toast.error(
+        'Cannot delete event with photos or videos. Archive instead.'
+      );
       return;
     }
 
-    if (!confirm('Are you sure you want to delete this event? This action cannot be undone.')) {
+    if (
+      !confirm(
+        'Are you sure you want to delete this event? This action cannot be undone.'
+      )
+    ) {
       return;
     }
 
@@ -279,7 +307,9 @@ export default function EventManagementPage() {
       router.push('/dashboard');
     } catch (error) {
       console.error('Error deleting event:', error);
-      toast.error(error instanceof Error ? error.message : 'Failed to delete event');
+      toast.error(
+        error instanceof Error ? error.message : 'Failed to delete event'
+      );
     } finally {
       setIsDeleting(false);
     }
@@ -360,8 +390,13 @@ export default function EventManagementPage() {
     );
   }
 
-  const isExpired = event.status === 'expired' || (event.expires_at && new Date(event.expires_at) < new Date());
-  const isExpiringSoon = event.expires_at && new Date(event.expires_at) < new Date(Date.now() + 24 * 60 * 60 * 1000) && !isExpired;
+  const isExpired =
+    event.status === 'expired' ||
+    (event.expires_at && new Date(event.expires_at) < new Date());
+  const isExpiringSoon =
+    event.expires_at &&
+    new Date(event.expires_at) < new Date(Date.now() + 24 * 60 * 60 * 1000) &&
+    !isExpired;
   const eventTypeConfig = getEventTypeConfig(event.event_type);
   const tierInfo = getSubscriptionTierInfo(event.subscription_tier);
 
@@ -400,24 +435,19 @@ export default function EventManagementPage() {
                 </Badge>
               </div>
               <p className="text-gray-600 text-lg">
-                {eventTypeConfig.description} • Created {formatDistanceToNow(new Date(event.created_at), { addSuffix: true })}
+                {eventTypeConfig.description} • Created{' '}
+                {formatDistanceToNow(new Date(event.created_at), {
+                  addSuffix: true,
+                })}
               </p>
             </div>
 
             <div className="flex items-center gap-3">
-              <Button
-                onClick={handleViewGallery}
-                variant="outline"
-                size="sm"
-              >
+              <Button onClick={handleViewGallery} variant="outline" size="sm">
                 <ExternalLink className="w-4 h-4 mr-2" />
                 View Gallery
               </Button>
-              <Button
-                onClick={handleShare}
-                variant="outline"
-                size="sm"
-              >
+              <Button onClick={handleShare} variant="outline" size="sm">
                 <Share2 className="w-4 h-4 mr-2" />
                 Share
               </Button>
@@ -438,8 +468,11 @@ export default function EventManagementPage() {
           <Alert className="mb-6">
             <AlertTriangle className="h-4 w-4" />
             <AlertDescription>
-              This event expires {formatDistanceToNow(new Date(event.expires_at!), { addSuffix: true })}. 
-              Consider upgrading to extend storage.
+              This event expires{' '}
+              {formatDistanceToNow(new Date(event.expires_at!), {
+                addSuffix: true,
+              })}
+              . Consider upgrading to extend storage.
             </AlertDescription>
           </Alert>
         )}
@@ -448,7 +481,8 @@ export default function EventManagementPage() {
           <Alert className="mb-6">
             <AlertTriangle className="h-4 w-4" />
             <AlertDescription>
-              This event has expired. Photos and videos may be deleted soon. Download your memories now.
+              This event has expired. Photos and videos may be deleted soon.
+              Download your memories now.
             </AlertDescription>
           </Alert>
         )}
@@ -475,7 +509,11 @@ export default function EventManagementPage() {
         )}
 
         {/* Main Content Tabs */}
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+        <Tabs
+          value={activeTab}
+          onValueChange={setActiveTab}
+          className="space-y-6"
+        >
           <TabsList className="grid w-full grid-cols-2 lg:grid-cols-6">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="settings">Settings</TabsTrigger>
@@ -503,7 +541,9 @@ export default function EventManagementPage() {
                         <Calendar className="w-4 h-4 text-gray-500 flex-shrink-0" />
                         <div className="min-w-0">
                           <p className="text-xs text-gray-600">Event Date</p>
-                          <p className="font-medium text-sm">{formatDate(event.event_date)}</p>
+                          <p className="font-medium text-sm">
+                            {formatDate(event.event_date)}
+                          </p>
                         </div>
                       </div>
                     )}
@@ -513,7 +553,9 @@ export default function EventManagementPage() {
                         <MapPin className="w-4 h-4 text-gray-500 flex-shrink-0" />
                         <div className="min-w-0">
                           <p className="text-xs text-gray-600">Location</p>
-                          <p className="font-medium text-sm truncate">{event.location}</p>
+                          <p className="font-medium text-sm truncate">
+                            {event.location}
+                          </p>
                         </div>
                       </div>
                     )}
@@ -523,7 +565,9 @@ export default function EventManagementPage() {
                       <div className="min-w-0">
                         <p className="text-xs text-gray-600">Created</p>
                         <p className="font-medium text-sm">
-                          {formatDistanceToNow(new Date(event.created_at), { addSuffix: true })}
+                          {formatDistanceToNow(new Date(event.created_at), {
+                            addSuffix: true,
+                          })}
                         </p>
                       </div>
                     </div>
@@ -532,7 +576,9 @@ export default function EventManagementPage() {
                       <Users className="w-4 h-4 text-gray-500 flex-shrink-0" />
                       <div className="min-w-0">
                         <p className="text-xs text-gray-600">Contributors</p>
-                        <p className="font-medium text-sm">{event.total_contributors}</p>
+                        <p className="font-medium text-sm">
+                          {event.total_contributors}
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -540,14 +586,20 @@ export default function EventManagementPage() {
                   {event.description && (
                     <div className="pt-4 border-t">
                       <p className="text-xs text-gray-600 mb-1">Description</p>
-                      <p className="text-sm text-gray-900">{event.description}</p>
+                      <p className="text-sm text-gray-900">
+                        {event.description}
+                      </p>
                     </div>
                   )}
 
                   {event.custom_message && (
                     <div className="p-3 bg-blue-50 rounded-lg">
-                      <p className="text-xs text-blue-600 mb-1">Message for Guests</p>
-                      <p className="text-sm text-blue-900">{event.custom_message}</p>
+                      <p className="text-xs text-blue-600 mb-1">
+                        Message for Guests
+                      </p>
+                      <p className="text-sm text-blue-900">
+                        {event.custom_message}
+                      </p>
                     </div>
                   )}
                 </CardContent>
@@ -568,29 +620,41 @@ export default function EventManagementPage() {
                         <Camera className="w-4 h-4 text-gray-500" />
                         <span className="text-sm text-gray-600">Photos</span>
                       </div>
-                      <span className="font-semibold">{event.total_photos}</span>
+                      <span className="font-semibold">
+                        {event.total_photos}
+                      </span>
                     </div>
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <Video className="w-4 h-4 text-gray-500" />
                         <span className="text-sm text-gray-600">Videos</span>
                       </div>
-                      <span className="font-semibold">{event.total_videos}</span>
+                      <span className="font-semibold">
+                        {event.total_videos}
+                      </span>
                     </div>
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <Users className="w-4 h-4 text-gray-500" />
-                        <span className="text-sm text-gray-600">Contributors</span>
+                        <span className="text-sm text-gray-600">
+                          Contributors
+                        </span>
                       </div>
-                      <span className="font-semibold">{event.total_contributors}</span>
+                      <span className="font-semibold">
+                        {event.total_contributors}
+                      </span>
                     </div>
                     {event.daysRemaining > 0 && (
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
                           <Clock className="w-4 h-4 text-gray-500" />
-                          <span className="text-sm text-gray-600">Days Left</span>
+                          <span className="text-sm text-gray-600">
+                            Days Left
+                          </span>
                         </div>
-                        <span className="font-semibold text-orange-600">{event.daysRemaining}</span>
+                        <span className="font-semibold text-orange-600">
+                          {event.daysRemaining}
+                        </span>
                       </div>
                     )}
                   </div>
@@ -615,12 +679,14 @@ export default function EventManagementPage() {
                         {event.total_photos} / {event.max_photos}
                       </span>
                     </div>
-                    <Progress 
-                      value={(event.total_photos / event.max_photos) * 100} 
+                    <Progress
+                      value={(event.total_photos / event.max_photos) * 100}
                       className="h-2"
                     />
                     {event.photoLimitReached && (
-                      <p className="text-xs text-red-600 mt-1">Photo limit reached</p>
+                      <p className="text-xs text-red-600 mt-1">
+                        Photo limit reached
+                      </p>
                     )}
                   </div>
 
@@ -628,15 +694,18 @@ export default function EventManagementPage() {
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-sm font-medium">Video Storage</span>
                       <span className="text-sm text-gray-600">
-                        {event.total_videos} / {event.has_video_addon ? 'Unlimited' : '0'}
+                        {event.total_videos} /{' '}
+                        {event.has_video_addon ? 'Unlimited' : '0'}
                       </span>
                     </div>
-                    <Progress 
-                      value={event.has_video_addon ? 0 : 100} 
+                    <Progress
+                      value={event.has_video_addon ? 0 : 100}
                       className="h-2"
                     />
                     {event.videoLimitReached && (
-                      <p className="text-xs text-red-600 mt-1">Video limit reached</p>
+                      <p className="text-xs text-red-600 mt-1">
+                        Video limit reached
+                      </p>
                     )}
                   </div>
                 </div>
@@ -648,8 +717,8 @@ export default function EventManagementPage() {
                       {event.storage_days} days
                     </span>
                   </div>
-                  <Progress 
-                    value={(event.daysRemaining / event.storage_days) * 100} 
+                  <Progress
+                    value={(event.daysRemaining / event.storage_days) * 100}
                     className="h-2"
                   />
                 </div>
@@ -673,7 +742,9 @@ export default function EventManagementPage() {
                     <Input
                       id="name"
                       value={formData.name}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, name: e.target.value })
+                      }
                       placeholder="Enter event name"
                     />
                   </div>
@@ -683,14 +754,18 @@ export default function EventManagementPage() {
                     <select
                       id="eventType"
                       value={formData.eventType}
-                      onChange={(e) => setFormData({ ...formData, eventType: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, eventType: e.target.value })
+                      }
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
-                      {Object.entries(FILIPINO_EVENT_TYPES).map(([key, config]) => (
-                        <option key={key} value={key}>
-                          {config.icon} {config.label}
-                        </option>
-                      ))}
+                      {Object.entries(FILIPINO_EVENT_TYPES).map(
+                        ([key, config]) => (
+                          <option key={key} value={key}>
+                            {config.icon} {config.label}
+                          </option>
+                        )
+                      )}
                     </select>
                   </div>
                 </div>
@@ -700,7 +775,9 @@ export default function EventManagementPage() {
                   <Textarea
                     id="description"
                     value={formData.description}
-                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, description: e.target.value })
+                    }
                     placeholder="Describe your event..."
                     rows={3}
                   />
@@ -712,7 +789,9 @@ export default function EventManagementPage() {
                     <Input
                       id="location"
                       value={formData.location}
-                      onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, location: e.target.value })
+                      }
                       placeholder="Event location"
                     />
                   </div>
@@ -723,17 +802,26 @@ export default function EventManagementPage() {
                       id="eventDate"
                       type="date"
                       value={formData.eventDate}
-                      onChange={(e) => setFormData({ ...formData, eventDate: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, eventDate: e.target.value })
+                      }
                     />
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="customMessage">Custom Message for Guests</Label>
+                  <Label htmlFor="customMessage">
+                    Custom Message for Guests
+                  </Label>
                   <Textarea
                     id="customMessage"
                     value={formData.customMessage}
-                    onChange={(e) => setFormData({ ...formData, customMessage: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        customMessage: e.target.value,
+                      })
+                    }
                     placeholder="Add a special message for your guests..."
                     rows={3}
                   />
@@ -779,21 +867,31 @@ export default function EventManagementPage() {
                     <Switch
                       id="isPublic"
                       checked={formData.isPublic}
-                      onCheckedChange={(checked) => setFormData({ ...formData, isPublic: checked })}
+                      onCheckedChange={(checked) =>
+                        setFormData({ ...formData, isPublic: checked })
+                      }
                     />
                   </div>
 
                   <div className="flex items-center justify-between">
                     <div className="space-y-1">
-                      <Label htmlFor="requiresModeration">Require Moderation</Label>
+                      <Label htmlFor="requiresModeration">
+                        Require Moderation
+                      </Label>
                       <p className="text-sm text-gray-600">
-                        Review photos and videos before they appear in the gallery
+                        Review photos and videos before they appear in the
+                        gallery
                       </p>
                     </div>
                     <Switch
                       id="requiresModeration"
                       checked={formData.requiresModeration}
-                      onCheckedChange={(checked) => setFormData({ ...formData, requiresModeration: checked })}
+                      onCheckedChange={(checked) =>
+                        setFormData({
+                          ...formData,
+                          requiresModeration: checked,
+                        })
+                      }
                     />
                   </div>
 
@@ -807,7 +905,9 @@ export default function EventManagementPage() {
                     <Switch
                       id="allowDownloads"
                       checked={formData.allowDownloads}
-                      onCheckedChange={(checked) => setFormData({ ...formData, allowDownloads: checked })}
+                      onCheckedChange={(checked) =>
+                        setFormData({ ...formData, allowDownloads: checked })
+                      }
                     />
                   </div>
                 </div>
@@ -850,11 +950,7 @@ export default function EventManagementPage() {
                         readOnly
                         className="bg-gray-50"
                       />
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={handleShare}
-                      >
+                      <Button variant="outline" size="sm" onClick={handleShare}>
                         <Copy className="w-4 h-4" />
                       </Button>
                     </div>
@@ -913,19 +1009,24 @@ export default function EventManagementPage() {
                   </div>
                   <div className="text-center p-4 bg-purple-50 rounded-lg">
                     <Users className="w-8 h-8 text-purple-600 mx-auto mb-2" />
-                    <p className="text-2xl font-bold text-purple-900">{event.total_contributors}</p>
+                    <p className="text-2xl font-bold text-purple-900">
+                      {event.total_contributors}
+                    </p>
                     <p className="text-sm text-purple-700">Contributors</p>
                   </div>
                   <div className="text-center p-4 bg-orange-50 rounded-lg">
                     <Camera className="w-8 h-8 text-orange-600 mx-auto mb-2" />
-                    <p className="text-2xl font-bold text-orange-900">{event.total_photos}</p>
+                    <p className="text-2xl font-bold text-orange-900">
+                      {event.total_photos}
+                    </p>
                     <p className="text-sm text-orange-700">Photos</p>
                   </div>
                 </div>
 
                 <div className="pt-4 border-t">
                   <p className="text-sm text-gray-600 text-center">
-                    Advanced analytics coming soon! Track engagement, popular photos, and guest activity.
+                    Advanced analytics coming soon! Track engagement, popular
+                    photos, and guest activity.
                   </p>
                 </div>
               </CardContent>
@@ -946,7 +1047,11 @@ export default function EventManagementPage() {
                   <p className="text-sm text-gray-600 mb-4">
                     Create a copy of this event with the same settings
                   </p>
-                  <Button onClick={handleDuplicate} variant="outline" className="w-full">
+                  <Button
+                    onClick={handleDuplicate}
+                    variant="outline"
+                    className="w-full"
+                  >
                     <Copy className="w-4 h-4 mr-2" />
                     Duplicate
                   </Button>
@@ -964,7 +1069,11 @@ export default function EventManagementPage() {
                   <p className="text-sm text-gray-600 mb-4">
                     Download all photos and videos as a ZIP file
                   </p>
-                  <Button onClick={handleExport} variant="outline" className="w-full">
+                  <Button
+                    onClick={handleExport}
+                    variant="outline"
+                    className="w-full"
+                  >
                     <DownloadIcon className="w-4 h-4 mr-2" />
                     Export
                   </Button>
@@ -982,7 +1091,11 @@ export default function EventManagementPage() {
                   <p className="text-sm text-gray-600 mb-4">
                     Hide this event from your dashboard
                   </p>
-                  <Button onClick={handleArchive} variant="outline" className="w-full">
+                  <Button
+                    onClick={handleArchive}
+                    variant="outline"
+                    className="w-full"
+                  >
                     <Archive className="w-4 h-4 mr-2" />
                     Archive
                   </Button>
@@ -1001,20 +1114,27 @@ export default function EventManagementPage() {
               <CardContent>
                 <div className="space-y-3">
                   <div>
-                    <h3 className="font-medium text-red-600 text-sm">Delete Event</h3>
+                    <h3 className="font-medium text-red-600 text-sm">
+                      Delete Event
+                    </h3>
                     <p className="text-xs text-gray-600 mt-1">
                       Permanently delete this event and all its data.
                     </p>
                     {event.total_photos > 0 || event.total_videos > 0 ? (
                       <p className="text-xs text-red-600 mt-1">
-                        Cannot delete event with {event.total_photos} photos and {event.total_videos} videos.
+                        Cannot delete event with {event.total_photos} photos and{' '}
+                        {event.total_videos} videos.
                       </p>
                     ) : null}
                   </div>
                   <Button
                     variant="destructive"
                     onClick={handleDelete}
-                    disabled={isDeleting || event.total_photos > 0 || event.total_videos > 0}
+                    disabled={
+                      isDeleting ||
+                      event.total_photos > 0 ||
+                      event.total_videos > 0
+                    }
                     size="sm"
                     className="w-full"
                   >

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useAuthContext } from '@/components/providers/AuthProvider';
 import {
   Card,
@@ -21,9 +21,9 @@ export default function ProfilePage() {
   console.log('ProfilePage Debug:', { profile, loading, user, error });
 
   // Create profile if user exists but no profile
-  const createProfile = async () => {
+  const createProfile = useCallback(async () => {
     if (!user || profile || isCreatingProfile) return;
-    
+
     setIsCreatingProfile(true);
     try {
       const response = await fetch('/api/profile/create', {
@@ -32,28 +32,28 @@ export default function ProfilePage() {
           'Content-Type': 'application/json',
         },
       });
-      
+
       const result = await response.json();
-      
+
       if (result.success) {
         // Refresh the page to load the new profile
         window.location.reload();
       } else {
         console.error('Failed to create profile:', result.error);
       }
-    } catch (error) {
-      console.error('Error creating profile:', error);
+    } catch {
+      // Error handling is done in the hook
     } finally {
       setIsCreatingProfile(false);
     }
-  };
+  }, [user, profile, isCreatingProfile]);
 
   // Auto-create profile if needed
   useEffect(() => {
     if (user && !profile && !loading && !error) {
       createProfile();
     }
-  }, [user, profile, loading, error]);
+  }, [user, profile, loading, error, createProfile]);
 
   const getInitials = (name: string) => {
     return name
@@ -78,7 +78,9 @@ export default function ProfilePage() {
         <div className="text-center">
           <h1 className="text-2xl font-bold mb-4 text-destructive">Error</h1>
           <p className="text-muted-foreground mb-4">{error}</p>
-          <a href="/signin" className="text-primary hover:underline">Try signing in again</a>
+          <a href="/signin" className="text-primary hover:underline">
+            Try signing in again
+          </a>
         </div>
       </div>
     );
@@ -89,8 +91,12 @@ export default function ProfilePage() {
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold mb-4">Not Authenticated</h1>
-          <p className="text-muted-foreground mb-4">You need to sign in to view your profile.</p>
-          <a href="/signin" className="text-primary hover:underline">Go to Sign In</a>
+          <p className="text-muted-foreground mb-4">
+            You need to sign in to view your profile.
+          </p>
+          <a href="/signin" className="text-primary hover:underline">
+            Go to Sign In
+          </a>
         </div>
       </div>
     );
@@ -101,9 +107,15 @@ export default function ProfilePage() {
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold mb-4">Profile Not Found</h1>
-          <p className="text-muted-foreground mb-4">Your profile could not be loaded.</p>
-          <p className="text-sm text-muted-foreground mb-4">User ID: {user.id}</p>
-          <a href="/signin" className="text-primary hover:underline">Try signing in again</a>
+          <p className="text-muted-foreground mb-4">
+            Your profile could not be loaded.
+          </p>
+          <p className="text-sm text-muted-foreground mb-4">
+            User ID: {user.id}
+          </p>
+          <a href="/signin" className="text-primary hover:underline">
+            Try signing in again
+          </a>
         </div>
       </div>
     );
@@ -114,8 +126,12 @@ export default function ProfilePage() {
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold mb-4">Not Authenticated</h1>
-          <p className="text-muted-foreground mb-4">You need to sign in to view your profile.</p>
-          <a href="/signin" className="text-primary hover:underline">Go to Sign In</a>
+          <p className="text-muted-foreground mb-4">
+            You need to sign in to view your profile.
+          </p>
+          <a href="/signin" className="text-primary hover:underline">
+            Go to Sign In
+          </a>
         </div>
       </div>
     );
@@ -129,24 +145,26 @@ export default function ProfilePage() {
           <div className="flex items-center space-x-6">
             <Avatar className="w-20 h-20 ring-4 ring-background shadow-lg">
               <AvatarImage
-                src={profile.avatar_url || ''}
-                alt={profile.full_name || ''}
+                src={profile?.avatar_url || ''}
+                alt={profile?.full_name || ''}
               />
               <AvatarFallback className="text-2xl font-bold">
-                {profile.full_name ? getInitials(profile.full_name) : 'U'}
+                {profile?.full_name ? getInitials(profile.full_name) : 'U'}
               </AvatarFallback>
             </Avatar>
             <div className="flex-1">
               <h1 className="text-3xl font-bold mb-2">
-                {profile.full_name || 'Walang Pangalan'}
+                {profile?.full_name || 'Walang Pangalan'}
               </h1>
               <p className="text-muted-foreground text-lg mb-3">
-                {profile.email}
+                {profile?.email}
               </p>
               <div className="flex items-center space-x-4">
                 <span className="text-sm text-muted-foreground">
                   Member since{' '}
-                  {new Date(profile.created_at).toLocaleDateString('en-PH')}
+                  {profile?.created_at
+                    ? new Date(profile.created_at).toLocaleDateString('en-PH')
+                    : 'Unknown'}
                 </span>
               </div>
             </div>
@@ -177,7 +195,7 @@ export default function ProfilePage() {
                   <div>
                     <p className="font-medium">Email Address</p>
                     <p className="text-sm text-muted-foreground">
-                      {profile.email}
+                      {profile?.email}
                     </p>
                   </div>
                 </div>
@@ -186,7 +204,7 @@ export default function ProfilePage() {
                   <div>
                     <p className="font-medium">Full Name</p>
                     <p className="text-sm text-muted-foreground">
-                      {profile.full_name || 'Not set'}
+                      {profile?.full_name || 'Not set'}
                     </p>
                   </div>
                 </div>
@@ -195,7 +213,7 @@ export default function ProfilePage() {
                   <div>
                     <p className="font-medium">Subscription Tier</p>
                     <p className="text-sm text-muted-foreground capitalize">
-                      {profile.subscription_tier}
+                      {profile?.subscription_tier}
                     </p>
                   </div>
                 </div>

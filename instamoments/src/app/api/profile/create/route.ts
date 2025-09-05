@@ -1,16 +1,22 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 
-export async function POST(request: NextRequest) {
+export async function POST() {
   try {
     const supabase = await createClient();
-    
+
     // Get the current user
-    const { data: { user }, error: userError } = await supabase.auth.getUser();
-    
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
+
     if (userError || !user) {
       return NextResponse.json(
-        { success: false, error: { code: 'UNAUTHORIZED', message: 'User not authenticated' } },
+        {
+          success: false,
+          error: { code: 'UNAUTHORIZED', message: 'User not authenticated' },
+        },
         { status: 401 }
       );
     }
@@ -26,7 +32,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({
         success: true,
         data: existingProfile,
-        message: 'Profile already exists'
+        message: 'Profile already exists',
       });
     }
 
@@ -39,7 +45,7 @@ export async function POST(request: NextRequest) {
         full_name: user.user_metadata?.full_name || null,
         subscription_tier: 'free',
         subscription_status: 'active',
-        user_type: 'guest'
+        user_type: 'guest',
       })
       .select()
       .single();
@@ -47,7 +53,13 @@ export async function POST(request: NextRequest) {
     if (profileError) {
       console.error('Profile creation error:', profileError);
       return NextResponse.json(
-        { success: false, error: { code: 'PROFILE_CREATION_FAILED', message: profileError.message } },
+        {
+          success: false,
+          error: {
+            code: 'PROFILE_CREATION_FAILED',
+            message: profileError.message,
+          },
+        },
         { status: 500 }
       );
     }
@@ -55,13 +67,15 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       data: profile,
-      message: 'Profile created successfully'
+      message: 'Profile created successfully',
     });
-
   } catch (error) {
     console.error('API Error:', error);
     return NextResponse.json(
-      { success: false, error: { code: 'INTERNAL_ERROR', message: 'Something went wrong' } },
+      {
+        success: false,
+        error: { code: 'INTERNAL_ERROR', message: 'Something went wrong' },
+      },
       { status: 500 }
     );
   }

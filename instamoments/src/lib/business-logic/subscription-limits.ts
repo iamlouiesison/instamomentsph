@@ -82,11 +82,10 @@ export function getSubscriptionLimits(tier: string): SubscriptionLimits {
  */
 export function canUploadPhoto(
   subscriptionTier: string,
-  currentPhotos: number,
-  hasVideoAddon: boolean = false
+  currentPhotos: number
 ): { allowed: boolean; reason?: string } {
   const limits = getSubscriptionLimits(subscriptionTier);
-  
+
   if (currentPhotos >= limits.maxPhotos) {
     return {
       allowed: false,
@@ -106,7 +105,7 @@ export function canUploadVideo(
   hasVideoAddon: boolean = false
 ): { allowed: boolean; reason?: string } {
   const limits = getSubscriptionLimits(subscriptionTier);
-  
+
   if (!hasVideoAddon) {
     return {
       allowed: false,
@@ -132,7 +131,7 @@ export function canUserUploadPhoto(
   userPhotoCount: number
 ): { allowed: boolean; reason?: string } {
   const limits = getSubscriptionLimits(subscriptionTier);
-  
+
   if (userPhotoCount >= limits.maxPhotosPerUser) {
     return {
       allowed: false,
@@ -154,12 +153,16 @@ export function calculateEventExpiration(
   const created = new Date(createdAt);
   const now = new Date();
   const limits = getSubscriptionLimits(subscriptionTier);
-  
+
   // Use custom expiration date if provided, otherwise calculate from creation date
-  const expiresAt = customExpiresAt ? new Date(customExpiresAt) : 
-    new Date(created.getTime() + limits.storageDays * 24 * 60 * 60 * 1000);
-  
-  const daysRemaining = Math.max(0, Math.ceil((expiresAt.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)));
+  const expiresAt = customExpiresAt
+    ? new Date(customExpiresAt)
+    : new Date(created.getTime() + limits.storageDays * 24 * 60 * 60 * 1000);
+
+  const daysRemaining = Math.max(
+    0,
+    Math.ceil((expiresAt.getTime() - now.getTime()) / (1000 * 60 * 60 * 24))
+  );
   const isExpired = expiresAt < now;
   const isExpiringSoon = !isExpired && daysRemaining <= 1;
 
@@ -181,7 +184,11 @@ export function isEventActive(
   subscriptionTier: string,
   customExpiresAt?: string | Date
 ): boolean {
-  const expiration = calculateEventExpiration(createdAt, subscriptionTier, customExpiresAt);
+  const expiration = calculateEventExpiration(
+    createdAt,
+    subscriptionTier,
+    customExpiresAt
+  );
   return !expiration.isExpired;
 }
 
@@ -194,9 +201,13 @@ export function getUpgradeRecommendations(
   currentVideos: number,
   daysRemaining: number
 ): Array<{ tier: string; reason: string; price: number }> {
-  const recommendations: Array<{ tier: string; reason: string; price: number }> = [];
+  const recommendations: Array<{
+    tier: string;
+    reason: string;
+    price: number;
+  }> = [];
   const currentLimits = getSubscriptionLimits(subscriptionTier);
-  
+
   // Check if approaching photo limit
   const photoUsagePercent = (currentPhotos / currentLimits.maxPhotos) * 100;
   if (photoUsagePercent >= 80) {
@@ -261,11 +272,11 @@ export function calculateTotalPrice(
 ): number {
   const limits = getSubscriptionLimits(subscriptionTier);
   let total = limits.price;
-  
+
   if (hasVideoAddon && limits.hasVideoAddon) {
     total += VIDEO_ADDON_PRICES[subscriptionTier] || 0;
   }
-  
+
   return total;
 }
 

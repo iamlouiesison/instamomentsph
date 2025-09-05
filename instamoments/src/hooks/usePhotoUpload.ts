@@ -2,7 +2,6 @@
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { ProcessedImage } from '@/lib/image-processing';
-import { PhotoUploadFormData } from '@/components/features/upload/PhotoUpload';
 
 export interface PhotoUploadData {
   eventId: string;
@@ -23,7 +22,7 @@ export interface PhotoUploadResponse {
   error?: {
     code: string;
     message: string;
-    details?: any;
+    details?: Record<string, unknown>;
   };
   meta?: {
     rateLimit: {
@@ -33,8 +32,14 @@ export interface PhotoUploadResponse {
   };
 }
 
+export interface PhotoUploadResult {
+  results: PhotoUploadResponse[];
+  successfulPhotos: ProcessedImage[];
+  failedPhotos: ProcessedImage[];
+}
+
 export interface UsePhotoUploadOptions {
-  onSuccess?: (uploadedPhotos: ProcessedImage[]) => void;
+  onSuccess?: (uploadedPhotos: PhotoUploadResponse[]) => void;
   onError?: (error: string) => void;
   onProgress?: (progress: number) => void;
 }
@@ -45,7 +50,7 @@ export interface UsePhotoUploadReturn {
   isError: boolean;
   error: Error | null;
   isSuccess: boolean;
-  data: PhotoUploadResponse | undefined;
+  data: PhotoUploadResult | undefined;
   reset: () => void;
   uploadProgress: number;
   uploadedCount: number;
@@ -61,13 +66,15 @@ export function usePhotoUpload(
   const queryClient = useQueryClient();
   const { onSuccess, onError, onProgress } = options;
 
-  const mutation = useMutation({
-    mutationFn: async (uploadData: PhotoUploadData): Promise<PhotoUploadResponse[]> => {
-      const { eventId, files, contributorName, contributorEmail, caption } = uploadData;
-      
+  const mutation = useMutation<PhotoUploadResult, string, PhotoUploadData>({
+    mutationFn: async (
+      uploadData: PhotoUploadData
+    ): Promise<PhotoUploadResult> => {
+      const { eventId, files, contributorName, contributorEmail, caption } =
+        uploadData;
+
       // Upload files sequentially to track progress
       const results: PhotoUploadResponse[] = [];
-      let uploadedCount = 0;
 
       for (const [index, photo] of files.entries()) {
         try {
@@ -98,11 +105,9 @@ export function usePhotoUpload(
           }
 
           results.push(result);
-          uploadedCount++;
-
         } catch (error) {
           console.error(`Upload failed for photo ${index + 1}:`, error);
-          
+
           // Add error result
           results.push({
             success: false,
@@ -114,25 +119,30 @@ export function usePhotoUpload(
         }
       }
 
-      return results;
+      const successfulUploads = results.filter((result) => result.success);
+      return {
+        results,
+        successfulPhotos: uploadData.files.slice(0, successfulUploads.length),
+        failedPhotos: uploadData.files.slice(successfulUploads.length),
+      };
     },
-    onSuccess: (results, variables) => {
-      const successfulUploads = results.filter(result => result.success);
-      const failedUploads = results.filter(result => !result.success);
+    onSuccess: (data, variables) => {
+      const { results } = data;
+      const successfulUploads = results.filter((result) => result.success);
+      const failedUploads = results.filter((result) => !result.success);
 
       if (successfulUploads.length > 0) {
         // Invalidate gallery queries to refresh the UI
         queryClient.invalidateQueries({
           queryKey: ['gallery', variables.eventId],
         });
-        
+
         queryClient.invalidateQueries({
           queryKey: ['events'],
         });
 
         // Call success callback with successfully uploaded photos
-        const uploadedPhotos = variables.files.slice(0, successfulUploads.length);
-        onSuccess?.(uploadedPhotos);
+        onSuccess?.(data.results);
       }
 
       if (failedUploads.length > 0) {
@@ -142,7 +152,7 @@ export function usePhotoUpload(
     },
     onError: (error) => {
       console.error('Photo upload mutation failed:', error);
-      onError?.(error.message);
+      onError?.(String(error));
     },
   });
 
@@ -150,33 +160,34 @@ export function usePhotoUpload(
     uploadPhotos: mutation.mutate,
     isPending: mutation.isPending,
     isError: mutation.isError,
-    error: mutation.error,
+    error: mutation.error as Error | null,
     isSuccess: mutation.isSuccess,
-    data: mutation.data?.[0], // Return first result for compatibility
+    data: mutation.data,
     reset: mutation.reset,
     uploadProgress: mutation.isPending ? 0 : 100,
-    uploadedCount: mutation.data?.filter(r => r.success).length || 0,
-    totalCount: mutation.data?.length || 0,
+    uploadedCount: mutation.data?.results.filter((r) => r.success).length || 0,
+    totalCount: mutation.data?.results.length || 0,
   };
 }
 
 /**
  * Hook for batch photo uploads with individual file progress
  */
-export function useBatchPhotoUpload(
-  options: UsePhotoUploadOptions = {}
-) {
+export function useBatchPhotoUpload(options: UsePhotoUploadOptions = {}) {
   const queryClient = useQueryClient();
   const { onSuccess, onError, onProgress } = options;
 
   const mutation = useMutation({
-    mutationFn: async (uploadData: PhotoUploadData): Promise<{
+    mutationFn: async (
+      uploadData: PhotoUploadData
+    ): Promise<{
       results: PhotoUploadResponse[];
       successfulPhotos: ProcessedImage[];
       failedPhotos: ProcessedImage[];
     }> => {
-      const { eventId, files, contributorName, contributorEmail, caption } = uploadData;
-      
+      const { eventId, files, contributorName, contributorEmail, caption } =
+        uploadData;
+
       const results: PhotoUploadResponse[] = [];
       const successfulPhotos: ProcessedImage[] = [];
       const failedPhotos: ProcessedImage[] = [];
@@ -214,7 +225,8 @@ export function useBatchPhotoUpload(
               success: false,
               error: {
                 code: 'UPLOAD_ERROR',
-                message: error instanceof Error ? error.message : 'Upload failed',
+                message:
+                  error instanceof Error ? error.message : 'Upload failed',
               },
             },
             photo,
@@ -253,12 +265,12 @@ export function useBatchPhotoUpload(
         queryClient.invalidateQueries({
           queryKey: ['gallery', variables.eventId],
         });
-        
+
         queryClient.invalidateQueries({
           queryKey: ['events'],
         });
 
-        onSuccess?.(successfulPhotos);
+        onSuccess?.(data.results);
       }
 
       if (failedPhotos.length > 0) {
@@ -268,7 +280,7 @@ export function useBatchPhotoUpload(
     },
     onError: (error) => {
       console.error('Batch photo upload mutation failed:', error);
-      onError?.(error.message);
+      onError?.(String(error));
     },
   });
 
@@ -276,7 +288,7 @@ export function useBatchPhotoUpload(
     uploadPhotos: mutation.mutate,
     isPending: mutation.isPending,
     isError: mutation.isError,
-    error: mutation.error,
+    error: mutation.error as Error | null,
     isSuccess: mutation.isSuccess,
     data: mutation.data,
     reset: mutation.reset,
@@ -289,9 +301,7 @@ export function useBatchPhotoUpload(
 /**
  * Hook for single photo upload with detailed progress
  */
-export function useSinglePhotoUpload(
-  options: UsePhotoUploadOptions = {}
-) {
+export function useSinglePhotoUpload(options: UsePhotoUploadOptions = {}) {
   const queryClient = useQueryClient();
   const { onSuccess, onError, onProgress } = options;
 
@@ -303,7 +313,8 @@ export function useSinglePhotoUpload(
       contributorEmail?: string;
       caption?: string;
     }): Promise<PhotoUploadResponse> => {
-      const { eventId, photo, contributorName, contributorEmail, caption } = uploadData;
+      const { eventId, photo, contributorName, contributorEmail, caption } =
+        uploadData;
 
       // Update progress
       onProgress?.(50);
@@ -340,16 +351,25 @@ export function useSinglePhotoUpload(
       queryClient.invalidateQueries({
         queryKey: ['gallery', variables.eventId],
       });
-      
+
       queryClient.invalidateQueries({
         queryKey: ['events'],
       });
 
-      onSuccess?.([variables.photo]);
+      onSuccess?.([
+        {
+          success: true,
+          data: {
+            photoId: 'retry-success',
+            fileUrl: variables.photo.file.name,
+            message: 'Photo uploaded successfully',
+          },
+        },
+      ]);
     },
     onError: (error) => {
       console.error('Single photo upload mutation failed:', error);
-      onError?.(error.message);
+      onError?.(String(error));
     },
   });
 
@@ -357,7 +377,7 @@ export function useSinglePhotoUpload(
     uploadPhoto: mutation.mutate,
     isPending: mutation.isPending,
     isError: mutation.isError,
-    error: mutation.error,
+    error: mutation.error as Error | null,
     isSuccess: mutation.isSuccess,
     data: mutation.data,
     reset: mutation.reset,
@@ -375,11 +395,14 @@ export function usePhotoUploadWithRetry(
   } = {}
 ) {
   const { maxRetries = 3, retryDelay = 1000, ...uploadOptions } = options;
-  
-  const mutation = useMutation({
-    mutationFn: async (uploadData: PhotoUploadData): Promise<PhotoUploadResponse[]> => {
-      const { eventId, files, contributorName, contributorEmail, caption } = uploadData;
-      
+
+  const mutation = useMutation<PhotoUploadResult, string, PhotoUploadData>({
+    mutationFn: async (
+      uploadData: PhotoUploadData
+    ): Promise<PhotoUploadResult> => {
+      const { eventId, files, contributorName, contributorEmail, caption } =
+        uploadData;
+
       const results: PhotoUploadResponse[] = [];
       let retryCount = 0;
 
@@ -414,21 +437,26 @@ export function usePhotoUploadWithRetry(
             results.push(result);
             success = true;
             retryCount = 0; // Reset retry count for next photo
-
           } catch (error) {
-            lastError = error instanceof Error ? error : new Error('Unknown error');
+            lastError =
+              error instanceof Error ? error : new Error('Unknown error');
             retryCount++;
-            
+
             if (retryCount < maxRetries) {
               // Wait before retry
-              await new Promise(resolve => setTimeout(resolve, retryDelay * retryCount));
+              await new Promise((resolve) =>
+                setTimeout(resolve, retryDelay * retryCount)
+              );
             }
           }
         }
 
         if (!success && lastError) {
-          console.error(`Upload failed for photo ${index + 1} after ${maxRetries} retries:`, lastError);
-          
+          console.error(
+            `Upload failed for photo ${index + 1} after ${maxRetries} retries:`,
+            lastError
+          );
+
           results.push({
             success: false,
             error: {
@@ -439,21 +467,34 @@ export function usePhotoUploadWithRetry(
         }
       }
 
-      return results;
+      return {
+        results,
+        successfulPhotos: uploadData.files.filter(
+          (_, index) => results[index]?.success
+        ),
+        failedPhotos: uploadData.files.filter(
+          (_, index) => !results[index]?.success
+        ),
+      };
     },
-    ...uploadOptions,
+    onSuccess: (data) => {
+      if (uploadOptions.onSuccess) {
+        uploadOptions.onSuccess(data.results);
+      }
+    },
+    onError: uploadOptions.onError,
   });
 
   return {
     uploadPhotos: mutation.mutate,
     isPending: mutation.isPending,
     isError: mutation.isError,
-    error: mutation.error,
+    error: mutation.error as Error | null,
     isSuccess: mutation.isSuccess,
     data: mutation.data,
     reset: mutation.reset,
     uploadProgress: mutation.isPending ? 0 : 100,
-    uploadedCount: mutation.data?.filter(r => r.success).length || 0,
-    totalCount: mutation.data?.length || 0,
+    uploadedCount: mutation.data?.results.filter((r) => r.success).length || 0,
+    totalCount: mutation.data?.results.length || 0,
   };
 }

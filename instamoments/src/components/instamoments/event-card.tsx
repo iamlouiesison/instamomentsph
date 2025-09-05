@@ -15,7 +15,6 @@ import {
   QrCode,
   Clock,
 } from 'lucide-react';
-import { FILIPINO_EVENT_TYPES, type EventType } from '@/lib/validations/event';
 import { formatDistanceToNow, format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { FrontendEvent } from '@/lib/utils/event-transformer';
@@ -44,7 +43,6 @@ export const EventCard: React.FC<EventCardProps> = ({
   showQRCode = true,
   className,
 }) => {
-  const eventTypeInfo = FILIPINO_EVENT_TYPES[event.eventType] || FILIPINO_EVENT_TYPES.other;
   const isExpired =
     event.status === 'expired' ||
     (event.expiresAt && new Date(event.expiresAt) < new Date());
@@ -96,9 +94,7 @@ export const EventCard: React.FC<EventCardProps> = ({
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between">
           <div className="flex-1">
-            <CardTitle className="text-lg">
-              {event.name}
-            </CardTitle>
+            <CardTitle className="text-lg">{event.name}</CardTitle>
             <div className="flex items-center gap-2 mt-1">
               {getStatusBadge()}
               {getTierBadge()}
@@ -141,9 +137,11 @@ export const EventCard: React.FC<EventCardProps> = ({
             <Clock className="w-4 h-4" />
             <span>
               Created{' '}
-              {event.createdAt ? formatDistanceToNow(new Date(event.createdAt), {
-                addSuffix: true,
-              }) : 'Unknown'}
+              {event.createdAt
+                ? formatDistanceToNow(new Date(event.createdAt), {
+                    addSuffix: true,
+                  })
+                : 'Unknown'}
             </span>
           </div>
         </div>

@@ -8,14 +8,17 @@ const supabase = createClient(
 
 async function getTestUser() {
   try {
-    const { data: { users }, error } = await supabase.auth.admin.listUsers();
-    
+    const {
+      data: { users },
+      error,
+    } = await supabase.auth.admin.listUsers();
+
     if (error) {
       console.log('Error:', error.message);
       return;
     }
-    
-    const testUser = users.find(user => user.email.includes('testuser'));
+
+    const testUser = users.find((user) => user.email.includes('testuser'));
     if (testUser) {
       console.log('✅ Test User Found:');
       console.log('📧 Email:', testUser.email);

@@ -83,6 +83,66 @@ export const VideoRecorder: React.FC<VideoRecorderProps> = ({
     }
   }, []);
 
+  // Generate thumbnail from video
+  const generateThumbnail = useCallback(
+    async (videoBlob: Blob) => {
+      try {
+        const video = document.createElement('video');
+        video.src = URL.createObjectURL(videoBlob);
+
+        await new Promise((resolve) => {
+          video.onloadedmetadata = resolve;
+        });
+
+        video.currentTime = Math.min(2, video.duration / 2); // Get frame at 2s or middle
+
+        await new Promise((resolve) => {
+          video.onseeked = resolve;
+        });
+
+        const canvas =
+          thumbnailCanvasRef.current || document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+
+        if (!ctx) throw new Error('Canvas context not available');
+
+        canvas.width = 320;
+        canvas.height = 240;
+
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        canvas.toBlob(
+          (thumbnailBlob) => {
+            if (thumbnailBlob) {
+              onVideoRecorded(videoBlob, thumbnailBlob);
+            }
+            URL.revokeObjectURL(video.src);
+          },
+          'image/jpeg',
+          0.8
+        );
+      } catch (error) {
+        console.error('Thumbnail generation failed:', error);
+        // Still proceed with video recording even if thumbnail fails
+        onVideoRecorded(videoBlob, new Blob());
+      }
+    },
+    [onVideoRecorded]
+  );
+
+  // Stop recording
+  const stopRecording = useCallback(() => {
+    if (mediaRecorderRef.current && state.isRecording) {
+      mediaRecorderRef.current.stop();
+      setState((prev) => ({ ...prev, isRecording: false }));
+
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
+    }
+  }, [state.isRecording]);
+
   // Start recording
   const startRecording = useCallback(() => {
     if (!streamRef.current) return;
@@ -136,19 +196,6 @@ export const VideoRecorder: React.FC<VideoRecorderProps> = ({
     }
   }, [maxDuration, generateThumbnail, stopRecording]);
 
-  // Stop recording
-  const stopRecording = useCallback(() => {
-    if (mediaRecorderRef.current && state.isRecording) {
-      mediaRecorderRef.current.stop();
-      setState((prev) => ({ ...prev, isRecording: false }));
-
-      if (timerRef.current) {
-        clearInterval(timerRef.current);
-        timerRef.current = null;
-      }
-    }
-  }, [state.isRecording]);
-
   // Pause/Resume recording
   const togglePause = useCallback(() => {
     if (!mediaRecorderRef.current) return;
@@ -161,53 +208,6 @@ export const VideoRecorder: React.FC<VideoRecorderProps> = ({
       setState((prev) => ({ ...prev, isPaused: true }));
     }
   }, [state.isPaused]);
-
-  // Generate thumbnail from video
-  const generateThumbnail = useCallback(
-    async (videoBlob: Blob) => {
-      try {
-        const video = document.createElement('video');
-        video.src = URL.createObjectURL(videoBlob);
-
-        await new Promise((resolve) => {
-          video.onloadedmetadata = resolve;
-        });
-
-        video.currentTime = Math.min(2, video.duration / 2); // Get frame at 2s or middle
-
-        await new Promise((resolve) => {
-          video.onseeked = resolve;
-        });
-
-        const canvas =
-          thumbnailCanvasRef.current || document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-
-        if (!ctx) throw new Error('Canvas context not available');
-
-        canvas.width = 320;
-        canvas.height = 240;
-
-        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-        canvas.toBlob(
-          (thumbnailBlob) => {
-            if (thumbnailBlob) {
-              onVideoRecorded(videoBlob, thumbnailBlob);
-            }
-            URL.revokeObjectURL(video.src);
-          },
-          'image/jpeg',
-          0.8
-        );
-      } catch (error) {
-        console.error('Thumbnail generation failed:', error);
-        // Still proceed with video recording even if thumbnail fails
-        onVideoRecorded(videoBlob, new Blob());
-      }
-    },
-    [onVideoRecorded]
-  );
 
   // Re-record
   const reRecord = useCallback(() => {

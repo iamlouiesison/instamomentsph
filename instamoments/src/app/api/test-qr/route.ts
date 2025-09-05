@@ -1,9 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import {
-  generateQRCodeDataUrl,
-  generateQRCodeSVG,
-  generateQRCodeBuffer,
-} from '@/lib/qr-code';
+import { generateQRCodeDataUrl, generateQRCodeSVG } from '@/lib/qr-code';
 
 // GET /api/test-qr - Generate QR code for testing without database dependency
 export async function GET(request: NextRequest) {
@@ -13,14 +9,18 @@ export async function GET(request: NextRequest) {
     // Get query parameters
     const format = searchParams.get('format') || 'png'; // png, svg
     const size = searchParams.get('size') || '256';
-    const text = searchParams.get('text') || 'https://instamoments.ph/gallery/test-event';
+    const text =
+      searchParams.get('text') || 'https://instamoments.ph/gallery/test-event';
 
     // Validate parameters
     if (!text) {
       return NextResponse.json(
         {
           success: false,
-          error: { code: 'MISSING_TEXT', message: 'Text parameter is required' },
+          error: {
+            code: 'MISSING_TEXT',
+            message: 'Text parameter is required',
+          },
         },
         { status: 400 }
       );

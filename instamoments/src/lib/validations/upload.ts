@@ -138,7 +138,7 @@ export const VideoFileValidationSchema = z.object({
 export const PhotoUploadRequestSchema = PhotoUploadValidationSchema.extend({
   file: FileValidationSchema,
   thumbnail: FileValidationSchema.optional(),
-  exifData: z.record(z.string(), z.any()).optional(),
+  exifData: z.record(z.string(), z.unknown()).optional(),
   dimensions: z
     .object({
       width: z
@@ -297,18 +297,23 @@ export function validateContributorInfo(info: {
 }
 
 export function validateUploadLimits(
-  userLimits: any,
-  eventLimits: any,
+  userLimits: Record<string, unknown>,
+  eventLimits: Record<string, unknown>,
   isVideo: boolean = false
 ): { isValid: boolean; errors: string[] } {
   const errors: string[] = [];
 
   if (isVideo) {
     // Video limits
-    if (userLimits.videosUploadedToday >= RATE_LIMITS.VIDEOS_PER_DAY) {
+    if (
+      (userLimits.videosUploadedToday as number) >= RATE_LIMITS.VIDEOS_PER_DAY
+    ) {
       errors.push('Daily video upload limit reached');
     }
-    if (userLimits.videosUploadedThisHour >= RATE_LIMITS.VIDEOS_PER_HOUR) {
+    if (
+      (userLimits.videosUploadedThisHour as number) >=
+      RATE_LIMITS.VIDEOS_PER_HOUR
+    ) {
       errors.push('Hourly video upload limit reached');
     }
     if (!eventLimits.hasVideoAddon) {
@@ -316,24 +321,34 @@ export function validateUploadLimits(
     }
   } else {
     // Photo limits
-    if (userLimits.photosUploadedToday >= RATE_LIMITS.PHOTOS_PER_DAY) {
+    if (
+      (userLimits.photosUploadedToday as number) >= RATE_LIMITS.PHOTOS_PER_DAY
+    ) {
       errors.push('Daily photo upload limit reached');
     }
-    if (userLimits.photosUploadedThisHour >= RATE_LIMITS.PHOTOS_PER_HOUR) {
+    if (
+      (userLimits.photosUploadedThisHour as number) >=
+      RATE_LIMITS.PHOTOS_PER_HOUR
+    ) {
       errors.push('Hourly photo upload limit reached');
     }
   }
 
   // Event limits
-  if (eventLimits.totalPhotos >= eventLimits.maxPhotos) {
+  if (
+    (eventLimits.totalPhotos as number) >= (eventLimits.maxPhotos as number)
+  ) {
     errors.push('Event has reached maximum photo limit');
   }
 
-  if (eventLimits.status !== 'active') {
+  if ((eventLimits.status as string) !== 'active') {
     errors.push('Event is not active');
   }
 
-  if (eventLimits.expiresAt && new Date(eventLimits.expiresAt) < new Date()) {
+  if (
+    eventLimits.expiresAt &&
+    new Date(eventLimits.expiresAt as string) < new Date()
+  ) {
     errors.push('Event has expired');
   }
 

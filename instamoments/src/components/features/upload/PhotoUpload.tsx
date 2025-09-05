@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useCallback, useEffect } from 'react';
+import Image from 'next/image';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -31,9 +32,8 @@ import {
   revokePreviewUrl,
   formatFileSize,
   getImageDimensions,
-  sanitizeEXIFData,
 } from '@/lib/image-processing';
-import { usePhotoUpload } from '@/hooks/usePhotoUpload';
+import { usePhotoUpload, PhotoUploadResponse } from '@/hooks/usePhotoUpload';
 
 // Validation schema for photo upload form
 const PhotoUploadSchema = z.object({
@@ -52,13 +52,13 @@ const PhotoUploadSchema = z.object({
     .optional(),
 });
 
-type PhotoUploadFormData = z.infer<typeof PhotoUploadSchema>;
+export type PhotoUploadFormData = z.infer<typeof PhotoUploadSchema>;
 
 interface PhotoUploadProps {
   eventId: string;
   eventName: string;
   maxPhotosPerUser: number;
-  onUploadComplete?: (uploadedPhotos: ProcessedImage[]) => void;
+  onUploadComplete?: (uploadedPhotos: PhotoUploadResponse[]) => void;
   onUploadError?: (error: string) => void;
 }
 
@@ -94,7 +94,6 @@ export const PhotoUpload: React.FC<PhotoUploadProps> = ({
     uploadProgress,
     uploadedCount,
     totalCount,
-    reset: resetUpload,
   } = usePhotoUpload({
     onSuccess: (uploadedPhotos) => {
       onUploadComplete?.(uploadedPhotos);
@@ -339,7 +338,6 @@ export const PhotoUpload: React.FC<PhotoUploadProps> = ({
 
   const canUpload = processedPhotos.length > 0 && !isProcessing && !isUploading;
   const totalPhotos = processedPhotos.length;
-  const hasErrors = uploadError || processedPhotos.some((p) => p.uploadError);
 
   return (
     <div className="space-y-6">
@@ -476,10 +474,11 @@ export const PhotoUpload: React.FC<PhotoUploadProps> = ({
               {processedPhotos.map((photo) => (
                 <div key={photo.id} className="relative group">
                   <div className="aspect-square rounded-lg overflow-hidden bg-muted">
-                    <img
+                    <Image
                       src={photo.previewUrl}
                       alt="Preview"
-                      className="w-full h-full object-cover"
+                      fill
+                      className="object-cover"
                     />
 
                     {/* Overlay */}
@@ -504,10 +503,7 @@ export const PhotoUpload: React.FC<PhotoUploadProps> = ({
                     {/* Upload Progress */}
                     {photo.isUploading && (
                       <div className="absolute bottom-0 left-0 right-0 p-2">
-                        <Progress
-                          value={uploadProgress}
-                          className="h-1"
-                        />
+                        <Progress value={uploadProgress} className="h-1" />
                       </div>
                     )}
 
@@ -624,13 +620,12 @@ export const PhotoUpload: React.FC<PhotoUploadProps> = ({
               {/* Upload Results */}
               {isUploading && (
                 <div className="space-y-2">
-                  <Progress
-                    value={uploadProgress}
-                    className="h-2"
-                  />
+                  <Progress value={uploadProgress} className="h-2" />
                   <div className="flex justify-between text-sm text-muted-foreground">
                     <span>Success: {uploadedCount}</span>
-                    <span>Failed: {(totalCount || totalPhotos) - uploadedCount}</span>
+                    <span>
+                      Failed: {(totalCount || totalPhotos) - uploadedCount}
+                    </span>
                   </div>
                 </div>
               )}

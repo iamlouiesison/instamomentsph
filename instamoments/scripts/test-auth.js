@@ -24,28 +24,35 @@ async function testAuth() {
   try {
     // Test 1: Check if we can access Supabase
     console.log('1️⃣ Testing Supabase connection...');
-    const { data: { user }, error: userError } = await supabase.auth.getUser();
-    
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
+
     if (userError) {
       console.log(`   ⚠️  User check error: ${userError.message}`);
     } else {
-      console.log(`   ✅ User check successful (current user: ${user ? 'logged in' : 'not logged in'})`);
+      console.log(
+        `   ✅ User check successful (current user: ${user ? 'logged in' : 'not logged in'})`
+      );
     }
 
     // Test 2: Try to sign up a test user
     console.log('\n2️⃣ Testing user sign up...');
     const testEmail = `testuser${Date.now()}@gmail.com`;
     const testPassword = 'TestPassword123!';
-    
-    const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
-      email: testEmail,
-      password: testPassword,
-      options: {
-        data: {
-          full_name: 'Test User'
-        }
+
+    const { data: signUpData, error: signUpError } = await supabase.auth.signUp(
+      {
+        email: testEmail,
+        password: testPassword,
+        options: {
+          data: {
+            full_name: 'Test User',
+          },
+        },
       }
-    });
+    );
 
     if (signUpError) {
       console.log(`   ❌ Sign up failed: ${signUpError.message}`);
@@ -57,10 +64,11 @@ async function testAuth() {
 
     // Test 3: Try to sign in with the test user
     console.log('\n3️⃣ Testing user sign in...');
-    const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
-      email: testEmail,
-      password: testPassword
-    });
+    const { data: signInData, error: signInError } =
+      await supabase.auth.signInWithPassword({
+        email: testEmail,
+        password: testPassword,
+      });
 
     if (signInError) {
       console.log(`   ❌ Sign in failed: ${signInError.message}`);
@@ -76,10 +84,14 @@ async function testAuth() {
         .from('profiles')
         .select('*')
         .limit(1);
-      
+
       if (profilesError) {
-        console.log(`   ❌ Profiles table access failed: ${profilesError.message}`);
-        console.log('   💡 This is expected if the profiles table does not exist');
+        console.log(
+          `   ❌ Profiles table access failed: ${profilesError.message}`
+        );
+        console.log(
+          '   💡 This is expected if the profiles table does not exist'
+        );
       } else {
         console.log('   ✅ Profiles table is accessible');
         console.log(`   📊 Found ${profiles.length} profiles`);
@@ -97,11 +109,11 @@ async function testAuth() {
           .insert({
             id: signInData.user.id,
             email: signInData.user.email,
-            full_name: 'Test User'
+            full_name: 'Test User',
           })
           .select()
           .single();
-        
+
         if (profileError) {
           console.log(`   ❌ Profile creation failed: ${profileError.message}`);
         } else {
@@ -116,7 +128,7 @@ async function testAuth() {
     // Test 6: Sign out
     console.log('\n6️⃣ Testing sign out...');
     const { error: signOutError } = await supabase.auth.signOut();
-    
+
     if (signOutError) {
       console.log(`   ❌ Sign out failed: ${signOutError.message}`);
     } else {
@@ -125,7 +137,6 @@ async function testAuth() {
 
     console.log('\n🎉 Authentication testing completed!');
     console.log('💡 Check the results above to identify any issues.');
-
   } catch (error) {
     console.error('❌ Authentication test failed:', error.message);
     process.exit(1);

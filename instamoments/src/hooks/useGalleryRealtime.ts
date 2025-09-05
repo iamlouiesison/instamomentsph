@@ -44,12 +44,7 @@ export function useGalleryRealtime(
   eventId: string,
   options: UseGalleryRealtimeOptions = {}
 ): UseGalleryRealtimeReturn {
-  const {
-    search = '',
-    contributor = 'all',
-    sortBy = 'newest',
-    limit = 20,
-  } = options;
+  const { sortBy = 'newest', limit = 20 } = options;
 
   const [items, setItems] = useState<MediaItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -219,7 +214,10 @@ export function useGalleryRealtime(
         },
         (payload) => {
           console.log('New photo uploaded:', payload);
-          const newPhoto = { ...(payload.new as any), type: 'photo' as const };
+          const newPhoto: GalleryItem = {
+            ...(payload.new as Photo),
+            type: 'photo' as const,
+          };
 
           setItems((prev) => {
             // Check if photo already exists (avoid duplicates)
@@ -259,7 +257,10 @@ export function useGalleryRealtime(
         },
         (payload) => {
           console.log('New video uploaded:', payload);
-          const newVideo = { ...(payload.new as any), type: 'video' as const };
+          const newVideo: VideoItem = {
+            ...(payload.new as Video),
+            type: 'video' as const,
+          };
 
           setItems((prev) => {
             // Check if video already exists (avoid duplicates)
@@ -299,8 +300,8 @@ export function useGalleryRealtime(
         },
         (payload) => {
           console.log('Photo updated:', payload);
-          const updatedPhoto = {
-            ...(payload.new as any),
+          const updatedPhoto: GalleryItem = {
+            ...(payload.new as Photo),
             type: 'photo' as const,
           };
 
@@ -321,8 +322,8 @@ export function useGalleryRealtime(
         },
         (payload) => {
           console.log('Video updated:', payload);
-          const updatedVideo = {
-            ...(payload.new as any),
+          const updatedVideo: VideoItem = {
+            ...(payload.new as Video),
             type: 'video' as const,
           };
 

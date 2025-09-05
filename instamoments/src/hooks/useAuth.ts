@@ -36,7 +36,11 @@ export function useAuth() {
           error,
         } = await supabase.auth.getSession();
 
-        console.log('Initial session result:', { hasSession: !!session, hasUser: !!session?.user, error: error?.message });
+        console.log('Initial session result:', {
+          hasSession: !!session,
+          hasUser: !!session?.user,
+          error: error?.message,
+        });
 
         if (!mounted) return;
 
@@ -56,7 +60,10 @@ export function useAuth() {
             .select('*')
             .eq('id', session.user.id);
 
-          console.log('Profile result:', { profilesCount: profiles?.length || 0, error: profileError?.message });
+          console.log('Profile result:', {
+            profilesCount: profiles?.length || 0,
+            error: profileError?.message,
+          });
 
           if (mounted) {
             setAuthState({
@@ -108,7 +115,7 @@ export function useAuth() {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, session) => {
       console.log('Auth state change:', event, !!session?.user);
-      
+
       if (!mounted) return;
 
       if (event === 'SIGNED_IN' && session?.user) {
@@ -184,10 +191,10 @@ export function useAuth() {
       password,
     });
 
-    console.log('🔐 Sign in result:', { 
-      success: !error, 
-      error: error?.message, 
-      userId: data?.user?.id 
+    console.log('🔐 Sign in result:', {
+      success: !error,
+      error: error?.message,
+      userId: data?.user?.id,
     });
 
     if (error) {

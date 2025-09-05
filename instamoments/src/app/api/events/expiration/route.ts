@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { processExpiredEvents, getEventsExpiringSoon } from '@/lib/business-logic/event-expiration';
+import {
+  processExpiredEvents,
+  getEventsExpiringSoon,
+} from '@/lib/business-logic/event-expiration';
 
 // POST /api/events/expiration - Process expired events
 export async function POST(request: NextRequest) {
@@ -19,7 +22,7 @@ export async function POST(request: NextRequest) {
       data: {
         processed: stats,
         expiringSoon: expiringSoon.length,
-        expiringEvents: expiringSoon.map(event => ({
+        expiringEvents: expiringSoon.map((event) => ({
           id: event.id,
           name: event.name,
           expiresAt: event.expiresAt,
@@ -54,14 +57,14 @@ export async function GET(request: NextRequest) {
       success: true,
       data: {
         expiringSoon: expiringSoon.length,
-        events: expiringSoon.map(event => ({
+        events: expiringSoon.map((event) => ({
           id: event.id,
           name: event.name,
           hostId: event.hostId,
-          gallerySlug: event.gallery_slug,
+          gallerySlug: event.gallerySlug,
           subscriptionTier: event.subscriptionTier,
-          totalPhotos: event.total_photos,
-          totalVideos: event.total_videos,
+          totalPhotos: event.totalPhotos,
+          totalVideos: event.totalVideos,
           expiresAt: event.expiresAt,
         })),
       },

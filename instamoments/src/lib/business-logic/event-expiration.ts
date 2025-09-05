@@ -33,7 +33,8 @@ export async function findExpiredEvents(): Promise<ExpiredEvent[]> {
 
   const { data: events, error } = await supabase
     .from('events')
-    .select(`
+    .select(
+      `
       id,
       name,
       host_id,
@@ -43,7 +44,8 @@ export async function findExpiredEvents(): Promise<ExpiredEvent[]> {
       total_videos,
       created_at,
       expires_at
-    `)
+    `
+    )
     .eq('status', 'active')
     .lt('expires_at', now);
 
@@ -52,7 +54,19 @@ export async function findExpiredEvents(): Promise<ExpiredEvent[]> {
     throw new Error('Failed to find expired events');
   }
 
-  return events || [];
+  return (
+    events?.map((event) => ({
+      id: event.id,
+      name: event.name,
+      hostId: event.host_id,
+      gallerySlug: event.gallery_slug,
+      subscriptionTier: event.subscription_tier,
+      totalPhotos: event.total_photos,
+      totalVideos: event.total_videos,
+      createdAt: event.created_at,
+      expiresAt: event.expires_at,
+    })) || []
+  );
 }
 
 /**
@@ -63,9 +77,9 @@ export async function markEventAsExpired(eventId: string): Promise<void> {
 
   const { error } = await supabase
     .from('events')
-    .update({ 
+    .update({
       status: 'expired',
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
     })
     .eq('id', eventId);
 
@@ -114,7 +128,7 @@ export async function deleteEventContent(eventId: string): Promise<{
     // Delete photos from storage
     if (photos && photos.length > 0) {
       const photoUrls = photos
-        .map(p => [p.file_url, p.thumbnail_url])
+        .map((p) => [p.file_url, p.thumbnail_url])
         .flat()
         .filter(Boolean);
 
@@ -145,7 +159,7 @@ export async function deleteEventContent(eventId: string): Promise<{
     // Delete videos from storage
     if (videos && videos.length > 0) {
       const videoUrls = videos
-        .map(v => [v.file_url, v.thumbnail_url])
+        .map((v) => [v.file_url, v.thumbnail_url])
         .flat()
         .filter(Boolean);
 
@@ -227,10 +241,8 @@ export function calculateExpirationDate(
 ): Date {
   const created = new Date(createdAt);
   const limits = getSubscriptionLimits(subscriptionTier);
-  
-  return new Date(
-    created.getTime() + limits.storageDays * 24 * 60 * 60 * 1000
-  );
+
+  return new Date(created.getTime() + limits.storageDays * 24 * 60 * 60 * 1000);
 }
 
 /**
@@ -242,8 +254,9 @@ export function isEventExpiringSoon(
 ): boolean {
   const expiration = new Date(expiresAt);
   const now = new Date();
-  const hoursUntilExpiration = (expiration.getTime() - now.getTime()) / (1000 * 60 * 60);
-  
+  const hoursUntilExpiration =
+    (expiration.getTime() - now.getTime()) / (1000 * 60 * 60);
+
   return hoursUntilExpiration <= hoursThreshold && hoursUntilExpiration > 0;
 }
 
@@ -259,7 +272,8 @@ export async function getEventsExpiringSoon(
 
   const { data: events, error } = await supabase
     .from('events')
-    .select(`
+    .select(
+      `
       id,
       name,
       host_id,
@@ -269,7 +283,8 @@ export async function getEventsExpiringSoon(
       total_videos,
       created_at,
       expires_at
-    `)
+    `
+    )
     .eq('status', 'active')
     .gte('expires_at', now.toISOString())
     .lte('expires_at', threshold.toISOString());
@@ -279,7 +294,19 @@ export async function getEventsExpiringSoon(
     throw new Error('Failed to find events expiring soon');
   }
 
-  return events || [];
+  return (
+    events?.map((event) => ({
+      id: event.id,
+      name: event.name,
+      hostId: event.host_id,
+      gallerySlug: event.gallery_slug,
+      subscriptionTier: event.subscription_tier,
+      totalPhotos: event.total_photos,
+      totalVideos: event.total_videos,
+      createdAt: event.created_at,
+      expiresAt: event.expires_at,
+    })) || []
+  );
 }
 
 /**

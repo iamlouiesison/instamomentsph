@@ -14,7 +14,7 @@ export interface ImageProcessingOptions {
 export interface ProcessedImage {
   file: File;
   thumbnail: File;
-  exifData: any | null;
+  exifData: Record<string, unknown> | null;
   originalSize: number;
   compressedSize: number;
   compressionRatio: number;
@@ -96,7 +96,7 @@ export async function compressImage(
     return {
       file: finalFile,
       thumbnail,
-      exifData,
+      exifData: exifData as Record<string, unknown> | null,
       originalSize,
       compressedSize,
       compressionRatio,
@@ -201,7 +201,7 @@ export async function convertToWebP(
     const img = new Image();
     const url = URL.createObjectURL(file);
 
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       img.onload = () => {
         canvas.width = img.width;
         canvas.height = img.height;

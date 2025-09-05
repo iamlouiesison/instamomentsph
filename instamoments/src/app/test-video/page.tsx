@@ -64,11 +64,6 @@ export default function TestVideoPage() {
     // Implement share functionality
   };
 
-  const handleDelete = (videoId: string) => {
-    console.log('Delete video:', videoId);
-    // Implement delete functionality
-  };
-
   return (
     <div className="container mx-auto p-6 space-y-8">
       <div className="text-center">
@@ -184,7 +179,6 @@ export default function TestVideoPage() {
                 videos={mockVideos}
                 onDownload={handleDownload}
                 onShare={handleShare}
-                onDelete={handleDelete}
                 showGreetingsOnly={false}
               />
             </div>
@@ -198,7 +192,6 @@ export default function TestVideoPage() {
               videos={mockVideos}
               onDownload={handleDownload}
               onShare={handleShare}
-              onDelete={handleDelete}
               showGreetingsOnly={true}
             />
           </Card>

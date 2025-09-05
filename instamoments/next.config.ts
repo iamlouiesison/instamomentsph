@@ -16,7 +16,7 @@ const nextConfig: NextConfig = {
       ...config.resolve.fallback,
       fs: false,
     };
-    
+
     // Handle Supabase modules properly
     if (!isServer) {
       config.resolve.alias = {
@@ -24,7 +24,7 @@ const nextConfig: NextConfig = {
         '@supabase/supabase-js': '@supabase/supabase-js/dist/main/index.js',
       };
     }
-    
+
     return config;
   },
 };

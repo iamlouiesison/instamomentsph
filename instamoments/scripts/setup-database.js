@@ -44,7 +44,7 @@ async function setupDatabase() {
           created_at TIMESTAMPTZ DEFAULT NOW(),
           updated_at TIMESTAMPTZ DEFAULT NOW()
         );
-      `
+      `,
     });
 
     if (profilesError) {
@@ -55,7 +55,7 @@ async function setupDatabase() {
 
     // Enable RLS on profiles
     await supabase.rpc('exec', {
-      sql: 'ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;'
+      sql: 'ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;',
     });
 
     // Create profiles policies
@@ -64,7 +64,7 @@ async function setupDatabase() {
         DROP POLICY IF EXISTS "Users can view own profile" ON profiles;
         CREATE POLICY "Users can view own profile" ON profiles
           FOR SELECT USING (auth.uid() = id);
-      `
+      `,
     });
 
     await supabase.rpc('exec', {
@@ -72,7 +72,7 @@ async function setupDatabase() {
         DROP POLICY IF EXISTS "Users can update own profile" ON profiles;
         CREATE POLICY "Users can update own profile" ON profiles
           FOR UPDATE USING (auth.uid() = id);
-      `
+      `,
     });
 
     await supabase.rpc('exec', {
@@ -80,7 +80,7 @@ async function setupDatabase() {
         DROP POLICY IF EXISTS "Users can insert own profile" ON profiles;
         CREATE POLICY "Users can insert own profile" ON profiles
           FOR INSERT WITH CHECK (auth.uid() = id);
-      `
+      `,
     });
 
     // Create events table
@@ -114,7 +114,7 @@ async function setupDatabase() {
           updated_at TIMESTAMPTZ DEFAULT NOW(),
           expires_at TIMESTAMPTZ
         );
-      `
+      `,
     });
 
     if (eventsError) {
@@ -125,7 +125,7 @@ async function setupDatabase() {
 
     // Enable RLS on events
     await supabase.rpc('exec', {
-      sql: 'ALTER TABLE events ENABLE ROW LEVEL SECURITY;'
+      sql: 'ALTER TABLE events ENABLE ROW LEVEL SECURITY;',
     });
 
     // Create events policies
@@ -134,7 +134,7 @@ async function setupDatabase() {
         DROP POLICY IF EXISTS "Event hosts can manage their events" ON events;
         CREATE POLICY "Event hosts can manage their events" ON events
           FOR ALL USING (auth.uid() = host_id);
-      `
+      `,
     });
 
     await supabase.rpc('exec', {
@@ -142,7 +142,7 @@ async function setupDatabase() {
         DROP POLICY IF EXISTS "Public events viewable by all" ON events;
         CREATE POLICY "Public events viewable by all" ON events
           FOR SELECT USING (is_public = TRUE);
-      `
+      `,
     });
 
     await supabase.rpc('exec', {
@@ -150,7 +150,7 @@ async function setupDatabase() {
         DROP POLICY IF EXISTS "Anyone can create events" ON events;
         CREATE POLICY "Anyone can create events" ON events
           FOR INSERT WITH CHECK (auth.uid() = host_id);
-      `
+      `,
     });
 
     // Create photos table
@@ -175,7 +175,7 @@ async function setupDatabase() {
           CONSTRAINT photos_file_size_check CHECK (file_size > 0 AND file_size <= 10485760),
           CONSTRAINT photos_mime_type_check CHECK (mime_type IN ('image/jpeg', 'image/jpg', 'image/png', 'image/webp'))
         );
-      `
+      `,
     });
 
     if (photosError) {
@@ -186,7 +186,7 @@ async function setupDatabase() {
 
     // Enable RLS on photos
     await supabase.rpc('exec', {
-      sql: 'ALTER TABLE photos ENABLE ROW LEVEL SECURITY;'
+      sql: 'ALTER TABLE photos ENABLE ROW LEVEL SECURITY;',
     });
 
     // Create photos policies
@@ -202,7 +202,7 @@ async function setupDatabase() {
               AND events.status = 'active'
             )
           );
-      `
+      `,
     });
 
     await supabase.rpc('exec', {
@@ -216,7 +216,7 @@ async function setupDatabase() {
               AND events.host_id = auth.uid()
             )
           );
-      `
+      `,
     });
 
     await supabase.rpc('exec', {
@@ -230,7 +230,7 @@ async function setupDatabase() {
               AND events.status = 'active'
             )
           );
-      `
+      `,
     });
 
     // Create function to handle new user profile creation
@@ -245,7 +245,7 @@ async function setupDatabase() {
             RETURN NEW;
         END;
         $$ language 'plpgsql' SECURITY DEFINER;
-      `
+      `,
     });
 
     if (functionError) {
@@ -261,12 +261,11 @@ async function setupDatabase() {
         CREATE TRIGGER on_auth_user_created
             AFTER INSERT ON auth.users
             FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
-      `
+      `,
     });
 
     console.log('\n🎉 Database setup completed!');
     console.log('💡 You can now test the sign-in functionality.');
-
   } catch (error) {
     console.error('❌ Database setup failed:', error.message);
     process.exit(1);

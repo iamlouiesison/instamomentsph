@@ -10,7 +10,6 @@ import {
   validateImageDimensions,
   validateVideoDuration,
   sanitizeFileName,
-  containsInappropriateContent,
 } from '@/lib/validations/upload';
 
 export interface SecurityCheckResult {
@@ -570,7 +569,7 @@ export async function checkUserEventLimits(
     }
 
     // Get user's current upload count for this event
-    const { data: contributor, error: contributorError } = await supabase
+    const { data: contributor } = await supabase
       .from('event_contributors')
       .select('photos_count')
       .eq('event_id', eventId)
@@ -621,7 +620,7 @@ export async function performUploadSecurityCheck(
   isValid: boolean;
   errors: string[];
   warnings: string[];
-  metadata?: any;
+  metadata?: Record<string, unknown>;
 }> {
   const allErrors: string[] = [];
   const allWarnings: string[] = [];

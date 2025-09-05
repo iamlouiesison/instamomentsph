@@ -79,7 +79,17 @@ export async function GET(
     }
 
     const offset = query.page * query.limit;
-    const results: any[] = [];
+    const results: Array<{
+      id: string;
+      type: 'photo' | 'video';
+      url: string;
+      thumbnail_url?: string;
+      caption?: string;
+      uploaded_by?: string;
+      created_at: string;
+      file_size?: number;
+      duration?: number;
+    }> = [];
 
     // Fetch photos if requested
     if (query.type === 'all' || query.type === 'photos') {
@@ -146,11 +156,17 @@ export async function GET(
         );
       }
 
-      // Add type to photos
+      // Add type to photos and map database fields to expected interface
       const photosWithType =
         photos?.map((photo) => ({
-          ...(photo as any),
+          id: photo.id,
           type: 'photo' as const,
+          url: photo.file_url,
+          thumbnail_url: photo.thumbnail_url,
+          caption: photo.caption,
+          uploaded_by: photo.contributor_name,
+          created_at: photo.uploaded_at,
+          file_size: photo.file_size,
         })) || [];
 
       results.push(...photosWithType);
@@ -172,7 +188,7 @@ export async function GET(
           file_size,
           duration_seconds,
           mime_type,
-          message as caption,
+          message,
           uploaded_at,
           processing_status
         `
@@ -223,11 +239,18 @@ export async function GET(
         );
       }
 
-      // Add type to videos
+      // Add type to videos and map database fields to expected interface
       const videosWithType =
         videos?.map((video) => ({
-          ...(video as any),
+          id: video.id,
           type: 'video' as const,
+          url: video.file_url,
+          thumbnail_url: video.thumbnail_url,
+          caption: video.message,
+          uploaded_by: video.contributor_name,
+          created_at: video.uploaded_at,
+          file_size: video.file_size,
+          duration: video.duration_seconds,
         })) || [];
 
       results.push(...videosWithType);
@@ -238,18 +261,16 @@ export async function GET(
       if (query.sortBy === 'newest') {
         results.sort(
           (a, b) =>
-            new Date(b.uploaded_at).getTime() -
-            new Date(a.uploaded_at).getTime()
+            new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
         );
       } else if (query.sortBy === 'oldest') {
         results.sort(
           (a, b) =>
-            new Date(a.uploaded_at).getTime() -
-            new Date(b.uploaded_at).getTime()
+            new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
         );
       } else if (query.sortBy === 'contributor') {
         results.sort((a, b) =>
-          a.contributor_name.localeCompare(b.contributor_name)
+          (a.uploaded_by || '').localeCompare(b.uploaded_by || '')
         );
       }
     }

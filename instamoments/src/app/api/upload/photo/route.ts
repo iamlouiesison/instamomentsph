@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { z } from 'zod';
-import { PhotoUploadSchema } from '@/types/database';
 
 // Rate limiting storage (in production, use Redis or similar)
 const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
@@ -99,7 +98,10 @@ function getClientIP(request: NextRequest): string {
   return 'unknown';
 }
 
-async function validateEvent(eventId: string, supabase: any) {
+async function validateEvent(
+  eventId: string,
+  supabase: Awaited<ReturnType<typeof createClient>>
+) {
   const { data: event, error } = await supabase
     .from('events')
     .select(
@@ -127,7 +129,7 @@ async function checkUserPhotoLimit(
   eventId: string,
   contributorEmail: string,
   maxPhotosPerUser: number,
-  supabase: any
+  supabase: Awaited<ReturnType<typeof createClient>>
 ) {
   if (!contributorEmail) return; // Skip check if no email provided
 
@@ -155,8 +157,8 @@ async function uploadToStorage(
   file: File,
   thumbnail: File,
   eventId: string,
-  supabase: any
-): Promise<{ fileUrl: string; thumbnailUrl: string }> {
+  supabase: Awaited<ReturnType<typeof createClient>>
+): Promise<{ fileUrl: string; thumbnailUrl: string | null }> {
   const timestamp = Date.now();
   const fileExtension = file.name.split('.').pop() || 'jpg';
   const fileName = `photo_${timestamp}.${fileExtension}`;
@@ -166,7 +168,7 @@ async function uploadToStorage(
   const thumbnailPath = `events/${eventId}/thumbnails/${thumbnailName}`;
 
   // Upload main photo
-  const { data: fileData, error: fileError } = await supabase.storage
+  const { error: fileError } = await supabase.storage
     .from('photos')
     .upload(filePath, file, {
       cacheControl: '3600',
@@ -178,7 +180,7 @@ async function uploadToStorage(
   }
 
   // Upload thumbnail
-  const { data: thumbnailData, error: thumbnailError } = await supabase.storage
+  const { error: thumbnailError } = await supabase.storage
     .from('thumbnails')
     .upload(thumbnailPath, thumbnail, {
       cacheControl: '3600',
@@ -215,8 +217,8 @@ async function savePhotoRecord(
   thumbnailUrl: string | null,
   fileSize: number,
   mimeType: string,
-  exifData: any,
-  supabase: any
+  exifData: Record<string, unknown>,
+  supabase: Awaited<ReturnType<typeof createClient>>
 ) {
   const { data, error } = await supabase
     .from('photos')
@@ -246,10 +248,10 @@ async function savePhotoRecord(
 async function logAnalyticsEvent(
   eventId: string,
   eventType: string,
-  properties: any,
+  properties: Record<string, unknown>,
   userAgent: string | null,
   ipAddress: string | null,
-  supabase: any
+  supabase: Awaited<ReturnType<typeof createClient>>
 ) {
   try {
     await supabase.from('analytics_events').insert({
@@ -534,7 +536,7 @@ export async function POST(request: NextRequest) {
 }
 
 // Handle OPTIONS request for CORS
-export async function OPTIONS(request: NextRequest) {
+export async function OPTIONS() {
   return new NextResponse(null, {
     status: 200,
     headers: {

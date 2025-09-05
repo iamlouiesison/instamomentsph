@@ -1,10 +1,17 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { CheckCircle, AlertCircle, QrCode, Download, RefreshCw } from 'lucide-react';
+import {
+  CheckCircle,
+  AlertCircle,
+  QrCode,
+  Download,
+  RefreshCw,
+} from 'lucide-react';
 
 // Test with the new event ID
 const TEST_EVENT_ID = '518def38-942c-451d-bb5e-148630bc21e7';
@@ -28,23 +35,30 @@ export default function TestQRFixPage() {
     try {
       setIsLoading(true);
       setError(null);
-      
-      const response = await fetch(`/api/qr/${TEST_EVENT_ID}?format=png&size=256&branded=true`);
-      
+
+      const response = await fetch(
+        `/api/qr/${TEST_EVENT_ID}?format=png&size=256&branded=true`
+      );
+
       if (!response.ok) {
-        throw new Error(`PNG API returned ${response.status}: ${response.statusText}`);
+        throw new Error(
+          `PNG API returned ${response.status}: ${response.statusText}`
+        );
       }
-      
+
       const blob = await response.blob();
       const url = URL.createObjectURL(blob);
       setQrCodeUrl(url);
-      
-      setTestResults(prev => ({ ...prev, pngTest: true, displayTest: true }));
-      
+
+      setTestResults((prev) => ({ ...prev, pngTest: true, displayTest: true }));
     } catch (err) {
       console.error('PNG QR Code test failed:', err);
       setError(err instanceof Error ? err.message : 'PNG test failed');
-      setTestResults(prev => ({ ...prev, pngTest: false, displayTest: false }));
+      setTestResults((prev) => ({
+        ...prev,
+        pngTest: false,
+        displayTest: false,
+      }));
     } finally {
       setIsLoading(false);
     }
@@ -53,28 +67,33 @@ export default function TestQRFixPage() {
   // Test SVG QR code generation
   const testSVGQRCode = async () => {
     try {
-      const response = await fetch(`/api/qr/${TEST_EVENT_ID}?format=svg&size=256&branded=true`);
-      
+      const response = await fetch(
+        `/api/qr/${TEST_EVENT_ID}?format=svg&size=256&branded=true`
+      );
+
       if (!response.ok) {
-        throw new Error(`SVG API returned ${response.status}: ${response.statusText}`);
+        throw new Error(
+          `SVG API returned ${response.status}: ${response.statusText}`
+        );
       }
-      
+
       const svgText = await response.text();
       console.log('SVG QR Code received:', svgText.substring(0, 100) + '...');
-      
-      setTestResults(prev => ({ ...prev, svgTest: true }));
-      
+
+      setTestResults((prev) => ({ ...prev, svgTest: true }));
     } catch (err) {
       console.error('SVG QR Code test failed:', err);
       setError(err instanceof Error ? err.message : 'SVG test failed');
-      setTestResults(prev => ({ ...prev, svgTest: false }));
+      setTestResults((prev) => ({ ...prev, svgTest: false }));
     }
   };
 
   // Test download functionality
   const testDownload = async () => {
     try {
-      const response = await fetch(`/api/qr/${TEST_EVENT_ID}?format=png&size=256&branded=true`);
+      const response = await fetch(
+        `/api/qr/${TEST_EVENT_ID}?format=png&size=256&branded=true`
+      );
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -96,8 +115,12 @@ export default function TestQRFixPage() {
     testSVGQRCode();
   }, []);
 
-  const allTestsPassed = Object.values(testResults).every(result => result === true);
-  const anyTestFailed = Object.values(testResults).some(result => result === false);
+  const allTestsPassed = Object.values(testResults).every(
+    (result) => result === true
+  );
+  const anyTestFailed = Object.values(testResults).some(
+    (result) => result === false
+  );
 
   return (
     <div className="min-h-screen bg-background p-4">
@@ -142,8 +165,11 @@ export default function TestQRFixPage() {
                   <AlertCircle className="h-4 w-4 text-red-600" />
                 )}
                 <span className="text-sm">
-                  {testResults.pngTest === null ? 'Testing...' : 
-                   testResults.pngTest ? 'Passed' : 'Failed'}
+                  {testResults.pngTest === null
+                    ? 'Testing...'
+                    : testResults.pngTest
+                      ? 'Passed'
+                      : 'Failed'}
                 </span>
               </div>
             </CardContent>
@@ -166,8 +192,11 @@ export default function TestQRFixPage() {
                   <AlertCircle className="h-4 w-4 text-red-600" />
                 )}
                 <span className="text-sm">
-                  {testResults.svgTest === null ? 'Testing...' : 
-                   testResults.svgTest ? 'Passed' : 'Failed'}
+                  {testResults.svgTest === null
+                    ? 'Testing...'
+                    : testResults.svgTest
+                      ? 'Passed'
+                      : 'Failed'}
                 </span>
               </div>
             </CardContent>
@@ -190,8 +219,11 @@ export default function TestQRFixPage() {
                   <AlertCircle className="h-4 w-4 text-red-600" />
                 )}
                 <span className="text-sm">
-                  {testResults.displayTest === null ? 'Testing...' : 
-                   testResults.displayTest ? 'Passed' : 'Failed'}
+                  {testResults.displayTest === null
+                    ? 'Testing...'
+                    : testResults.displayTest
+                      ? 'Passed'
+                      : 'Failed'}
                 </span>
               </div>
             </CardContent>
@@ -203,7 +235,8 @@ export default function TestQRFixPage() {
           <Alert>
             <CheckCircle className="h-4 w-4" />
             <AlertDescription>
-              <strong>All tests passed!</strong> QR code generation is working correctly after the fix.
+              <strong>All tests passed!</strong> QR code generation is working
+              correctly after the fix.
             </AlertDescription>
           </Alert>
         )}
@@ -212,7 +245,8 @@ export default function TestQRFixPage() {
           <Alert variant="destructive">
             <AlertCircle className="h-4 w-4" />
             <AlertDescription>
-              <strong>Some tests failed.</strong> Check the error details below and fix the issues.
+              <strong>Some tests failed.</strong> Check the error details below
+              and fix the issues.
             </AlertDescription>
           </Alert>
         )}
@@ -235,20 +269,18 @@ export default function TestQRFixPage() {
             </CardHeader>
             <CardContent className="text-center">
               <div className="flex justify-center mb-4">
-                <img
+                <Image
                   src={qrCodeUrl}
                   alt="Test QR Code"
-                  className="w-64 h-64 border rounded-lg"
+                  width={256}
+                  height={256}
+                  className="border rounded-lg"
                 />
               </div>
               <p className="text-sm text-muted-foreground mb-4">
                 This QR code should link to the event gallery
               </p>
-              <Button
-                onClick={testDownload}
-                variant="outline"
-                className="mt-2"
-              >
+              <Button onClick={testDownload} variant="outline" className="mt-2">
                 <Download className="h-4 w-4 mr-2" />
                 Download QR Code
               </Button>
@@ -290,10 +322,16 @@ export default function TestQRFixPage() {
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>
             <div className="space-y-2">
-              <p><strong>Test Instructions:</strong></p>
+              <p>
+                <strong>Test Instructions:</strong>
+              </p>
               <ul className="list-disc list-inside space-y-1 text-sm">
-                <li>Verify the QR code API now returns proper binary image data</li>
-                <li>Check that the QR code image displays correctly in the browser</li>
+                <li>
+                  Verify the QR code API now returns proper binary image data
+                </li>
+                <li>
+                  Check that the QR code image displays correctly in the browser
+                </li>
                 <li>Test both PNG and SVG formats</li>
                 <li>Verify download functionality works</li>
                 <li>Scan the QR code with your phone to verify it works</li>

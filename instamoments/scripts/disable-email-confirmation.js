@@ -29,12 +29,12 @@ async function disableEmailConfirmation() {
   try {
     // Try to disable email confirmation via SQL
     console.log('1️⃣ Trying to disable email confirmation via SQL...');
-    
+
     const { error } = await supabase.rpc('exec', {
       sql: `
         UPDATE auth.config 
         SET email_confirmation_enabled = false;
-      `
+      `,
     });
 
     if (error) {
@@ -45,14 +45,14 @@ async function disableEmailConfirmation() {
 
     // Alternative approach - try to update the auth settings
     console.log('\n2️⃣ Trying alternative approach...');
-    
+
     try {
       // This might not work with the current Supabase client, but let's try
       const { data, error: updateError } = await supabase
         .from('auth.config')
         .update({ email_confirmation_enabled: false })
         .select();
-      
+
       if (updateError) {
         console.log(`   ⚠️  Update approach failed: ${updateError.message}`);
       } else {
@@ -64,34 +64,41 @@ async function disableEmailConfirmation() {
 
     // Test if it worked
     console.log('\n3️⃣ Testing if email confirmation is disabled...');
-    
+
     const testEmail = `test${Date.now()}@gmail.com`;
     const testPassword = 'TestPassword123!';
-    
+
     // Try to sign up a user
-    const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
-      email: testEmail,
-      password: testPassword,
-    });
+    const { data: signUpData, error: signUpError } = await supabase.auth.signUp(
+      {
+        email: testEmail,
+        password: testPassword,
+      }
+    );
 
     if (signUpError) {
       console.log(`   ❌ Sign up failed: ${signUpError.message}`);
     } else {
       console.log('   ✅ Sign up successful');
-      
+
       // Try to sign in immediately
-      const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
-        email: testEmail,
-        password: testPassword,
-      });
+      const { data: signInData, error: signInError } =
+        await supabase.auth.signInWithPassword({
+          email: testEmail,
+          password: testPassword,
+        });
 
       if (signInError) {
         console.log(`   ❌ Sign in failed: ${signInError.message}`);
         if (signInError.message.includes('Email not confirmed')) {
-          console.log('   💡 Email confirmation is still enabled. Please disable it manually in the Supabase dashboard.');
+          console.log(
+            '   💡 Email confirmation is still enabled. Please disable it manually in the Supabase dashboard.'
+          );
         }
       } else {
-        console.log('   ✅ Sign in successful - email confirmation is disabled!');
+        console.log(
+          '   ✅ Sign in successful - email confirmation is disabled!'
+        );
       }
     }
 
@@ -101,7 +108,6 @@ async function disableEmailConfirmation() {
     console.log('3. Go to Authentication → Settings');
     console.log('4. Find "Email confirmation" and turn it OFF');
     console.log('5. Save the changes');
-
   } catch (error) {
     console.error('❌ Script failed:', error.message);
   }

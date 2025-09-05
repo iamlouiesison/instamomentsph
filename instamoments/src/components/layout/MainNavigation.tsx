@@ -16,12 +16,10 @@ import {
   Camera,
   LogOut,
   User,
-  Calendar,
   Plus,
   Menu,
   X,
   Home,
-  Settings,
   BarChart3,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -82,9 +80,7 @@ export function MainNavigation({ className }: MainNavigationProps) {
             <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform">
               <Camera className="w-5 h-5 text-primary-foreground" />
             </div>
-            <span className="text-xl font-bold text-primary">
-              InstaMoments
-            </span>
+            <span className="text-xl font-bold text-primary">InstaMoments</span>
           </Link>
 
           {/* Desktop Navigation */}

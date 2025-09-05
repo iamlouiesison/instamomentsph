@@ -3,7 +3,13 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
 import { QrCode, Download, Share2, Copy, ExternalLink } from 'lucide-react';
 import { FrontendEvent } from '@/lib/utils/event-transformer';
 import { toast } from 'sonner';
@@ -125,7 +131,9 @@ export function CompactQRCode({
 
   if (error) {
     return (
-      <div className={`${currentSize.containerSize} flex items-center justify-center border border-dashed border-muted-foreground/25 rounded-lg ${className}`}>
+      <div
+        className={`${currentSize.containerSize} flex items-center justify-center border border-dashed border-muted-foreground/25 rounded-lg ${className}`}
+      >
         <QrCode className="w-6 h-6 text-muted-foreground" />
       </div>
     );
@@ -162,7 +170,7 @@ export function CompactQRCode({
             QR Code - {event.name}
           </DialogTitle>
         </DialogHeader>
-        
+
         <div className="space-y-4">
           {/* QR Code Display */}
           <div className="flex justify-center">
@@ -219,7 +227,9 @@ export function CompactQRCode({
             <Button
               variant="outline"
               size="sm"
-              onClick={() => window.open(`/gallery/${event.gallerySlug}`, '_blank')}
+              onClick={() =>
+                window.open(`/gallery/${event.gallerySlug}`, '_blank')
+              }
               disabled={isLoading}
             >
               <ExternalLink className="h-4 w-4 mr-2" />

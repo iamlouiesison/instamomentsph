@@ -31,11 +31,13 @@ export function useSubscriptionLimits({
 }: UseSubscriptionLimitsProps) {
   const [limits, setLimits] = useState<SubscriptionLimits | null>(null);
   const [eventLimits, setEventLimits] = useState<EventLimits | null>(null);
-  const [upgradeRecommendations, setUpgradeRecommendations] = useState<Array<{
-    tier: string;
-    reason: string;
-    price: number;
-  }>>([]);
+  const [upgradeRecommendations, setUpgradeRecommendations] = useState<
+    Array<{
+      tier: string;
+      reason: string;
+      price: number;
+    }>
+  >([]);
 
   useEffect(() => {
     const subscriptionLimits = getSubscriptionLimits(subscriptionTier);
@@ -73,7 +75,7 @@ export function useSubscriptionLimits({
 
   const checkPhotoUpload = () => {
     if (!limits) return { allowed: false, reason: 'Loading...' };
-    return canUploadPhoto(subscriptionTier, currentPhotos, hasVideoAddon);
+    return canUploadPhoto(subscriptionTier, currentPhotos);
   };
 
   const checkVideoUpload = () => {

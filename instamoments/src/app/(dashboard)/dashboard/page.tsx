@@ -41,7 +41,7 @@ interface DashboardStats {
 }
 
 export default function DashboardPage() {
-  const { user, profile, signOut, loading } = useAuthContext();
+  const { user, profile, loading } = useAuthContext();
   const router = useRouter();
   const [events, setEvents] = useState<Event[]>([]);
   const [stats, setStats] = useState<DashboardStats>({
@@ -113,7 +113,7 @@ export default function DashboardPage() {
     } finally {
       setEventsLoading(false);
     }
-  }, [statusFilter, user]);
+  }, [statusFilter, user, router]);
 
   useEffect(() => {
     console.log('Dashboard useEffect - Auth state:', {
@@ -122,14 +122,14 @@ export default function DashboardPage() {
       loading,
       profile: profile?.id,
     });
-    
+
     if (user) {
       fetchEvents();
     } else if (!loading) {
       console.log('Dashboard - No user and not loading, redirecting to signin');
       router.push('/signin');
     }
-  }, [user, statusFilter, fetchEvents, loading, router]);
+  }, [user, statusFilter, fetchEvents, loading, router, profile?.id]);
 
   const handleEventEdit = (eventId: string) => {
     router.push(`/dashboard/events/${eventId}/edit`);
@@ -204,28 +204,36 @@ export default function DashboardPage() {
                     <Calendar className="w-4 h-4 text-blue-600" />
                     <span className="text-sm text-gray-600">Events</span>
                   </div>
-                  <span className="font-semibold text-lg">{stats.totalEvents}</span>
+                  <span className="font-semibold text-lg">
+                    {stats.totalEvents}
+                  </span>
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Users className="w-4 h-4 text-green-600" />
                     <span className="text-sm text-gray-600">Contributors</span>
                   </div>
-                  <span className="font-semibold text-lg">{stats.totalContributors}</span>
+                  <span className="font-semibold text-lg">
+                    {stats.totalContributors}
+                  </span>
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Camera className="w-4 h-4 text-purple-600" />
                     <span className="text-sm text-gray-600">Photos</span>
                   </div>
-                  <span className="font-semibold text-lg">{stats.totalPhotos}</span>
+                  <span className="font-semibold text-lg">
+                    {stats.totalPhotos}
+                  </span>
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Video className="w-4 h-4 text-orange-600" />
                     <span className="text-sm text-gray-600">Videos</span>
                   </div>
-                  <span className="font-semibold text-lg">{stats.totalVideos}</span>
+                  <span className="font-semibold text-lg">
+                    {stats.totalVideos}
+                  </span>
                 </div>
               </CardContent>
             </Card>
@@ -245,7 +253,12 @@ export default function DashboardPage() {
                   <Camera className="w-4 h-4 mr-2" />
                   Active Events
                 </Button>
-                <Button asChild variant="outline" className="w-full justify-start" size="sm">
+                <Button
+                  asChild
+                  variant="outline"
+                  className="w-full justify-start"
+                  size="sm"
+                >
                   <Link href="/profile">
                     <User className="w-4 h-4 mr-2" />
                     View Profile
@@ -300,7 +313,9 @@ export default function DashboardPage() {
                     <span>Loading events...</span>
                   </div>
                 ) : filteredEvents.length === 0 ? (
-                  <EmptyEvents onCreateEvent={() => router.push('/create-event')} />
+                  <EmptyEvents
+                    onCreateEvent={() => router.push('/create-event')}
+                  />
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
                     {filteredEvents.map((event) => (
