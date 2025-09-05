@@ -363,7 +363,7 @@ export default function EventManagementPage() {
                 </h1>
               </div>
               <div className="flex items-center gap-3 mb-4">
-                <Badge className={`${eventTypeConfig.color} border`}>
+                <Badge variant="secondary" className="border">
                   {eventTypeConfig.label}
                 </Badge>
                 <Badge variant={isExpired ? 'destructive' : 'default'}>

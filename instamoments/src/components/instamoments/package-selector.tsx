@@ -54,7 +54,11 @@ export const PackageSelector: React.FC<PackageSelectorProps> = ({
                   : 'hover:bg-muted/50 border-border hover:border-primary/30',
                 isPopular && 'border-primary/30'
               )}
-              onClick={() => onSelectTier(key as SubscriptionTier)}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                onSelectTier(key as SubscriptionTier);
+              }}
             >
               {isPopular && (
                 <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
@@ -107,7 +111,7 @@ export const PackageSelector: React.FC<PackageSelectorProps> = ({
                 </div>
 
                 {isSelected && (
-                  <Button className="w-full mt-4" size="lg">
+                  <Button type="button" className="w-full mt-4" size="lg">
                     Selected
                   </Button>
                 )}
@@ -135,9 +139,14 @@ export const PackageSelector: React.FC<PackageSelectorProps> = ({
                 </p>
               </div>
               <Button
+                type="button"
                 variant={hasVideoAddon ? 'default' : 'outline'}
                 size="lg"
-                onClick={() => onToggleVideoAddon(!hasVideoAddon)}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  onToggleVideoAddon(!hasVideoAddon);
+                }}
                 className="ml-4"
               >
                 {hasVideoAddon ? 'Added' : 'Add'}

@@ -35,10 +35,16 @@ export const EventTypeSelector: React.FC<EventTypeSelectorProps> = ({
                 ? 'ring-2 ring-primary bg-primary/5 border-primary/20 shadow-md'
                 : 'hover:bg-muted/50 border-border hover:border-primary/30'
             )}
-            onClick={() => onSelect(key as EventType)}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              onSelect(key as EventType);
+            }}
           >
             <CardContent className="p-6 text-center">
-              <div className="text-2xl mb-3">{eventType.emoji}</div>
+              <div className="flex justify-center mb-3">
+                <eventType.icon className="w-8 h-8 text-primary" />
+              </div>
               <h3 className="font-semibold text-base mb-2 text-foreground">
                 {eventType.label}
               </h3>

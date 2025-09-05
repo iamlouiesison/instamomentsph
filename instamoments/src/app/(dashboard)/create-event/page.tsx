@@ -21,6 +21,7 @@ import {
   type EventType,
   type SubscriptionTier,
 } from '@/lib/validations/event';
+import { getSubscriptionLimits, formatPrice, calculateTotalPrice } from '@/lib/business-logic/subscription-limits';
 import {
   ArrowLeft,
   ArrowRight,
@@ -85,7 +86,24 @@ export default function CreateEventPage() {
   const watchedValues = watch();
 
   const nextStep = () => {
+    console.log('nextStep called, current step:', currentStep);
+    
+    // Validate current step before proceeding
+    if (currentStep === 1 && !watchedValues.name) {
+      toast.error('Please enter an event name');
+      return;
+    }
+    if (currentStep === 2 && !selectedEventType) {
+      toast.error('Please select an event type');
+      return;
+    }
+    if (currentStep === 3 && !selectedTier) {
+      toast.error('Please select a package');
+      return;
+    }
+    
     if (currentStep < STEPS.length) {
+      console.log('Moving to step:', currentStep + 1);
       setCurrentStep(currentStep + 1);
     }
   };
@@ -97,6 +115,7 @@ export default function CreateEventPage() {
   };
 
   const onSubmit = async (data: Record<string, unknown>) => {
+    console.log('onSubmit called with data:', data);
     setIsSubmitting(true);
 
     try {
@@ -124,6 +143,18 @@ export default function CreateEventPage() {
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleCreateEvent = async () => {
+    console.log('handleCreateEvent called, current step:', currentStep);
+    if (currentStep !== 4) {
+      console.log('Cannot create event - not on final step');
+      return;
+    }
+
+    const formData = form.getValues();
+    console.log('Form data:', formData);
+    await onSubmit(formData);
   };
 
   const handleEventTypeSelect = (type: EventType) => {
@@ -203,7 +234,7 @@ export default function CreateEventPage() {
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit(onSubmit)} className="max-w-5xl mx-auto">
+        <div className="max-w-5xl mx-auto">
           <Card className="shadow-lg border-2">
             <CardHeader className="pb-6">
               <CardTitle className="flex items-center gap-3 text-2xl">
@@ -340,24 +371,26 @@ export default function CreateEventPage() {
                 </div>
               )}
 
-              {/* Step 4: Review */}
+              {/* Step 4: Review & Create */}
               {currentStep === 4 && (
                 <div className="space-y-6">
-                  <div className="bg-gray-50 rounded-lg p-6">
-                    <h3 className="font-semibold text-lg mb-4">
-                      Event Summary
-                    </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <p className="text-sm text-gray-600">Event Name</p>
-                        <p className="font-medium">{watchedValues.name}</p>
+
+                  <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-8 border border-blue-200">
+                    <h4 className="font-bold text-xl mb-6 text-gray-900 flex items-center gap-2">
+                      <FileText className="w-6 h-6 text-blue-600" />
+                      Event Details
+                    </h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="space-y-1">
+                        <p className="text-sm font-medium text-gray-600">Event Name</p>
+                        <p className="text-lg font-semibold text-gray-900">{watchedValues.name}</p>
                       </div>
-                      <div>
-                        <p className="text-sm text-gray-600">Event Type</p>
-                        <p className="font-medium flex items-center gap-2">
+                      <div className="space-y-1">
+                        <p className="text-sm font-medium text-gray-600">Event Type</p>
+                        <p className="text-lg font-semibold text-gray-900 flex items-center gap-2">
                           {selectedEventType && (
                             <>
-                              <PartyPopper className="w-4 h-4 text-gray-700" />
+                              <PartyPopper className="w-5 h-5 text-blue-600" />
                               {selectedEventType.charAt(0).toUpperCase() +
                                 selectedEventType.slice(1)}
                             </>
@@ -365,29 +398,169 @@ export default function CreateEventPage() {
                         </p>
                       </div>
                       {watchedValues.eventDate && (
-                        <div>
-                          <p className="text-sm text-gray-600">Event Date</p>
-                          <p className="font-medium">
+                        <div className="space-y-1">
+                          <p className="text-sm font-medium text-gray-600">Event Date</p>
+                          <p className="text-lg font-semibold text-gray-900">
                             {new Date(
                               watchedValues.eventDate
-                            ).toLocaleDateString('en-PH')}
+                            ).toLocaleDateString('en-PH', {
+                              weekday: 'long',
+                              year: 'numeric',
+                              month: 'long',
+                              day: 'numeric'
+                            })}
                           </p>
                         </div>
                       )}
                       {watchedValues.location && (
-                        <div>
-                          <p className="text-sm text-gray-600">Location</p>
-                          <p className="font-medium">
+                        <div className="space-y-1">
+                          <p className="text-sm font-medium text-gray-600">Location</p>
+                          <p className="text-lg font-semibold text-gray-900">
                             {watchedValues.location}
                           </p>
                         </div>
                       )}
+                    </div>
+                    {watchedValues.description && (
+                      <div className="mt-6 space-y-1">
+                        <p className="text-sm font-medium text-gray-600">Description</p>
+                        <p className="text-gray-900">{watchedValues.description}</p>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-8 border border-purple-200">
+                    <h4 className="font-bold text-xl mb-6 text-gray-900 flex items-center gap-2">
+                      <Gem className="w-6 h-6 text-purple-600" />
+                      Package & Features
+                    </h4>
+                    
+                    {/* Package Overview */}
+                    <div className="bg-white rounded-lg p-6 mb-6 border border-purple-100">
+                      <div className="flex items-center justify-between mb-4">
+                        <div>
+                          <h5 className="text-lg font-bold text-gray-900">
+                            {selectedTier.charAt(0).toUpperCase() + selectedTier.slice(1)} Package
+                          </h5>
+                          <p className="text-sm text-gray-600">Perfect for your {selectedEventType} celebration</p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-2xl font-bold text-purple-600">
+                            {formatPrice(calculateTotalPrice(selectedTier, hasVideoAddon))}
+                          </p>
+                          <p className="text-sm text-gray-500">One-time payment</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Package Details Grid */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      {/* Photo Limits */}
+                      <div className="bg-white rounded-lg p-4 border border-purple-100">
+                        <div className="flex items-center gap-2 mb-2">
+                          <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                            <span className="text-blue-600 text-sm font-bold">📸</span>
+                          </div>
+                          <h6 className="font-semibold text-gray-900">Photos</h6>
+                        </div>
+                        <div className="space-y-1">
+                          <p className="text-2xl font-bold text-gray-900">
+                            {getSubscriptionLimits(selectedTier).maxPhotos}
+                          </p>
+                          <p className="text-sm text-gray-600">Maximum photos</p>
+                          <p className="text-xs text-gray-500">
+                            {getSubscriptionLimits(selectedTier).maxPhotosPerUser} per person
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Video Limits */}
+                      <div className="bg-white rounded-lg p-4 border border-purple-100">
+                        <div className="flex items-center gap-2 mb-2">
+                          <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                            <span className="text-green-600 text-sm font-bold">🎥</span>
+                          </div>
+                          <h6 className="font-semibold text-gray-900">Videos</h6>
+                        </div>
+                        <div className="space-y-1">
+                          <p className="text-2xl font-bold text-gray-900">
+                            {hasVideoAddon ? getSubscriptionLimits(selectedTier).maxVideos : 0}
+                          </p>
+                          <p className="text-sm text-gray-600">
+                            {hasVideoAddon ? 'Maximum videos' : 'Not included'}
+                          </p>
+                          {hasVideoAddon && (
+                            <p className="text-xs text-green-600 font-medium">✓ Video addon enabled</p>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Storage Duration */}
+                      <div className="bg-white rounded-lg p-4 border border-purple-100">
+                        <div className="flex items-center gap-2 mb-2">
+                          <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center">
+                            <span className="text-orange-600 text-sm font-bold">⏰</span>
+                          </div>
+                          <h6 className="font-semibold text-gray-900">Storage</h6>
+                        </div>
+                        <div className="space-y-1">
+                          <p className="text-2xl font-bold text-gray-900">
+                            {getSubscriptionLimits(selectedTier).storageDays}
+                          </p>
+                          <p className="text-sm text-gray-600">Days storage</p>
+                          <p className="text-xs text-gray-500">Auto-delete after expiry</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Features List */}
+                    <div className="mt-6 bg-white rounded-lg p-4 border border-purple-100">
+                      <h6 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                        <CheckCircle className="w-4 h-4 text-green-600" />
+                        What's Included
+                      </h6>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                        <div className="flex items-center gap-2 text-sm text-gray-700">
+                          <Check className="w-4 h-4 text-green-600" />
+                          <span>QR code for easy sharing</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-sm text-gray-700">
+                          <Check className="w-4 h-4 text-green-600" />
+                          <span>Real-time photo gallery</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-sm text-gray-700">
+                          <Check className="w-4 h-4 text-green-600" />
+                          <span>No app download required</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-sm text-gray-700">
+                          <Check className="w-4 h-4 text-green-600" />
+                          <span>Mobile-optimized interface</span>
+                        </div>
+                        {hasVideoAddon && (
+                          <div className="flex items-center gap-2 text-sm text-gray-700">
+                            <Check className="w-4 h-4 text-green-600" />
+                            <span>Video upload support</span>
+                          </div>
+                        )}
+                        <div className="flex items-center gap-2 text-sm text-gray-700">
+                          <Check className="w-4 h-4 text-green-600" />
+                          <span>Instant photo sharing</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                    <div className="flex items-start gap-3">
+                      <div className="w-6 h-6 bg-yellow-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <span className="text-yellow-600 text-sm font-bold">!</span>
+                      </div>
                       <div>
-                        <p className="text-sm text-gray-600">Package</p>
-                        <p className="font-medium">
-                          {selectedTier.charAt(0).toUpperCase() +
-                            selectedTier.slice(1)}
-                          {hasVideoAddon && ' + Video Add-on'}
+                        <p className="text-sm font-medium text-yellow-800">
+                          Ready to create your event?
+                        </p>
+                        <p className="text-sm text-yellow-700 mt-1">
+                          Once created, you'll receive a QR code to share with your guests for easy photo and video uploads.
                         </p>
                       </div>
                     </div>
@@ -416,7 +589,8 @@ export default function CreateEventPage() {
                     onClick={nextStep}
                     disabled={
                       (currentStep === 1 && !watchedValues.name) ||
-                      (currentStep === 2 && !selectedEventType)
+                      (currentStep === 2 && !selectedEventType) ||
+                      (currentStep === 3 && !selectedTier)
                     }
                     className="px-8"
                   >
@@ -425,8 +599,9 @@ export default function CreateEventPage() {
                   </Button>
                 ) : (
                   <Button 
-                    type="submit" 
+                    type="button"
                     size="lg"
+                    onClick={handleCreateEvent}
                     disabled={isSubmitting}
                     className="px-8"
                   >
@@ -443,7 +618,7 @@ export default function CreateEventPage() {
               </div>
             </CardContent>
           </Card>
-        </form>
+        </div>
       </div>
     </div>
   );

@@ -1,61 +1,74 @@
 import { z } from 'zod';
+import { 
+  Heart, 
+  Cake, 
+  Crown, 
+  Baby, 
+  GraduationCap, 
+  HeartHandshake, 
+  Building2, 
+  Music, 
+  Building, 
+  Users, 
+  PartyPopper 
+} from 'lucide-react';
 
 // Event types for celebrations and gatherings
 export const EVENT_TYPES = {
   wedding: {
     label: 'Wedding',
     description: 'Wedding celebration',
-    emoji: '💒',
+    icon: Heart,
   },
   birthday: {
     label: 'Birthday',
     description: 'Birthday party',
-    emoji: '🎂',
+    icon: Cake,
   },
   debut: {
     label: '18th Birthday',
     description: 'Coming of age celebration',
-    emoji: '👑',
+    icon: Crown,
   },
   christening: {
     label: 'Christening',
     description: 'Baptism ceremony',
-    emoji: '👶',
+    icon: Baby,
   },
   graduation: {
     label: 'Graduation',
     description: 'Graduation ceremony',
-    emoji: '🎓',
+    icon: GraduationCap,
   },
   anniversary: {
     label: 'Anniversary',
     description: 'Anniversary celebration',
-    emoji: '💕',
+    icon: HeartHandshake,
   },
   corporate: {
     label: 'Company Event',
     description: 'Business gathering',
-    emoji: '🏢',
+    icon: Building2,
   },
   concert: {
     label: 'Concert',
     description: 'Musical performance event',
-    emoji: '🎵',
+    icon: Music,
   },
   summit: {
     label: 'Summit',
     description: 'Conference or meeting event',
-    emoji: '🏛️',
+    icon: Building,
   },
   reunion: {
     label: 'Reunion',
     description: 'Family or class reunion',
-    emoji: '👨‍👩‍👧‍👦',
+    icon: Users,
   },
   other: {
     label: 'Other',
     description: 'Other celebration',
-    emoji: '🎉',
+    icon: PartyPopper,
   },
 } as const;
 
@@ -153,6 +166,9 @@ export const EventCreateSchema = z.object({
     'graduation',
     'anniversary',
     'corporate',
+    'concert',
+    'summit',
+    'reunion',
     'other',
   ]),
   eventDate: z
