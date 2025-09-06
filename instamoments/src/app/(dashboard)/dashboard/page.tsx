@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useAuthContext } from '@/components/providers/AuthProvider';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -48,11 +48,28 @@ export default function DashboardPage() {
   const [eventsLoading, setEventsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
+  const lastFetchRef = useRef<{ userId: string | null; statusFilter: string }>({
+    userId: null,
+    statusFilter: 'all',
+  });
+  const lastAuthStateRef = useRef<{ userId: string | null; profileId: string | null }>({
+    userId: null,
+    profileId: null,
+  });
 
   const fetchEvents = useCallback(async () => {
     // Don't fetch events if user is not authenticated
     if (!user) {
       console.log('No user authenticated - skipping events fetch');
+      return;
+    }
+
+    // Check if we've already fetched for this user and status filter
+    if (
+      lastFetchRef.current.userId === user.id &&
+      lastFetchRef.current.statusFilter === statusFilter
+    ) {
+      console.log('Already fetched events for this user and status filter');
       return;
     }
 
@@ -105,6 +122,12 @@ export default function DashboardPage() {
       );
 
       setStats(totalStats);
+      
+      // Update the ref to track what we've fetched
+      lastFetchRef.current = {
+        userId: user.id,
+        statusFilter: statusFilter,
+      };
     } catch (error) {
       console.error('Error fetching events:', error);
       toast.error('Failed to load events');
@@ -114,12 +137,32 @@ export default function DashboardPage() {
   }, [statusFilter, user, router]);
 
   useEffect(() => {
+    const currentUserId = user?.id || null;
+    const currentProfileId = profile?.id || null;
+    
+    // Check if auth state has actually changed
+    const authStateChanged = 
+      lastAuthStateRef.current.userId !== currentUserId ||
+      lastAuthStateRef.current.profileId !== currentProfileId;
+    
+    if (!authStateChanged && user) {
+      console.log('Dashboard - Auth state unchanged, skipping effect');
+      return;
+    }
+    
     console.log('Dashboard useEffect - Auth state:', {
       hasUser: !!user,
-      userId: user?.id,
+      userId: currentUserId,
       loading,
-      profile: profile?.id,
+      profile: currentProfileId,
+      changed: authStateChanged,
     });
+
+    // Update the ref
+    lastAuthStateRef.current = {
+      userId: currentUserId,
+      profileId: currentProfileId,
+    };
 
     if (user) {
       fetchEvents();
@@ -127,7 +170,14 @@ export default function DashboardPage() {
       console.log('Dashboard - No user and not loading, redirecting to signin');
       router.push('/signin');
     }
-  }, [user, statusFilter, fetchEvents, loading, router, profile?.id]);
+  }, [user, loading, router, profile?.id]); // Removed fetchEvents and statusFilter from dependencies
+
+  // Separate effect for status filter changes
+  useEffect(() => {
+    if (user) {
+      fetchEvents();
+    }
+  }, [statusFilter]); // Only depend on statusFilter, not user or fetchEvents
 
   const handleEventEdit = (eventId: string) => {
     router.push(`/dashboard/events/${eventId}/edit`);

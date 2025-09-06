@@ -132,7 +132,7 @@ export function useGalleryRealtime(
               event_id: eventId,
               contributor_name: item.uploaded_by || 'Unknown',
               contributor_email: '',
-              file_name: item.url.split('/').pop() || '',
+              file_name: (item.url as string)?.split('/').pop() || '',
               file_url: item.url,
               thumbnail_url: item.thumbnail_url,
               file_size: item.file_size || 0,
@@ -397,7 +397,7 @@ export function useGalleryRealtime(
         fetchTimeoutRef.current = null;
       }
     };
-  }, [eventId, fetchData, sortBy, supabase]);
+  }, [eventId, sortBy, supabase]);
 
   // Handle connection status changes
   useEffect(() => {
@@ -428,7 +428,7 @@ export function useGalleryRealtime(
         fetchTimeoutRef.current = null;
       }
     };
-  }, [fetchData]);
+  }, [eventId, sortBy]); // Remove fetchData dependency to prevent loops
 
   return {
     items,

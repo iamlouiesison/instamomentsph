@@ -7,6 +7,7 @@ export function useAuthPersistence() {
   const supabase = createClient();
   const syncTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const isSyncingRef = useRef(false);
+  const isWritingRef = useRef(false);
 
   const syncAuthState = useCallback(async () => {
     // Prevent concurrent syncs
@@ -38,25 +39,52 @@ export function useAuthPersistence() {
             email: session.user.email,
             timestamp: Date.now(),
           };
-          localStorage.setItem(
-            'instamoments_auth_user',
-            JSON.stringify(authData)
-          );
-          console.log('✅ Auth state synced to localStorage:', {
-            userId: authData.id,
-            email: authData.email,
-          });
+          
+          // Check if the data has actually changed (excluding timestamp) to prevent unnecessary updates
+          const existingData = localStorage.getItem('instamoments_auth_user');
+          let shouldUpdate = true;
+          
+          if (existingData) {
+            try {
+              const existing = JSON.parse(existingData);
+              // Compare only the meaningful data, not the timestamp
+              if (existing.id === authData.id && existing.email === authData.email) {
+                shouldUpdate = false;
+              }
+            } catch (e) {
+              // If parsing fails, update anyway
+              shouldUpdate = true;
+            }
+          }
+          
+          if (shouldUpdate) {
+            isWritingRef.current = true;
+            localStorage.setItem('instamoments_auth_user', JSON.stringify(authData));
+            console.log('✅ Auth state synced to localStorage:', {
+              userId: authData.id,
+              email: authData.email,
+            });
+            // Reset the flag after a short delay
+            setTimeout(() => {
+              isWritingRef.current = false;
+            }, 100);
+          } else {
+            console.log('🔄 Auth state unchanged, skipping localStorage update');
+          }
         } else {
           // Clear auth state if no session
-          localStorage.removeItem('instamoments_auth_user');
-          console.log('🧹 Auth state cleared from localStorage');
+          const existingData = localStorage.getItem('instamoments_auth_user');
+          if (existingData) {
+            localStorage.removeItem('instamoments_auth_user');
+            console.log('🧹 Auth state cleared from localStorage');
+          }
         }
       } catch (error) {
         console.error('❌ Error syncing auth state:', error);
       } finally {
         isSyncingRef.current = false;
       }
-    }, 100); // 100ms debounce
+    }, 1000); // 1 second debounce to prevent rapid calls
   }, [supabase]);
 
   useEffect(() => {
@@ -65,13 +93,15 @@ export function useAuthPersistence() {
 
     // Listen for storage events (cross-tab sync) - only for our custom key
     const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === 'instamoments_auth_user') {
+      if (e.key === 'instamoments_auth_user' && !isWritingRef.current) {
         console.log('🔄 Auth state changed in another tab:', {
           key: e.key,
           newValue: e.newValue ? 'present' : 'null',
           oldValue: e.oldValue ? 'present' : 'null',
         });
         syncAuthState();
+      } else if (e.key === 'instamoments_auth_user' && isWritingRef.current) {
+        console.log('🔄 Ignoring storage event - we triggered it');
       }
     };
 

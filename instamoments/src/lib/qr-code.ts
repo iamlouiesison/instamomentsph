@@ -16,7 +16,7 @@ export interface QRCodeOptions {
 
 // Default QR code options optimized for mobile scanning
 export const DEFAULT_QR_OPTIONS: QRCodeOptions = {
-  size: 256,
+  size: 512,
   margin: 2,
   color: {
     dark: '#000000',

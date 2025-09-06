@@ -117,7 +117,7 @@ export function MainNavigation({ className }: MainNavigationProps) {
             {/* User Info - Desktop */}
             <div className="hidden sm:block">
               <span className="text-sm text-muted-foreground">
-                Hello, {profile?.full_name || user?.email?.split('@')[0]}!
+                Hello, {profile?.full_name || user?.user_metadata?.full_name || user?.email?.split('@')[0]}!
               </span>
             </div>
 
@@ -136,7 +136,7 @@ export function MainNavigation({ className }: MainNavigationProps) {
               <DropdownMenuContent align="end" className="w-56">
                 <div className="px-3 py-2">
                   <p className="text-sm font-medium">
-                    {profile?.full_name || 'User'}
+                    {profile?.full_name || user?.user_metadata?.full_name || 'User'}
                   </p>
                   <p className="text-xs text-muted-foreground">{user?.email}</p>
                 </div>
@@ -211,7 +211,7 @@ export function MainNavigation({ className }: MainNavigationProps) {
               {/* Mobile User Info */}
               <div className="px-3 py-2 border-t mt-2">
                 <p className="text-sm font-medium">
-                  {profile?.full_name || 'User'}
+                  {profile?.full_name || user?.user_metadata?.full_name || 'User'}
                 </p>
                 <p className="text-xs text-muted-foreground">{user?.email}</p>
               </div>

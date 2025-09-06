@@ -2,7 +2,7 @@
 
 import { createClient } from '@/lib/supabase/client';
 import { User } from '@supabase/supabase-js';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Database } from '@/types/database';
 import { useAuthPersistence } from './useAuthPersistence';
 
@@ -25,6 +25,7 @@ export function useAuth() {
 
   const supabase = createClient();
   const { syncAuthState } = useAuthPersistence();
+  const isProcessingRef = useRef(false);
 
   useEffect(() => {
     let mounted = true;
@@ -149,14 +150,26 @@ export function useAuth() {
 
     // Listen for storage events to sync auth state across tabs (only for our custom key)
     const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === 'instamoments_auth_user') {
-        console.log('🔐 Storage event detected:', {
-          key: e.key,
-          newValue: e.newValue ? 'present' : 'null',
-          oldValue: e.oldValue ? 'present' : 'null',
-          timestamp: new Date().toISOString(),
-        });
-        getInitialSession();
+      if (e.key === 'instamoments_auth_user' && !isProcessingRef.current) {
+        // Only trigger if the value actually changed (not just timestamp updates)
+        if (e.newValue !== e.oldValue) {
+          console.log('🔐 Storage event detected:', {
+            key: e.key,
+            newValue: e.newValue ? 'present' : 'null',
+            oldValue: e.oldValue ? 'present' : 'null',
+            timestamp: new Date().toISOString(),
+          });
+          isProcessingRef.current = true;
+          getInitialSession();
+          // Reset the flag after processing
+          setTimeout(() => {
+            isProcessingRef.current = false;
+          }, 500);
+        } else {
+          console.log('🔐 Storage event ignored - no actual change detected');
+        }
+      } else if (e.key === 'instamoments_auth_user' && isProcessingRef.current) {
+        console.log('🔐 Ignoring storage event - already processing');
       }
     };
 

@@ -18,7 +18,7 @@ export async function GET(
 
     // Get query parameters
     const format = searchParams.get('format') || 'png'; // png, svg, print
-    const size = searchParams.get('size') || '256';
+    const size = searchParams.get('size') || '512'; // Default to 512x512
     const branded = searchParams.get('branded') === 'true';
 
     // Validate event ID

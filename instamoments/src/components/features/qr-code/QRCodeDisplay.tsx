@@ -45,11 +45,11 @@ export function QRCodeDisplay({
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Size configurations
+  // Size configurations - All sizes now use 512x512 for consistency
   const sizeConfig = {
-    small: { qrSize: 128, containerSize: 'w-32 h-32' },
-    medium: { qrSize: 256, containerSize: 'w-64 h-64' },
-    large: { qrSize: 384, containerSize: 'w-96 h-96' },
+    small: { qrSize: 512, containerSize: 'w-32 h-32' },
+    medium: { qrSize: 512, containerSize: 'w-64 h-64' },
+    large: { qrSize: 512, containerSize: 'w-96 h-96' },
     print: { qrSize: 512, containerSize: 'w-[512px] h-[512px]' },
   };
 
