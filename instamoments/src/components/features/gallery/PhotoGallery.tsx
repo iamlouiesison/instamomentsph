@@ -43,6 +43,7 @@ import { toast } from 'sonner';
 import { format } from 'date-fns';
 import { useGalleryRealtime } from '@/hooks/useGalleryRealtime';
 import { Photo, Video as VideoType } from '@/types/database';
+import { LoadingSpinner, GalleryLoading } from '@/components/instamoments/loading-states';
 
 interface PhotoGalleryProps {
   eventId: string;
@@ -278,6 +279,11 @@ export function PhotoGallery({
     );
   }
 
+  // Show loading state while initial data is being fetched
+  if (loading && items.length === 0) {
+    return <GalleryLoading count={12} />;
+  }
+
   return (
     <div className="space-y-6">
       {/* Connection Status and Stats */}
@@ -416,35 +422,6 @@ export function PhotoGallery({
                   {/* Hover Overlay */}
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors" />
 
-                  {/* Top Actions */}
-                  <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <div className="flex gap-1">
-                      {allowDownloads && (
-                        <Button
-                          size="sm"
-                          variant="secondary"
-                          className="h-8 w-8 p-0 bg-white/90 hover:bg-white shadow-md"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleDownload(item);
-                          }}
-                        >
-                          <Download className="h-4 w-4" />
-                        </Button>
-                      )}
-                      <Button
-                        size="sm"
-                        variant="secondary"
-                        className="h-8 w-8 p-0 bg-white/90 hover:bg-white shadow-md"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleShare(item);
-                        }}
-                      >
-                        <Share2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
 
                   {/* Type Indicator */}
                   <div className="absolute top-2 left-2">
@@ -487,7 +464,7 @@ export function PhotoGallery({
           {loading && (
             <div className="flex justify-center py-8">
               <div className="flex items-center gap-2 text-muted-foreground">
-                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-primary"></div>
+                <LoadingSpinner size="sm" />
                 <span className="text-sm">Loading more photos...</span>
               </div>
             </div>
@@ -502,6 +479,9 @@ export function PhotoGallery({
       <Dialog open={isLightboxOpen} onOpenChange={setIsLightboxOpen}>
         <DialogContent className="max-w-7xl w-full h-[90vh] p-0">
           <DialogHeader className="p-6 pb-0">
+            <DialogTitle className="sr-only">
+              Photo Gallery - {selectedItem?.type === 'photo' ? 'Photo' : 'Video'} Viewer
+            </DialogTitle>
             <div className="flex items-center justify-center">
               <div className="flex items-center gap-3">
                 <Button
