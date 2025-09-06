@@ -1,4 +1,3 @@
-import { createClient } from '@/lib/supabase/server';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
@@ -23,75 +22,8 @@ export async function middleware(request: NextRequest) {
     return response;
   }
 
-  // Only check authentication for protected routes to avoid interfering with client-side auth
-  const protectedRoutes = [
-    '/dashboard',
-    '/create-event',
-    '/settings',
-    '/profile',
-    '/complete-profile',
-  ];
-
-  const isProtectedRoute = protectedRoutes.some((route) =>
-    pathname.startsWith(route)
-  );
-
-  // Skip auth check for non-protected routes (including gallery routes)
-  if (!isProtectedRoute) {
-    return response;
-  }
-
-  // Create Supabase client only when needed
-  const supabase = await createClient();
-
-  // Get the current user
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  // Define auth routes (should redirect if already authenticated)
-  const authRoutes = ['/signin', '/signup', '/reset-password'];
-
-  // Check if the current path is an auth route
-  const isAuthRoute = authRoutes.some((route) => pathname.startsWith(route));
-
-  // Handle protected routes
-  if (isProtectedRoute && !user) {
-    const signInUrl = new URL('/signin', request.url);
-    signInUrl.searchParams.set('redirectTo', pathname);
-    return NextResponse.redirect(signInUrl);
-  }
-
-  // Handle auth routes (redirect if already authenticated)
-  if (isAuthRoute && user) {
-    // Check if user has a complete profile
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', user.id)
-      .single();
-
-    if (!profile) {
-      // Redirect to complete profile if no profile exists
-      return NextResponse.redirect(new URL('/complete-profile', request.url));
-    }
-
-    // Redirect to dashboard if already authenticated
-    return NextResponse.redirect(new URL('/dashboard', request.url));
-  }
-
-  // Handle API routes
-  if (pathname.startsWith('/api/')) {
-    // API routes are handled separately
-    return response;
-  }
-
-  // Handle auth callback
-  if (pathname.startsWith('/auth/callback')) {
-    return response;
-  }
-
   // For all other routes, continue
+  // Authentication will be handled client-side
   return response;
 }
 

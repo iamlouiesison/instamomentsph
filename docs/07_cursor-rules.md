@@ -706,7 +706,6 @@ PAYMONGO_PUBLIC_KEY=pk_test_your_public_key
 
 # Application
 NEXT_PUBLIC_APP_URL=http://localhost:3000
-NEXTAUTH_SECRET=your_nextauth_secret
 
 # File Upload
 NEXT_PUBLIC_MAX_FILE_SIZE=10485760  # 10MB
