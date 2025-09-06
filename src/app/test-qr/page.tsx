@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import Image from 'next/image';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Badge } from '@/components/ui/badge';
-import { QRCodeDisplay } from '@/components/features/qr-code';
+import React, { useState, useEffect } from "react";
+import Image from "next/image";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import { QRCodeDisplay } from "@/components/features/qr-code";
 import {
   CheckCircle,
   AlertCircle,
@@ -14,20 +14,20 @@ import {
   QrCode,
   Download,
   Printer,
-} from 'lucide-react';
+} from "lucide-react";
 
 // Mock event data for testing
 const MOCK_EVENT = {
-  id: '123e4567-e89b-12d3-a456-426614174000',
-  name: 'Test Wedding Event',
-  description: 'A beautiful wedding celebration',
-  event_type: 'wedding' as const,
-  event_date: '2024-12-25',
-  gallery_slug: 'test-wedding-2024',
-  qr_code_url: 'https://example.com/qr/test-wedding-2024.png',
-  location: 'Manila, Philippines',
-  host_id: 'test-host-id',
-  subscription_tier: 'premium' as const,
+  id: "123e4567-e89b-12d3-a456-426614174000",
+  name: "Test Wedding Event",
+  description: "A beautiful wedding celebration",
+  event_type: "wedding" as const,
+  event_date: "2024-12-25",
+  gallery_slug: "test-wedding-2024",
+  qr_code_url: "https://example.com/qr/test-wedding-2024.png",
+  location: "Manila, Philippines",
+  host_id: "test-host-id",
+  subscription_tier: "premium" as const,
   max_photos: 100,
   max_photos_per_user: 3,
   storage_days: 30,
@@ -35,18 +35,18 @@ const MOCK_EVENT = {
   requires_moderation: false,
   allow_downloads: true,
   is_public: true,
-  custom_message: 'Welcome to our wedding!',
+  custom_message: "Welcome to our wedding!",
   total_photos: 0,
   total_videos: 0,
   total_contributors: 0,
-  status: 'active' as const,
+  status: "active" as const,
   created_at: new Date().toISOString(),
   updated_at: new Date().toISOString(),
   expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
 };
 
 export default function TestQRPage() {
-  const [qrCodeUrl, setQrCodeUrl] = useState<string>('');
+  const [qrCodeUrl, setQrCodeUrl] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [testResults, setTestResults] = useState<{
@@ -68,12 +68,12 @@ export default function TestQRPage() {
       setError(null);
 
       const response = await fetch(
-        `/api/qr/${MOCK_EVENT.id}?format=png&size=256&branded=true`
+        `/api/qr/${MOCK_EVENT.id}?format=png&size=256&branded=true`,
       );
 
       if (!response.ok) {
         throw new Error(
-          `API returned ${response.status}: ${response.statusText}`
+          `API returned ${response.status}: ${response.statusText}`,
         );
       }
 
@@ -87,8 +87,8 @@ export default function TestQRPage() {
         qrGeneration: true,
       }));
     } catch (err) {
-      console.error('QR Code API test failed:', err);
-      setError(err instanceof Error ? err.message : 'Unknown error');
+      console.error("QR Code API test failed:", err);
+      setError(err instanceof Error ? err.message : "Unknown error");
       setTestResults((prev) => ({
         ...prev,
         apiTest: false,
@@ -103,11 +103,11 @@ export default function TestQRPage() {
   const testDownload = async () => {
     try {
       const response = await fetch(
-        `/api/qr/${MOCK_EVENT.id}?format=png&size=256&branded=true`
+        `/api/qr/${MOCK_EVENT.id}?format=png&size=256&branded=true`,
       );
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
+      const a = document.createElement("a");
       a.href = url;
       a.download = `test-qr-${MOCK_EVENT.gallery_slug}.png`;
       document.body.appendChild(a);
@@ -117,7 +117,7 @@ export default function TestQRPage() {
 
       setTestResults((prev) => ({ ...prev, downloadTest: true }));
     } catch (err) {
-      console.error('Download test failed:', err);
+      console.error("Download test failed:", err);
       setTestResults((prev) => ({ ...prev, downloadTest: false }));
     }
   };
@@ -125,7 +125,7 @@ export default function TestQRPage() {
   // Test print functionality
   const testPrint = () => {
     try {
-      const printWindow = window.open('', '_blank');
+      const printWindow = window.open("", "_blank");
       if (printWindow) {
         const printContent = `
           <!DOCTYPE html>
@@ -145,7 +145,7 @@ export default function TestQRPage() {
                 <div class="event-info">
                   <h1>${MOCK_EVENT.name}</h1>
                   <p>Wedding Event</p>
-                  <p>${new Date(MOCK_EVENT.event_date).toLocaleDateString('en-PH')}</p>
+                  <p>${new Date(MOCK_EVENT.event_date).toLocaleDateString("en-PH")}</p>
                 </div>
                 <img src="/api/qr/${MOCK_EVENT.id}?format=print&size=512&branded=true" 
                      alt="QR Code for ${MOCK_EVENT.name}" 
@@ -165,7 +165,7 @@ export default function TestQRPage() {
         setTestResults((prev) => ({ ...prev, printTest: true }));
       }
     } catch (err) {
-      console.error('Print test failed:', err);
+      console.error("Print test failed:", err);
       setTestResults((prev) => ({ ...prev, printTest: false }));
     }
   };
@@ -176,10 +176,10 @@ export default function TestQRPage() {
   }, []);
 
   const allTestsPassed = Object.values(testResults).every(
-    (result) => result === true
+    (result) => result === true,
   );
   const anyTestFailed = Object.values(testResults).some(
-    (result) => result === false
+    (result) => result === false,
   );
 
   return (
@@ -215,7 +215,7 @@ export default function TestQRPage() {
               <div className="flex justify-between">
                 <span className="text-sm text-muted-foreground">Date:</span>
                 <span className="text-sm font-medium">
-                  {new Date(MOCK_EVENT.event_date).toLocaleDateString('en-PH')}
+                  {new Date(MOCK_EVENT.event_date).toLocaleDateString("en-PH")}
                 </span>
               </div>
             </CardContent>
@@ -242,10 +242,10 @@ export default function TestQRPage() {
                 )}
                 <span className="text-sm">
                   {testResults.apiTest === null
-                    ? 'Testing...'
+                    ? "Testing..."
                     : testResults.apiTest
-                      ? 'Passed'
-                      : 'Failed'}
+                      ? "Passed"
+                      : "Failed"}
                 </span>
               </div>
             </CardContent>
@@ -269,10 +269,10 @@ export default function TestQRPage() {
                 )}
                 <span className="text-sm">
                   {testResults.qrGeneration === null
-                    ? 'Testing...'
+                    ? "Testing..."
                     : testResults.qrGeneration
-                      ? 'Passed'
-                      : 'Failed'}
+                      ? "Passed"
+                      : "Failed"}
                 </span>
               </div>
             </CardContent>
@@ -296,10 +296,10 @@ export default function TestQRPage() {
                 )}
                 <span className="text-sm">
                   {testResults.downloadTest === null
-                    ? 'Not tested'
+                    ? "Not tested"
                     : testResults.downloadTest
-                      ? 'Passed'
-                      : 'Failed'}
+                      ? "Passed"
+                      : "Failed"}
                 </span>
               </div>
             </CardContent>
@@ -323,10 +323,10 @@ export default function TestQRPage() {
                 )}
                 <span className="text-sm">
                   {testResults.printTest === null
-                    ? 'Not tested'
+                    ? "Not tested"
                     : testResults.printTest
-                      ? 'Passed'
-                      : 'Failed'}
+                      ? "Passed"
+                      : "Failed"}
                 </span>
               </div>
             </CardContent>
@@ -383,9 +383,9 @@ export default function TestQRPage() {
               <p className="text-sm text-muted-foreground mb-4">
                 This QR code should link to: <br />
                 <code className="bg-muted px-2 py-1 rounded">
-                  {typeof window !== 'undefined'
+                  {typeof window !== "undefined"
                     ? window.location.origin
-                    : 'http://localhost:3000'}
+                    : "http://localhost:3000"}
                   /gallery/{MOCK_EVENT.gallery_slug}
                 </code>
               </p>
@@ -416,7 +416,7 @@ export default function TestQRPage() {
             disabled={isLoading}
             variant="outline"
           >
-            {isLoading ? 'Testing...' : 'Test API Again'}
+            {isLoading ? "Testing..." : "Test API Again"}
           </Button>
           <Button
             onClick={testDownload}

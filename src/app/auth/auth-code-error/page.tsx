@@ -1,14 +1,14 @@
-import Link from 'next/link';
-import { AlertTriangle, ArrowLeft } from 'lucide-react';
+import Link from "next/link";
+import { AlertTriangle, ArrowLeft } from "lucide-react";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Alert } from '@/components/ui/alert';
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Alert } from "@/components/ui/alert";
 
 export default function AuthCodeErrorPage() {
   return (

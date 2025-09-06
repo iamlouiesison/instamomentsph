@@ -1,27 +1,27 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import Link from 'next/link';
-import { Mail, ArrowLeft, CheckCircle } from 'lucide-react';
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import Link from "next/link";
+import { Mail, ArrowLeft, CheckCircle } from "lucide-react";
 
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
-import { Alert } from '@/components/ui/alert';
-import { useAuthContext } from '@/components/providers/AuthProvider';
+} from "@/components/ui/card";
+import { Alert } from "@/components/ui/alert";
+import { useAuthContext } from "@/components/providers/AuthProvider";
 import {
   resetPasswordSchema,
   type ResetPasswordInput,
-} from '@/lib/validations/auth';
+} from "@/lib/validations/auth";
 
 export default function ResetPasswordPage() {
   const [isLoading, setIsLoading] = useState(false);
@@ -44,15 +44,15 @@ export default function ResetPasswordPage() {
       const { error } = await resetPassword(data.email);
 
       if (error) {
-        setError('root', {
-          message: 'Something went wrong. Please try again.',
+        setError("root", {
+          message: "Something went wrong. Please try again.",
         });
       } else {
         setIsSuccess(true);
       }
     } catch {
-      setError('root', {
-        message: 'Something went wrong. Please try again.',
+      setError("root", {
+        message: "Something went wrong. Please try again.",
       });
     } finally {
       setIsLoading(false);
@@ -69,11 +69,11 @@ export default function ResetPasswordPage() {
                 <CheckCircle className="w-8 h-8 text-white" />
               </div>
               <CardTitle className="text-2xl font-bold text-gray-900">
-                {'Email sent!'}
+                {"Email sent!"}
               </CardTitle>
               <CardDescription className="text-gray-600">
                 {
-                  'We sent a password reset link to your email. Please check your inbox.'
+                  "We sent a password reset link to your email. Please check your inbox."
                 }
               </CardDescription>
             </CardHeader>
@@ -96,7 +96,7 @@ export default function ResetPasswordPage() {
                   variant="outline"
                   className="w-full h-12"
                 >
-                  {'Try Again'}
+                  {"Try Again"}
                 </Button>
 
                 <div className="text-center">
@@ -104,7 +104,7 @@ export default function ResetPasswordPage() {
                     href="/signin"
                     className="text-blue-600 hover:text-blue-800 hover:underline font-medium"
                   >
-                    {'Back'} to {'Sign In'}
+                    {"Back"} to {"Sign In"}
                   </Link>
                 </div>
               </div>
@@ -124,7 +124,7 @@ export default function ResetPasswordPage() {
               <Mail className="w-8 h-8 text-white" />
             </div>
             <CardTitle className="text-2xl font-bold text-gray-900">
-              {'Reset Password'}
+              {"Reset Password"}
             </CardTitle>
             <CardDescription className="text-gray-600">
               Enter your email address and we&apos;ll send you a link to reset
@@ -140,7 +140,7 @@ export default function ResetPasswordPage() {
 
               <div className="space-y-2">
                 <Label htmlFor="email" className="text-sm font-medium">
-                  {'Email Address'}
+                  {"Email Address"}
                 </Label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
@@ -149,7 +149,7 @@ export default function ResetPasswordPage() {
                     type="email"
                     placeholder="your.email@example.com"
                     className="pl-10 h-12"
-                    {...register('email')}
+                    {...register("email")}
                   />
                 </div>
                 {errors.email && (
@@ -162,7 +162,7 @@ export default function ResetPasswordPage() {
                 className="w-full h-12 bg-blue-500 hover:bg-blue-600 text-white font-semibold"
                 disabled={isLoading}
               >
-                {isLoading ? 'Sending email...' : 'Send Reset Link'}
+                {isLoading ? "Sending email..." : "Send Reset Link"}
               </Button>
             </form>
 
@@ -172,7 +172,7 @@ export default function ResetPasswordPage() {
                 className="inline-flex items-center text-blue-600 hover:text-blue-800 hover:underline font-medium"
               >
                 <ArrowLeft className="w-4 h-4 mr-1" />
-                {'Back'} to {'Sign In'}
+                {"Back"} to {"Sign In"}
               </Link>
             </div>
           </CardContent>

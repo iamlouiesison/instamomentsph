@@ -1,17 +1,17 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import Image from 'next/image';
-import { Button } from '@/components/ui/button';
-import { LoadingSpinner } from '@/components/instamoments';
+import React, { useState, useEffect } from "react";
+import Image from "next/image";
+import { Button } from "@/components/ui/button";
+import { LoadingSpinner } from "@/components/instamoments";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import {
   Download,
   Printer,
@@ -19,14 +19,14 @@ import {
   Copy,
   QrCode,
   Smartphone,
-} from 'lucide-react';
-import { Event } from '@/types/database';
-import { EVENT_TYPES } from '@/lib/validations/event';
-import { toast } from 'sonner';
+} from "lucide-react";
+import { Event } from "@/types/database";
+import { EVENT_TYPES } from "@/lib/validations/event";
+import { toast } from "sonner";
 
 interface QRCodeDisplayProps {
   event: Event;
-  size?: 'small' | 'medium' | 'large' | 'print';
+  size?: "small" | "medium" | "large" | "print";
   showInstructions?: boolean;
   showDownloadOptions?: boolean;
   branded?: boolean;
@@ -35,22 +35,22 @@ interface QRCodeDisplayProps {
 
 export function QRCodeDisplay({
   event,
-  size = 'medium',
+  size = "medium",
   showInstructions = true,
   showDownloadOptions = true,
   branded = true,
-  className = '',
+  className = "",
 }: QRCodeDisplayProps) {
-  const [qrCodeUrl, setQrCodeUrl] = useState<string>('');
+  const [qrCodeUrl, setQrCodeUrl] = useState<string>("");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   // Size configurations - All sizes now use 512x512 for consistency
   const sizeConfig = {
-    small: { qrSize: 512, containerSize: 'w-32 h-32' },
-    medium: { qrSize: 512, containerSize: 'w-64 h-64' },
-    large: { qrSize: 512, containerSize: 'w-96 h-96' },
-    print: { qrSize: 512, containerSize: 'w-[512px] h-[512px]' },
+    small: { qrSize: 512, containerSize: "w-32 h-32" },
+    medium: { qrSize: 512, containerSize: "w-64 h-64" },
+    large: { qrSize: 512, containerSize: "w-96 h-96" },
+    print: { qrSize: 512, containerSize: "w-[512px] h-[512px]" },
   };
 
   const currentSize = sizeConfig[size];
@@ -63,7 +63,7 @@ export function QRCodeDisplay({
         setError(null);
 
         const params = new URLSearchParams({
-          format: 'png',
+          format: "png",
           size: currentSize.qrSize.toString(),
           branded: branded.toString(),
         });
@@ -71,8 +71,8 @@ export function QRCodeDisplay({
         const qrUrl = `/api/qr/${event.id}?${params.toString()}`;
         setQrCodeUrl(qrUrl);
       } catch (err) {
-        console.error('Error generating QR code:', err);
-        setError('Failed to generate QR code');
+        console.error("Error generating QR code:", err);
+        setError("Failed to generate QR code");
       } finally {
         setIsLoading(false);
       }
@@ -82,25 +82,25 @@ export function QRCodeDisplay({
   }, [event.id, currentSize.qrSize, branded]);
 
   // Download QR code
-  const handleDownload = async (format: 'png' | 'svg' | 'print') => {
+  const handleDownload = async (format: "png" | "svg" | "print") => {
     try {
       const params = new URLSearchParams({
         format,
-        size: format === 'print' ? '512' : currentSize.qrSize.toString(),
+        size: format === "print" ? "512" : currentSize.qrSize.toString(),
         branded: branded.toString(),
       });
 
       const response = await fetch(`/api/qr/${event.id}?${params.toString()}`);
 
       if (!response.ok) {
-        throw new Error('Failed to download QR code');
+        throw new Error("Failed to download QR code");
       }
 
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
+      const a = document.createElement("a");
       a.href = url;
-      a.download = `qr-${event.gallery_slug}-${format}.${format === 'svg' ? 'svg' : 'png'}`;
+      a.download = `qr-${event.gallery_slug}-${format}.${format === "svg" ? "svg" : "png"}`;
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
@@ -108,8 +108,8 @@ export function QRCodeDisplay({
 
       toast.success(`QR code downloaded as ${format.toUpperCase()}`);
     } catch (err) {
-      console.error('Download error:', err);
-      toast.error('Failed to download QR code');
+      console.error("Download error:", err);
+      toast.error("Failed to download QR code");
     }
   };
 
@@ -118,10 +118,10 @@ export function QRCodeDisplay({
     try {
       const galleryUrl = `${window.location.origin}/gallery/${event.gallery_slug}`;
       await navigator.clipboard.writeText(galleryUrl);
-      toast.success('Gallery URL copied to clipboard');
+      toast.success("Gallery URL copied to clipboard");
     } catch (err) {
-      console.error('Copy error:', err);
-      toast.error('Failed to copy URL');
+      console.error("Copy error:", err);
+      toast.error("Failed to copy URL");
     }
   };
 
@@ -141,7 +141,7 @@ export function QRCodeDisplay({
         await handleCopyUrl();
       }
     } catch (err) {
-      console.error('Share error:', err);
+      console.error("Share error:", err);
       // Fallback to copying URL
       await handleCopyUrl();
     }
@@ -149,7 +149,7 @@ export function QRCodeDisplay({
 
   // Print QR code
   const handlePrint = () => {
-    const printWindow = window.open('', '_blank');
+    const printWindow = window.open("", "_blank");
     if (printWindow) {
       const printContent = `
         <!DOCTYPE html>
@@ -192,7 +192,7 @@ export function QRCodeDisplay({
               <div class="event-info">
                 <h1>${event.name}</h1>
                 <p>${EVENT_TYPES[event.event_type]?.label || event.event_type}</p>
-                ${event.event_date ? `<p>${new Date(event.event_date).toLocaleDateString('en-PH')}</p>` : ''}
+                ${event.event_date ? `<p>${new Date(event.event_date).toLocaleDateString("en-PH")}</p>` : ""}
               </div>
               <img src="/api/qr/${event.id}?format=print&size=512&branded=${branded}" 
                    alt="QR Code for ${event.name}" 
@@ -292,7 +292,7 @@ export function QRCodeDisplay({
             <Button
               variant="outline"
               size="sm"
-              onClick={() => handleDownload('png')}
+              onClick={() => handleDownload("png")}
               disabled={isLoading}
             >
               <Download className="h-4 w-4 mr-2" />
@@ -301,7 +301,7 @@ export function QRCodeDisplay({
             <Button
               variant="outline"
               size="sm"
-              onClick={() => handleDownload('svg')}
+              onClick={() => handleDownload("svg")}
               disabled={isLoading}
             >
               <Download className="h-4 w-4 mr-2" />
@@ -380,10 +380,10 @@ export function QRCodeDisplay({
           </p>
           {event.event_date && (
             <p>
-              {new Date(event.event_date).toLocaleDateString('en-PH', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
+              {new Date(event.event_date).toLocaleDateString("en-PH", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
               })}
             </p>
           )}

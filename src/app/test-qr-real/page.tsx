@@ -1,32 +1,32 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import Image from 'next/image';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Badge } from '@/components/ui/badge';
-import { QRCodeDisplay } from '@/components/features/qr-code';
+import React, { useState, useEffect } from "react";
+import Image from "next/image";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import { QRCodeDisplay } from "@/components/features/qr-code";
 import {
   CheckCircle,
   AlertCircle,
   QrCode,
   Download,
   RefreshCw,
-} from 'lucide-react';
+} from "lucide-react";
 
 // Real event data from our test event
 const REAL_EVENT = {
-  id: '1ace1980-e889-4b69-a7cc-4fc65aec3e8f',
-  name: 'Test Wedding Event',
-  description: 'A beautiful wedding celebration',
-  event_type: 'wedding' as const,
-  event_date: new Date().toISOString().split('T')[0],
-  gallery_slug: 'test-wedding-mf6dw8r1',
-  qr_code_url: 'https://example.com/qr/test-wedding-mf6dw8r1.png',
-  location: 'Manila, Philippines',
-  host_id: 'da044330-42b6-4149-94b5-2a35774615a0',
-  subscription_tier: 'free' as const,
+  id: "1ace1980-e889-4b69-a7cc-4fc65aec3e8f",
+  name: "Test Wedding Event",
+  description: "A beautiful wedding celebration",
+  event_type: "wedding" as const,
+  event_date: new Date().toISOString().split("T")[0],
+  gallery_slug: "test-wedding-mf6dw8r1",
+  qr_code_url: "https://example.com/qr/test-wedding-mf6dw8r1.png",
+  location: "Manila, Philippines",
+  host_id: "da044330-42b6-4149-94b5-2a35774615a0",
+  subscription_tier: "free" as const,
   max_photos: 30,
   max_photos_per_user: 3,
   storage_days: 3,
@@ -34,18 +34,18 @@ const REAL_EVENT = {
   requires_moderation: false,
   allow_downloads: true,
   is_public: true,
-  custom_message: 'Welcome to our wedding!',
+  custom_message: "Welcome to our wedding!",
   total_photos: 0,
   total_videos: 0,
   total_contributors: 0,
-  status: 'active' as const,
+  status: "active" as const,
   created_at: new Date().toISOString(),
   updated_at: new Date().toISOString(),
   expires_at: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
 };
 
 export default function TestQRRealPage() {
-  const [qrCodeUrl, setQrCodeUrl] = useState<string>('');
+  const [qrCodeUrl, setQrCodeUrl] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [testResults, setTestResults] = useState<{
@@ -70,13 +70,13 @@ export default function TestQRRealPage() {
       });
 
       const response = await fetch(
-        `/api/qr/${REAL_EVENT.id}?format=png&size=256&branded=true`
+        `/api/qr/${REAL_EVENT.id}?format=png&size=256&branded=true`,
       );
 
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(
-          `API returned ${response.status}: ${errorData.error?.message || response.statusText}`
+          `API returned ${response.status}: ${errorData.error?.message || response.statusText}`,
         );
       }
 
@@ -90,8 +90,8 @@ export default function TestQRRealPage() {
         componentTest: true,
       });
     } catch (err) {
-      console.error('QR Code generation test failed:', err);
-      setError(err instanceof Error ? err.message : 'Unknown error');
+      console.error("QR Code generation test failed:", err);
+      setError(err instanceof Error ? err.message : "Unknown error");
       setTestResults({
         apiTest: false,
         qrGeneration: false,
@@ -106,11 +106,11 @@ export default function TestQRRealPage() {
   const testDownload = async () => {
     try {
       const response = await fetch(
-        `/api/qr/${REAL_EVENT.id}?format=png&size=256&branded=true`
+        `/api/qr/${REAL_EVENT.id}?format=png&size=256&branded=true`,
       );
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
+      const a = document.createElement("a");
       a.href = url;
       a.download = `qr-${REAL_EVENT.gallery_slug}.png`;
       document.body.appendChild(a);
@@ -118,8 +118,8 @@ export default function TestQRRealPage() {
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
     } catch (err) {
-      console.error('Download test failed:', err);
-      setError(err instanceof Error ? err.message : 'Download failed');
+      console.error("Download test failed:", err);
+      setError(err instanceof Error ? err.message : "Download failed");
     }
   };
 
@@ -129,10 +129,10 @@ export default function TestQRRealPage() {
   }, []);
 
   const allTestsPassed = Object.values(testResults).every(
-    (result) => result === true
+    (result) => result === true,
   );
   const anyTestFailed = Object.values(testResults).some(
-    (result) => result === false
+    (result) => result === false,
   );
 
   return (
@@ -213,10 +213,10 @@ export default function TestQRRealPage() {
                 )}
                 <span className="text-sm">
                   {testResults.apiTest === null
-                    ? 'Testing...'
+                    ? "Testing..."
                     : testResults.apiTest
-                      ? 'Passed'
-                      : 'Failed'}
+                      ? "Passed"
+                      : "Failed"}
                 </span>
               </div>
             </CardContent>
@@ -240,10 +240,10 @@ export default function TestQRRealPage() {
                 )}
                 <span className="text-sm">
                   {testResults.qrGeneration === null
-                    ? 'Testing...'
+                    ? "Testing..."
                     : testResults.qrGeneration
-                      ? 'Passed'
-                      : 'Failed'}
+                      ? "Passed"
+                      : "Failed"}
                 </span>
               </div>
             </CardContent>
@@ -267,10 +267,10 @@ export default function TestQRRealPage() {
                 )}
                 <span className="text-sm">
                   {testResults.componentTest === null
-                    ? 'Testing...'
+                    ? "Testing..."
                     : testResults.componentTest
-                      ? 'Passed'
-                      : 'Failed'}
+                      ? "Passed"
+                      : "Failed"}
                 </span>
               </div>
             </CardContent>
@@ -327,9 +327,9 @@ export default function TestQRRealPage() {
               <p className="text-sm text-muted-foreground mb-4">
                 This QR code should link to: <br />
                 <code className="bg-muted px-2 py-1 rounded break-all">
-                  {typeof window !== 'undefined'
+                  {typeof window !== "undefined"
                     ? window.location.origin
-                    : 'http://localhost:3000'}
+                    : "http://localhost:3000"}
                   /gallery/{REAL_EVENT.gallery_slug}
                 </code>
               </p>

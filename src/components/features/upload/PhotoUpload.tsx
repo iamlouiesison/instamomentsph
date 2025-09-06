@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import React, { useState, useRef, useCallback, useEffect } from 'react';
-import Image from 'next/image';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
+import React, { useState, useRef, useCallback, useEffect } from "react";
+import Image from "next/image";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import {
   Camera,
   Upload,
@@ -15,15 +15,15 @@ import {
   Loader2,
   Trash2,
   Eye,
-} from 'lucide-react';
+} from "lucide-react";
 
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 import {
   compressImage,
@@ -32,23 +32,23 @@ import {
   revokePreviewUrl,
   formatFileSize,
   getImageDimensions,
-} from '@/lib/image-processing';
-import { usePhotoUpload, PhotoUploadResponse } from '@/hooks/usePhotoUpload';
+} from "@/lib/image-processing";
+import { usePhotoUpload, PhotoUploadResponse } from "@/hooks/usePhotoUpload";
 
 // Validation schema for photo upload form
 const PhotoUploadSchema = z.object({
   contributorName: z
     .string()
-    .min(1, 'Name is required')
-    .max(50, 'Name must be less than 50 characters'),
+    .min(1, "Name is required")
+    .max(50, "Name must be less than 50 characters"),
   contributorEmail: z
     .string()
-    .email('Invalid email address')
+    .email("Invalid email address")
     .optional()
-    .or(z.literal('')),
+    .or(z.literal("")),
   caption: z
     .string()
-    .max(200, 'Caption must be less than 200 characters')
+    .max(200, "Caption must be less than 200 characters")
     .optional(),
 });
 
@@ -114,9 +114,9 @@ export const PhotoUpload: React.FC<PhotoUploadProps> = ({
   const form = useForm<PhotoUploadFormData>({
     resolver: zodResolver(PhotoUploadSchema),
     defaultValues: {
-      contributorName: '',
-      contributorEmail: '',
-      caption: '',
+      contributorName: "",
+      contributorEmail: "",
+      caption: "",
     },
   });
 
@@ -138,12 +138,12 @@ export const PhotoUpload: React.FC<PhotoUploadProps> = ({
     async (files: FileList | File[]) => {
       const fileArray = Array.from(files);
       const validFiles = fileArray.filter((file) => {
-        if (!file.type.startsWith('image/')) {
-          onUploadError?.('Please select only image files');
+        if (!file.type.startsWith("image/")) {
+          onUploadError?.("Please select only image files");
           return false;
         }
         if (file.size > 10 * 1024 * 1024) {
-          onUploadError?.('File size must be less than 10MB');
+          onUploadError?.("File size must be less than 10MB");
           return false;
         }
         return true;
@@ -181,22 +181,22 @@ export const PhotoUpload: React.FC<PhotoUploadProps> = ({
         const processed = await Promise.all(processingPromises);
         setProcessedPhotos((prev) => [...prev, ...processed]);
       } catch (error) {
-        console.error('Image processing failed:', error);
-        onUploadError?.('Failed to process images. Please try again.');
+        console.error("Image processing failed:", error);
+        onUploadError?.("Failed to process images. Please try again.");
       } finally {
         setIsProcessing(false);
       }
     },
-    [selectedFiles.length, maxPhotosPerUser, onUploadError]
+    [selectedFiles.length, maxPhotosPerUser, onUploadError],
   );
 
   // Handle drag and drop
   const handleDrag = useCallback((e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (e.type === 'dragenter' || e.type === 'dragover') {
+    if (e.type === "dragenter" || e.type === "dragover") {
       setDragActive(true);
-    } else if (e.type === 'dragleave') {
+    } else if (e.type === "dragleave") {
       setDragActive(false);
     }
   }, []);
@@ -211,7 +211,7 @@ export const PhotoUpload: React.FC<PhotoUploadProps> = ({
         handleFileSelect(e.dataTransfer.files);
       }
     },
-    [handleFileSelect]
+    [handleFileSelect],
   );
 
   // Handle file input change
@@ -221,7 +221,7 @@ export const PhotoUpload: React.FC<PhotoUploadProps> = ({
         handleFileSelect(e.target.files);
       }
     },
-    [handleFileSelect]
+    [handleFileSelect],
   );
 
   // Handle camera capture
@@ -229,7 +229,7 @@ export const PhotoUpload: React.FC<PhotoUploadProps> = ({
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
         video: {
-          facingMode: 'environment', // Use back camera on mobile
+          facingMode: "environment", // Use back camera on mobile
           width: { ideal: 1920 },
           height: { ideal: 1080 },
         },
@@ -242,8 +242,8 @@ export const PhotoUpload: React.FC<PhotoUploadProps> = ({
         cameraVideoRef.current.srcObject = stream;
       }
     } catch (error) {
-      console.error('Camera access failed:', error);
-      onUploadError?.('Camera access denied. Please allow camera permissions.');
+      console.error("Camera access failed:", error);
+      onUploadError?.("Camera access denied. Please allow camera permissions.");
     }
   }, [onUploadError]);
 
@@ -260,7 +260,7 @@ export const PhotoUpload: React.FC<PhotoUploadProps> = ({
 
     const video = cameraVideoRef.current;
     const canvas = cameraCanvasRef.current;
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext("2d");
 
     if (!ctx) return;
 
@@ -276,15 +276,15 @@ export const PhotoUpload: React.FC<PhotoUploadProps> = ({
       async (blob) => {
         if (blob) {
           const file = new File([blob], `camera_${Date.now()}.jpg`, {
-            type: 'image/jpeg',
+            type: "image/jpeg",
           });
 
           stopCamera();
           await handleFileSelect([file]);
         }
       },
-      'image/jpeg',
-      0.9
+      "image/jpeg",
+      0.9,
     );
   }, [handleFileSelect, stopCamera]);
 
@@ -303,13 +303,13 @@ export const PhotoUpload: React.FC<PhotoUploadProps> = ({
   const handleUpload = useCallback(
     (formData: PhotoUploadFormData) => {
       if (processedPhotos.length === 0) {
-        onUploadError?.('Please select at least one photo');
+        onUploadError?.("Please select at least one photo");
         return;
       }
 
       // Update photos to show uploading state
       setProcessedPhotos((prev) =>
-        prev.map((p) => ({ ...p, isUploading: true, uploadProgress: 0 }))
+        prev.map((p) => ({ ...p, isUploading: true, uploadProgress: 0 })),
       );
 
       // Convert UploadingPhoto to ProcessedImage for upload
@@ -331,7 +331,7 @@ export const PhotoUpload: React.FC<PhotoUploadProps> = ({
         caption: formData.caption,
       });
     },
-    [processedPhotos, eventId, uploadPhotos, onUploadError]
+    [processedPhotos, eventId, uploadPhotos, onUploadError],
   );
 
   const onSubmit = form.handleSubmit(handleUpload);
@@ -354,8 +354,8 @@ export const PhotoUpload: React.FC<PhotoUploadProps> = ({
           <div
             className={`relative border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
               dragActive
-                ? 'border-primary bg-primary/5'
-                : 'border-muted-foreground/25 hover:border-primary/50'
+                ? "border-primary bg-primary/5"
+                : "border-muted-foreground/25 hover:border-primary/50"
             }`}
             onDragEnter={handleDrag}
             onDragLeave={handleDrag}
@@ -486,7 +486,7 @@ export const PhotoUpload: React.FC<PhotoUploadProps> = ({
                       <Button
                         size="sm"
                         variant="secondary"
-                        onClick={() => window.open(photo.previewUrl, '_blank')}
+                        onClick={() => window.open(photo.previewUrl, "_blank")}
                       >
                         <Eye className="h-4 w-4" />
                       </Button>
@@ -557,7 +557,7 @@ export const PhotoUpload: React.FC<PhotoUploadProps> = ({
                   <Label htmlFor="contributorName">Your Name *</Label>
                   <Input
                     id="contributorName"
-                    {...form.register('contributorName')}
+                    {...form.register("contributorName")}
                     placeholder="Enter your name"
                     disabled={isUploading}
                   />
@@ -573,7 +573,7 @@ export const PhotoUpload: React.FC<PhotoUploadProps> = ({
                   <Input
                     id="contributorEmail"
                     type="email"
-                    {...form.register('contributorEmail')}
+                    {...form.register("contributorEmail")}
                     placeholder="your@email.com"
                     disabled={isUploading}
                   />
@@ -589,7 +589,7 @@ export const PhotoUpload: React.FC<PhotoUploadProps> = ({
                 <Label htmlFor="caption">Caption (Optional)</Label>
                 <Textarea
                   id="caption"
-                  {...form.register('caption')}
+                  {...form.register("caption")}
                   placeholder="Add a caption for your photos..."
                   rows={3}
                   disabled={isUploading}
@@ -611,7 +611,7 @@ export const PhotoUpload: React.FC<PhotoUploadProps> = ({
                   ) : (
                     <>
                       <Upload className="h-4 w-4 mr-2" />
-                      Upload {totalPhotos} Photo{totalPhotos !== 1 ? 's' : ''}
+                      Upload {totalPhotos} Photo{totalPhotos !== 1 ? "s" : ""}
                     </>
                   )}
                 </Button>

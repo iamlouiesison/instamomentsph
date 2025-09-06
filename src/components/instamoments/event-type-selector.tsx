@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { EVENT_TYPES, type EventType } from '@/lib/validations/event';
-import { cn } from '@/lib/utils';
+import React from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { EVENT_TYPES, type EventType } from "@/lib/validations/event";
+import { cn } from "@/lib/utils";
 
 interface EventTypeSelectorProps {
   selectedType?: EventType;
@@ -20,8 +20,8 @@ export const EventTypeSelector: React.FC<EventTypeSelectorProps> = ({
   return (
     <div
       className={cn(
-        'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4',
-        className
+        "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4",
+        className,
       )}
     >
       {Object.entries(EVENT_TYPES).map(([key, eventType]) => {
@@ -30,10 +30,10 @@ export const EventTypeSelector: React.FC<EventTypeSelectorProps> = ({
           <Card
             key={key}
             className={cn(
-              'cursor-pointer transition-all duration-200 hover:shadow-lg border-2',
+              "cursor-pointer transition-all duration-200 hover:shadow-lg border-2",
               isSelected
-                ? 'ring-2 ring-primary bg-primary/5 border-primary/20 shadow-md'
-                : 'hover:bg-muted/50 border-border hover:border-primary/30'
+                ? "ring-2 ring-primary bg-primary/5 border-primary/20 shadow-md"
+                : "hover:bg-muted/50 border-border hover:border-primary/30",
             )}
             onClick={(e) => {
               e.preventDefault();

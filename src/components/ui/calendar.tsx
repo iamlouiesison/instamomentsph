@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import * as React from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { DayPicker } from 'react-day-picker';
+import * as React from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { DayPicker } from "react-day-picker";
 
-import { cn } from '@/lib/utils';
+import { cn } from "@/lib/utils";
 // import { buttonVariants } from '@/components/ui/button';
 
 export type CalendarProps = React.ComponentProps<typeof DayPicker>;
@@ -16,7 +16,7 @@ function Calendar({
   ...props
 }: CalendarProps) {
   return (
-    <div className={cn('p-3', className)}>
+    <div className={cn("p-3", className)}>
       <style
         dangerouslySetInnerHTML={{
           __html: `
@@ -172,33 +172,33 @@ function Calendar({
         showOutsideDays={showOutsideDays}
         className="rdp"
         classNames={{
-          months: 'rdp-months',
-          month: 'rdp-month',
-          caption: 'rdp-caption',
-          caption_label: 'rdp-caption_label',
-          nav: 'rdp-nav',
-          nav_button: 'rdp-nav_button',
-          nav_button_previous: 'rdp-nav_button_previous',
-          nav_button_next: 'rdp-nav_button_next',
-          table: 'rdp-table',
-          head_row: 'rdp-head_row',
-          head_cell: 'rdp-head_cell',
-          row: 'rdp-row',
-          cell: 'rdp-cell',
-          day: 'rdp-day',
-          day_range_end: 'day-range-end',
-          day_selected: 'rdp-day_selected',
-          day_today: 'rdp-day_today',
-          day_outside: 'rdp-day_outside',
-          day_disabled: 'rdp-day_disabled',
+          months: "rdp-months",
+          month: "rdp-month",
+          caption: "rdp-caption",
+          caption_label: "rdp-caption_label",
+          nav: "rdp-nav",
+          nav_button: "rdp-nav_button",
+          nav_button_previous: "rdp-nav_button_previous",
+          nav_button_next: "rdp-nav_button_next",
+          table: "rdp-table",
+          head_row: "rdp-head_row",
+          head_cell: "rdp-head_cell",
+          row: "rdp-row",
+          cell: "rdp-cell",
+          day: "rdp-day",
+          day_range_end: "day-range-end",
+          day_selected: "rdp-day_selected",
+          day_today: "rdp-day_today",
+          day_outside: "rdp-day_outside",
+          day_disabled: "rdp-day_disabled",
           day_range_middle:
-            'aria-selected:bg-accent aria-selected:text-accent-foreground',
-          day_hidden: 'invisible',
+            "aria-selected:bg-accent aria-selected:text-accent-foreground",
+          day_hidden: "invisible",
           ...classNames,
         }}
         components={{
           Chevron: ({ ...props }) => {
-            if (props.orientation === 'left') {
+            if (props.orientation === "left") {
               return <ChevronLeft className="h-4 w-4" />;
             }
             return <ChevronRight className="h-4 w-4" />;
@@ -209,6 +209,6 @@ function Calendar({
     </div>
   );
 }
-Calendar.displayName = 'Calendar';
+Calendar.displayName = "Calendar";
 
 export { Calendar };

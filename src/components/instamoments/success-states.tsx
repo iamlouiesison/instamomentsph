@@ -1,7 +1,7 @@
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { cn } from '@/lib/utils';
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 import {
   CheckCircle,
   Upload,
@@ -10,7 +10,7 @@ import {
   Download,
   Heart,
   MessageCircle,
-} from 'lucide-react';
+} from "lucide-react";
 
 interface PhotoUploadSuccessProps {
   fileName?: string;
@@ -28,8 +28,8 @@ export function PhotoUploadSuccess({
   return (
     <Card
       className={cn(
-        'w-full max-w-md mx-auto border-green-200 bg-green-50/50',
-        className
+        "w-full max-w-md mx-auto border-green-200 bg-green-50/50",
+        className,
       )}
     >
       <CardContent className="p-6 space-y-4">
@@ -88,8 +88,8 @@ export function PaymentSuccess({
   return (
     <Card
       className={cn(
-        'w-full max-w-md mx-auto border-green-200 bg-green-50/50',
-        className
+        "w-full max-w-md mx-auto border-green-200 bg-green-50/50",
+        className,
       )}
     >
       <CardContent className="p-8 text-center space-y-6">
@@ -161,8 +161,8 @@ export function EventCreatedSuccess({
   return (
     <Card
       className={cn(
-        'w-full max-w-md mx-auto border-green-200 bg-green-50/50',
-        className
+        "w-full max-w-md mx-auto border-green-200 bg-green-50/50",
+        className,
       )}
     >
       <CardContent className="p-8 text-center space-y-6">
@@ -234,8 +234,8 @@ export function PhotoLikedSuccess({
   return (
     <Card
       className={cn(
-        'w-full max-w-sm mx-auto border-green-200 bg-green-50/50',
-        className
+        "w-full max-w-sm mx-auto border-green-200 bg-green-50/50",
+        className,
       )}
     >
       <CardContent className="p-6 text-center space-y-4">
@@ -288,8 +288,8 @@ export function CommentAddedSuccess({
   return (
     <Card
       className={cn(
-        'w-full max-w-sm mx-auto border-green-200 bg-green-50/50',
-        className
+        "w-full max-w-sm mx-auto border-green-200 bg-green-50/50",
+        className,
       )}
     >
       <CardContent className="p-6 text-center space-y-4">
@@ -344,8 +344,8 @@ export function DownloadSuccess({
   return (
     <Card
       className={cn(
-        'w-full max-w-md mx-auto border-green-200 bg-green-50/50',
-        className
+        "w-full max-w-md mx-auto border-green-200 bg-green-50/50",
+        className,
       )}
     >
       <CardContent className="p-6 text-center space-y-4">
@@ -357,7 +357,7 @@ export function DownloadSuccess({
           <h3 className="font-semibold text-green-800">Download Complete!</h3>
           {count && (
             <p className="text-sm text-green-700">
-              {count} photo{count > 1 ? 's' : ''} downloaded successfully
+              {count} photo{count > 1 ? "s" : ""} downloaded successfully
             </p>
           )}
           <p className="text-sm text-green-700">

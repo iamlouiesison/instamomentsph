@@ -1,27 +1,27 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { User, Phone, Smartphone } from 'lucide-react';
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { User, Phone, Smartphone } from "lucide-react";
 
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
-import { Alert } from '@/components/ui/alert';
-import { useAuthContext } from '@/components/providers/AuthProvider';
+} from "@/components/ui/card";
+import { Alert } from "@/components/ui/alert";
+import { useAuthContext } from "@/components/providers/AuthProvider";
 import {
   completeProfileSchema,
   type CompleteProfileInput,
-} from '@/lib/validations/auth';
+} from "@/lib/validations/auth";
 
 export default function CompleteProfilePage() {
   const [isLoading, setIsLoading] = useState(false);
@@ -37,7 +37,7 @@ export default function CompleteProfilePage() {
     resolver: zodResolver(completeProfileSchema),
     defaultValues: {
       fullName:
-        user?.user_metadata?.full_name || user?.user_metadata?.name || '',
+        user?.user_metadata?.full_name || user?.user_metadata?.name || "",
     },
   });
 
@@ -51,15 +51,15 @@ export default function CompleteProfilePage() {
       });
 
       if (error) {
-        setError('root', {
-          message: 'Something went wrong. Please try again.',
+        setError("root", {
+          message: "Something went wrong. Please try again.",
         });
       } else {
-        router.push('/dashboard');
+        router.push("/dashboard");
       }
     } catch {
-      setError('root', {
-        message: 'Something went wrong. Please try again.',
+      setError("root", {
+        message: "Something went wrong. Please try again.",
       });
     } finally {
       setIsLoading(false);
@@ -119,7 +119,7 @@ export default function CompleteProfilePage() {
                       type="text"
                       placeholder="Juan dela Cruz"
                       className="pl-10 h-12"
-                      {...register('fullName')}
+                      {...register("fullName")}
                     />
                   </div>
                   {errors.fullName && (
@@ -140,7 +140,7 @@ export default function CompleteProfilePage() {
                       type="tel"
                       placeholder="09123456789"
                       className="pl-10 h-12"
-                      {...register('phoneNumber')}
+                      {...register("phoneNumber")}
                     />
                   </div>
                   {errors.phoneNumber && (
@@ -158,7 +158,7 @@ export default function CompleteProfilePage() {
                   className="w-full h-12 text-primary-foreground font-semibold"
                   disabled={isLoading}
                 >
-                  {isLoading ? 'Sinusave...' : 'Tapusin ang Setup'}
+                  {isLoading ? "Sinusave..." : "Tapusin ang Setup"}
                 </Button>
               </form>
 

@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Lock, Home, User } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import React from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Lock, Home, User } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 interface PrivateGalleryNotificationProps {
   isPrivate?: boolean;
@@ -38,7 +38,7 @@ export function PrivateGalleryNotification({
                     mode.
                   </>
                 ) : (
-                  'This gallery is in private mode.'
+                  "This gallery is in private mode."
                 )}
               </p>
               <p className="text-sm text-muted-foreground">
@@ -53,13 +53,13 @@ export function PrivateGalleryNotification({
             </div>
 
             <div className="space-y-2">
-              <Button onClick={() => router.push('/')} className="w-full">
+              <Button onClick={() => router.push("/")} className="w-full">
                 <Home className="h-4 w-4 mr-2" />
                 Go to Homepage
               </Button>
               <Button
                 variant="outline"
-                onClick={() => router.push('/signin')}
+                onClick={() => router.push("/signin")}
                 className="w-full"
               >
                 Sign In
@@ -101,7 +101,7 @@ export function PrivateGalleryNotification({
           </div>
 
           <div className="space-y-2">
-            <Button onClick={() => router.push('/')} className="w-full">
+            <Button onClick={() => router.push("/")} className="w-full">
               <Home className="h-4 w-4 mr-2" />
               Go to Homepage
             </Button>

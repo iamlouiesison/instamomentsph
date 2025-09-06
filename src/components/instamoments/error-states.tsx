@@ -1,7 +1,7 @@
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { cn } from '@/lib/utils';
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { cn } from "@/lib/utils";
 import {
   AlertTriangle,
   Wifi,
@@ -10,7 +10,7 @@ import {
   CreditCard,
   RefreshCw,
   X,
-} from 'lucide-react';
+} from "lucide-react";
 
 interface ErrorStateProps {
   icon: React.ReactNode;
@@ -32,7 +32,7 @@ function ErrorState({
 }: ErrorStateProps) {
   return (
     <Card
-      className={cn('w-full max-w-md mx-auto border-destructive/20', className)}
+      className={cn("w-full max-w-md mx-auto border-destructive/20", className)}
     >
       <CardContent className="p-8 text-center space-y-4">
         <div className="mx-auto w-16 h-16 bg-destructive/10 rounded-full flex items-center justify-center">
@@ -74,7 +74,7 @@ export function NetworkError({ onRetry, className }: NetworkErrorProps) {
       action={
         onRetry
           ? {
-              label: 'Try Again',
+              label: "Try Again",
               onClick: onRetry,
             }
           : undefined
@@ -99,7 +99,7 @@ export function UploadError({
 }: UploadErrorProps) {
   return (
     <Card
-      className={cn('w-full max-w-md mx-auto border-destructive/20', className)}
+      className={cn("w-full max-w-md mx-auto border-destructive/20", className)}
     >
       <CardContent className="p-6 space-y-4">
         <div className="text-center space-y-2">
@@ -155,7 +155,7 @@ export function CameraError({
 }: CameraErrorProps) {
   return (
     <Card
-      className={cn('w-full max-w-md mx-auto border-destructive/20', className)}
+      className={cn("w-full max-w-md mx-auto border-destructive/20", className)}
     >
       <CardContent className="p-8 text-center space-y-6">
         <div className="mx-auto w-16 h-16 bg-destructive/10 rounded-full flex items-center justify-center">
@@ -214,7 +214,7 @@ export function PaymentError({
 }: PaymentErrorProps) {
   return (
     <Card
-      className={cn('w-full max-w-md mx-auto border-destructive/20', className)}
+      className={cn("w-full max-w-md mx-auto border-destructive/20", className)}
     >
       <CardContent className="p-8 text-center space-y-6">
         <div className="mx-auto w-16 h-16 bg-destructive/10 rounded-full flex items-center justify-center">
@@ -227,7 +227,7 @@ export function PaymentError({
           </h3>
           <p className="mobile-text text-muted-foreground">
             {errorMessage ||
-              'There was an error processing your payment. Please try again.'}
+              "There was an error processing your payment. Please try again."}
           </p>
         </div>
 
@@ -275,15 +275,15 @@ interface GenericErrorProps {
 }
 
 export function GenericError({
-  title = 'Something went wrong',
-  message = 'An unexpected error occurred. Please try again.',
+  title = "Something went wrong",
+  message = "An unexpected error occurred. Please try again.",
   onRetry,
   onDismiss,
   className,
 }: GenericErrorProps) {
   return (
     <Card
-      className={cn('w-full max-w-md mx-auto border-destructive/20', className)}
+      className={cn("w-full max-w-md mx-auto border-destructive/20", className)}
     >
       <CardContent className="p-8 text-center space-y-4">
         <div className="mx-auto w-16 h-16 bg-destructive/10 rounded-full flex items-center justify-center">
@@ -337,7 +337,7 @@ export function ValidationError({
   return (
     <Alert
       variant="destructive"
-      className={cn('w-full max-w-md mx-auto', className)}
+      className={cn("w-full max-w-md mx-auto", className)}
     >
       <AlertTriangle className="h-4 w-4" />
       <AlertDescription>

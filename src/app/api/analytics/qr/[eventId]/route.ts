@@ -1,22 +1,22 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { NextRequest, NextResponse } from "next/server";
+import { createClient } from "@/lib/supabase/server";
 
 // GET /api/analytics/qr/[eventId] - Get QR code analytics for an event
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ eventId: string }> }
+  { params }: { params: Promise<{ eventId: string }> },
 ) {
   try {
     const { eventId } = await params;
 
     // Validate event ID
-    if (!eventId || typeof eventId !== 'string') {
+    if (!eventId || typeof eventId !== "string") {
       return NextResponse.json(
         {
           success: false,
-          error: { code: 'INVALID_EVENT_ID', message: 'Invalid event ID' },
+          error: { code: "INVALID_EVENT_ID", message: "Invalid event ID" },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -31,17 +31,17 @@ export async function GET(
       return NextResponse.json(
         {
           success: false,
-          error: { code: 'UNAUTHORIZED', message: 'Authentication required' },
+          error: { code: "UNAUTHORIZED", message: "Authentication required" },
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
     const { data: event, error: eventError } = await supabase
-      .from('events')
-      .select('id, host_id')
-      .eq('id', eventId)
-      .eq('host_id', user.id)
+      .from("events")
+      .select("id, host_id")
+      .eq("id", eventId)
+      .eq("host_id", user.id)
       .single();
 
     if (eventError || !event) {
@@ -49,33 +49,33 @@ export async function GET(
         {
           success: false,
           error: {
-            code: 'EVENT_NOT_FOUND',
-            message: 'Event not found or access denied',
+            code: "EVENT_NOT_FOUND",
+            message: "Event not found or access denied",
           },
         },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
     // Get QR scan analytics
     const { data: qrScans, error: scansError } = await supabase
-      .from('analytics_events')
-      .select('*')
-      .eq('event_id', eventId)
-      .eq('event_type', 'qr_scan')
-      .order('created_at', { ascending: false });
+      .from("analytics_events")
+      .select("*")
+      .eq("event_id", eventId)
+      .eq("event_type", "qr_scan")
+      .order("created_at", { ascending: false });
 
     if (scansError) {
-      console.error('Error fetching QR scans:', scansError);
+      console.error("Error fetching QR scans:", scansError);
       return NextResponse.json(
         {
           success: false,
           error: {
-            code: 'ANALYTICS_ERROR',
-            message: 'Failed to fetch analytics',
+            code: "ANALYTICS_ERROR",
+            message: "Failed to fetch analytics",
           },
         },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -124,13 +124,13 @@ export async function GET(
       data: analytics,
     });
   } catch (error) {
-    console.error('QR Analytics error:', error);
+    console.error("QR Analytics error:", error);
     return NextResponse.json(
       {
         success: false,
-        error: { code: 'INTERNAL_ERROR', message: 'Failed to fetch analytics' },
+        error: { code: "INTERNAL_ERROR", message: "Failed to fetch analytics" },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

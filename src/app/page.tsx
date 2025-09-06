@@ -1,12 +1,12 @@
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import {
   QrCode,
   Camera,
@@ -23,7 +23,7 @@ import {
   Phone,
   Cake,
   GraduationCap,
-} from 'lucide-react';
+} from "lucide-react";
 
 export default function Home() {
   return (
@@ -38,7 +38,7 @@ export default function Home() {
                   📸 Made for Celebrations
                 </Badge>
                 <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight">
-                  Create Instant Photo Galleries for Your{' '}
+                  Create Instant Photo Galleries for Your{" "}
                   <span className="text-primary">Special Celebrations</span>
                 </h1>
                 <p className="text-xl text-muted-foreground max-w-2xl">

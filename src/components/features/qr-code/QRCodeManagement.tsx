@@ -1,15 +1,15 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from "react";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   QrCode,
   BarChart3,
@@ -19,12 +19,12 @@ import {
   Copy,
   Users,
   Smartphone,
-} from 'lucide-react';
-import { CalendarIcon } from '@/components/ui/calendar-icon';
-import { Event } from '@/types/database';
-import { QRCodeDisplay } from './QRCodeDisplay';
-import { toast } from 'sonner';
-import { format } from 'date-fns';
+} from "lucide-react";
+import { CalendarIcon } from "@/components/ui/calendar-icon";
+import { Event } from "@/types/database";
+import { QRCodeDisplay } from "./QRCodeDisplay";
+import { toast } from "sonner";
+import { format } from "date-fns";
 
 interface QRCodeManagementProps {
   event: Event;
@@ -42,11 +42,11 @@ interface QRCodeAnalytics {
 
 export function QRCodeManagement({
   event,
-  className = '',
+  className = "",
 }: QRCodeManagementProps) {
   const [analytics, setAnalytics] = useState<QRCodeAnalytics | null>(null);
   const [isLoadingAnalytics, setIsLoadingAnalytics] = useState(true);
-  const [activeTab, setActiveTab] = useState('display');
+  const [activeTab, setActiveTab] = useState("display");
 
   // Fetch QR code analytics
   const fetchAnalytics = useCallback(async () => {
@@ -59,8 +59,8 @@ export function QRCodeManagement({
         setAnalytics(data.data);
       }
     } catch (error) {
-      console.error('Failed to fetch QR analytics:', error);
-      toast.error('Failed to load analytics');
+      console.error("Failed to fetch QR analytics:", error);
+      toast.error("Failed to load analytics");
     } finally {
       setIsLoadingAnalytics(false);
     }
@@ -76,10 +76,10 @@ export function QRCodeManagement({
       // This would trigger a new QR code generation
       // For now, we'll just refresh the analytics
       await fetchAnalytics();
-      toast.success('QR code refreshed');
+      toast.success("QR code refreshed");
     } catch (error) {
-      console.error('Failed to regenerate QR code:', error);
-      toast.error('Failed to regenerate QR code');
+      console.error("Failed to regenerate QR code:", error);
+      toast.error("Failed to regenerate QR code");
     }
   };
 
@@ -88,10 +88,10 @@ export function QRCodeManagement({
     try {
       const galleryUrl = `${window.location.origin}/gallery/${event.gallery_slug}`;
       await navigator.clipboard.writeText(galleryUrl);
-      toast.success('Gallery URL copied to clipboard');
+      toast.success("Gallery URL copied to clipboard");
     } catch (error) {
-      console.error('Failed to copy URL:', error);
-      toast.error('Failed to copy URL');
+      console.error("Failed to copy URL:", error);
+      toast.error("Failed to copy URL");
     }
   };
 
@@ -110,7 +110,7 @@ export function QRCodeManagement({
         await handleCopyUrl();
       }
     } catch (error) {
-      console.error('Failed to share:', error);
+      console.error("Failed to share:", error);
       await handleCopyUrl();
     }
   };
@@ -213,7 +213,7 @@ export function QRCodeManagement({
               disabled={isLoadingAnalytics}
             >
               <RefreshCw
-                className={`h-4 w-4 mr-2 ${isLoadingAnalytics ? 'animate-spin' : ''}`}
+                className={`h-4 w-4 mr-2 ${isLoadingAnalytics ? "animate-spin" : ""}`}
               />
               Refresh
             </Button>
@@ -313,7 +313,7 @@ export function QRCodeManagement({
                     <span className="text-sm font-medium">
                       {format(
                         new Date(analytics.lastScannedAt),
-                        'MMM d, yyyy h:mm a'
+                        "MMM d, yyyy h:mm a",
                       )}
                     </span>
                   </div>
@@ -354,7 +354,7 @@ export function QRCodeManagement({
                   </ul>
                 </div>
                 <div className="flex gap-2">
-                  <Button size="sm" onClick={() => setActiveTab('display')}>
+                  <Button size="sm" onClick={() => setActiveTab("display")}>
                     View QR Code
                   </Button>
                   <Button size="sm" variant="outline" onClick={handleShare}>
@@ -406,9 +406,9 @@ export function QRCodeManagement({
             <CardContent>
               <div className="flex items-center gap-2 p-3 bg-muted rounded-lg">
                 <code className="flex-1 text-sm">
-                  {typeof window !== 'undefined'
+                  {typeof window !== "undefined"
                     ? `${window.location.origin}/gallery/${event.gallery_slug}`
-                    : ''}
+                    : ""}
                 </code>
                 <Button size="sm" variant="outline" onClick={handleCopyUrl}>
                   <Copy className="h-4 w-4" />

@@ -1,19 +1,19 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Badge } from '@/components/ui/badge';
-import { PhotoUpload, UploadForm } from '@/components/features/upload';
-import { PhotoUploadResponse } from '@/hooks/usePhotoUpload';
-import { CheckCircle, AlertCircle, Info, Camera, Upload } from 'lucide-react';
-import { TestQueryProvider } from '@/components/providers/TestQueryProvider';
+import React, { useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import { PhotoUpload, UploadForm } from "@/components/features/upload";
+import { PhotoUploadResponse } from "@/hooks/usePhotoUpload";
+import { CheckCircle, AlertCircle, Info, Camera, Upload } from "lucide-react";
+import { TestQueryProvider } from "@/components/providers/TestQueryProvider";
 
 // Mock event data for testing
 const MOCK_EVENT = {
-  id: '123e4567-e89b-12d3-a456-426614174000',
-  name: 'Test Wedding Event',
+  id: "123e4567-e89b-12d3-a456-426614174000",
+  name: "Test Wedding Event",
   maxPhotosPerUser: 5,
   requiresModeration: false,
   isPublic: true,
@@ -22,10 +22,10 @@ const MOCK_EVENT = {
 
 export default function TestUploadPage() {
   const [currentStep, setCurrentStep] = useState<
-    'upload' | 'form' | 'complete'
-  >('upload');
+    "upload" | "form" | "complete"
+  >("upload");
   const [selectedPhotos, setSelectedPhotos] = useState<PhotoUploadResponse[]>(
-    []
+    [],
   );
   const [uploadResults, setUploadResults] = useState<{
     success: number;
@@ -36,7 +36,7 @@ export default function TestUploadPage() {
 
   const handlePhotosSelected = (photos: PhotoUploadResponse[]) => {
     setSelectedPhotos(photos);
-    setCurrentStep('form');
+    setCurrentStep("form");
   };
 
   const handleUploadComplete = (uploadedPhotos: PhotoUploadResponse[]) => {
@@ -45,7 +45,7 @@ export default function TestUploadPage() {
       failed: selectedPhotos.length - uploadedPhotos.length,
       errors: [],
     });
-    setCurrentStep('complete');
+    setCurrentStep("complete");
     setIsUploading(false);
   };
 
@@ -66,12 +66,12 @@ export default function TestUploadPage() {
   };
 
   const handleFormCancel = () => {
-    setCurrentStep('upload');
+    setCurrentStep("upload");
     setSelectedPhotos([]);
   };
 
   const resetTest = () => {
-    setCurrentStep('upload');
+    setCurrentStep("upload");
     setSelectedPhotos([]);
     setUploadResults({ success: 0, failed: 0, errors: [] });
     setIsUploading(false);
@@ -113,21 +113,21 @@ export default function TestUploadPage() {
                   <Badge
                     variant={
                       MOCK_EVENT.requiresModeration
-                        ? 'destructive'
-                        : 'secondary'
+                        ? "destructive"
+                        : "secondary"
                     }
                   >
                     {MOCK_EVENT.requiresModeration
-                      ? 'Required'
-                      : 'Auto-approve'}
+                      ? "Required"
+                      : "Auto-approve"}
                   </Badge>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-sm text-muted-foreground">Videos:</span>
                   <Badge
-                    variant={MOCK_EVENT.hasVideoAddon ? 'default' : 'secondary'}
+                    variant={MOCK_EVENT.hasVideoAddon ? "default" : "secondary"}
                   >
-                    {MOCK_EVENT.hasVideoAddon ? 'Enabled' : 'Disabled'}
+                    {MOCK_EVENT.hasVideoAddon ? "Enabled" : "Disabled"}
                   </Badge>
                 </div>
               </CardContent>
@@ -138,12 +138,12 @@ export default function TestUploadPage() {
           <div className="flex justify-center">
             <div className="flex items-center space-x-4">
               <div
-                className={`flex items-center space-x-2 ${currentStep === 'upload' ? 'text-primary' : currentStep === 'form' || currentStep === 'complete' ? 'text-green-600' : 'text-muted-foreground'}`}
+                className={`flex items-center space-x-2 ${currentStep === "upload" ? "text-primary" : currentStep === "form" || currentStep === "complete" ? "text-green-600" : "text-muted-foreground"}`}
               >
                 <div
-                  className={`w-8 h-8 rounded-full flex items-center justify-center ${currentStep === 'upload' ? 'bg-primary text-primary-foreground' : currentStep === 'form' || currentStep === 'complete' ? 'bg-green-600 text-white' : 'bg-muted'}`}
+                  className={`w-8 h-8 rounded-full flex items-center justify-center ${currentStep === "upload" ? "bg-primary text-primary-foreground" : currentStep === "form" || currentStep === "complete" ? "bg-green-600 text-white" : "bg-muted"}`}
                 >
-                  {currentStep === 'form' || currentStep === 'complete' ? (
+                  {currentStep === "form" || currentStep === "complete" ? (
                     <CheckCircle className="h-4 w-4" />
                   ) : (
                     <Upload className="h-4 w-4" />
@@ -155,12 +155,12 @@ export default function TestUploadPage() {
               <div className="w-8 h-px bg-muted"></div>
 
               <div
-                className={`flex items-center space-x-2 ${currentStep === 'form' ? 'text-primary' : currentStep === 'complete' ? 'text-green-600' : 'text-muted-foreground'}`}
+                className={`flex items-center space-x-2 ${currentStep === "form" ? "text-primary" : currentStep === "complete" ? "text-green-600" : "text-muted-foreground"}`}
               >
                 <div
-                  className={`w-8 h-8 rounded-full flex items-center justify-center ${currentStep === 'form' ? 'bg-primary text-primary-foreground' : currentStep === 'complete' ? 'bg-green-600 text-white' : 'bg-muted'}`}
+                  className={`w-8 h-8 rounded-full flex items-center justify-center ${currentStep === "form" ? "bg-primary text-primary-foreground" : currentStep === "complete" ? "bg-green-600 text-white" : "bg-muted"}`}
                 >
-                  {currentStep === 'complete' ? (
+                  {currentStep === "complete" ? (
                     <CheckCircle className="h-4 w-4" />
                   ) : (
                     <Camera className="h-4 w-4" />
@@ -172,12 +172,12 @@ export default function TestUploadPage() {
               <div className="w-8 h-px bg-muted"></div>
 
               <div
-                className={`flex items-center space-x-2 ${currentStep === 'complete' ? 'text-green-600' : 'text-muted-foreground'}`}
+                className={`flex items-center space-x-2 ${currentStep === "complete" ? "text-green-600" : "text-muted-foreground"}`}
               >
                 <div
-                  className={`w-8 h-8 rounded-full flex items-center justify-center ${currentStep === 'complete' ? 'bg-green-600 text-white' : 'bg-muted'}`}
+                  className={`w-8 h-8 rounded-full flex items-center justify-center ${currentStep === "complete" ? "bg-green-600 text-white" : "bg-muted"}`}
                 >
-                  {currentStep === 'complete' ? (
+                  {currentStep === "complete" ? (
                     <CheckCircle className="h-4 w-4" />
                   ) : (
                     <span className="text-sm">3</span>
@@ -214,7 +214,7 @@ export default function TestUploadPage() {
           </Alert>
 
           {/* Upload Component */}
-          {currentStep === 'upload' && (
+          {currentStep === "upload" && (
             <PhotoUpload
               eventId={MOCK_EVENT.id}
               eventName={MOCK_EVENT.name}
@@ -225,7 +225,7 @@ export default function TestUploadPage() {
           )}
 
           {/* Upload Form */}
-          {currentStep === 'form' && (
+          {currentStep === "form" && (
             <UploadForm
               eventName={MOCK_EVENT.name}
               maxPhotosPerUser={MOCK_EVENT.maxPhotosPerUser}
@@ -239,7 +239,7 @@ export default function TestUploadPage() {
           )}
 
           {/* Upload Results */}
-          {currentStep === 'complete' && (
+          {currentStep === "complete" && (
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -287,7 +287,7 @@ export default function TestUploadPage() {
                   </Button>
                   <Button
                     variant="outline"
-                    onClick={() => (window.location.href = '/dashboard')}
+                    onClick={() => (window.location.href = "/dashboard")}
                   >
                     Go to Dashboard
                   </Button>

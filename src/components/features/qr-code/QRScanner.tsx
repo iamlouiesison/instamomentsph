@@ -1,25 +1,25 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Button } from '@/components/ui/button';
+import React, { useState, useEffect, useRef, useCallback } from "react";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+} from "@/components/ui/card";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   Camera,
   CameraOff,
   AlertTriangle,
   Smartphone,
   Wifi,
-} from 'lucide-react';
-import { toast } from 'sonner';
-import { validateQRCodeContent, extractEventSlugFromQR } from '@/lib/qr-code';
-import { useRouter } from 'next/navigation';
+} from "lucide-react";
+import { toast } from "sonner";
+import { validateQRCodeContent, extractEventSlugFromQR } from "@/lib/qr-code";
+import { useRouter } from "next/navigation";
 
 interface QRScannerProps {
   onScan?: (result: string) => void;
@@ -31,14 +31,14 @@ interface QRScannerProps {
 export function QRScanner({
   onScan,
   onError,
-  className = '',
+  className = "",
   showInstructions = true,
 }: QRScannerProps) {
   const [isScanning, setIsScanning] = useState(false);
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isSupported, setIsSupported] = useState(true);
-  const [manualUrl, setManualUrl] = useState('');
+  const [manualUrl, setManualUrl] = useState("");
   const [showManualInput, setShowManualInput] = useState(false);
 
   const scannerRef = useRef<HTMLDivElement>(null);
@@ -50,12 +50,12 @@ export function QRScanner({
     const checkSupport = async () => {
       try {
         // Check if html5-qrcode is available
-        if (typeof window !== 'undefined') {
-          await import('html5-qrcode');
+        if (typeof window !== "undefined") {
+          await import("html5-qrcode");
           setIsSupported(true);
         }
       } catch (err) {
-        console.error('QR code scanning not supported:', err);
+        console.error("QR code scanning not supported:", err);
         setIsSupported(false);
       }
     };
@@ -72,7 +72,7 @@ export function QRScanner({
       }
       setIsScanning(false);
     } catch (err) {
-      console.error('Error stopping scanner:', err);
+      console.error("Error stopping scanner:", err);
     }
   }, []);
 
@@ -83,7 +83,7 @@ export function QRScanner({
         // Validate QR code content
         if (!validateQRCodeContent(result)) {
           toast.error(
-            'Invalid QR code. Please scan a valid InstaMoments QR code.'
+            "Invalid QR code. Please scan a valid InstaMoments QR code.",
           );
           return;
         }
@@ -92,7 +92,7 @@ export function QRScanner({
         const eventSlug = extractEventSlugFromQR(result);
         if (!eventSlug) {
           toast.error(
-            'Invalid QR code format. Please scan a valid InstaMoments QR code.'
+            "Invalid QR code format. Please scan a valid InstaMoments QR code.",
           );
           return;
         }
@@ -106,13 +106,13 @@ export function QRScanner({
         // Navigate to gallery
         router.push(`/gallery/${eventSlug}`);
 
-        toast.success('QR code scanned successfully!');
+        toast.success("QR code scanned successfully!");
       } catch (err) {
-        console.error('Error processing scan result:', err);
-        toast.error('Failed to process QR code. Please try again.');
+        console.error("Error processing scan result:", err);
+        toast.error("Failed to process QR code. Please try again.");
       }
     },
-    [onScan, stopScanning, router]
+    [onScan, stopScanning, router],
   );
 
   // Start QR code scanning
@@ -122,10 +122,10 @@ export function QRScanner({
       setIsScanning(true);
 
       // Dynamic import to avoid SSR issues
-      const { Html5QrcodeScanner } = await import('html5-qrcode');
+      const { Html5QrcodeScanner } = await import("html5-qrcode");
 
       if (!scannerRef.current) {
-        throw new Error('Scanner container not found');
+        throw new Error("Scanner container not found");
       }
 
       // Clear any existing scanner
@@ -148,7 +148,7 @@ export function QRScanner({
             useBarCodeDetectorIfSupported: true,
           },
         },
-        false // verbose
+        false, // verbose
       );
 
       qrCodeScannerRef.current = scanner;
@@ -161,45 +161,45 @@ export function QRScanner({
         (errorMessage: string) => {
           // Ignore common scanning errors
           if (
-            !errorMessage.includes('No QR code found') &&
-            !errorMessage.includes('NotFoundException')
+            !errorMessage.includes("No QR code found") &&
+            !errorMessage.includes("NotFoundException")
           ) {
-            console.log('QR Code scan error:', errorMessage);
+            console.log("QR Code scan error:", errorMessage);
           }
-        }
+        },
       );
 
       setHasPermission(true);
     } catch (err: unknown) {
-      console.error('Error starting QR scanner:', err);
+      console.error("Error starting QR scanner:", err);
 
       if (err instanceof Error) {
         if (
-          err.name === 'NotAllowedError' ||
-          err.message.includes('Permission denied')
+          err.name === "NotAllowedError" ||
+          err.message.includes("Permission denied")
         ) {
           setError(
-            'Camera permission denied. Please allow camera access and try again.'
+            "Camera permission denied. Please allow camera access and try again.",
           );
           setHasPermission(false);
         } else if (
-          err.name === 'NotFoundError' ||
-          err.message.includes('No camera found')
+          err.name === "NotFoundError" ||
+          err.message.includes("No camera found")
         ) {
-          setError('No camera found. Please connect a camera and try again.');
+          setError("No camera found. Please connect a camera and try again.");
           setHasPermission(false);
-        } else if (err.message.includes('NotSupportedError')) {
-          setError('QR code scanning is not supported on this device.');
+        } else if (err.message.includes("NotSupportedError")) {
+          setError("QR code scanning is not supported on this device.");
           setIsSupported(false);
         } else {
-          setError('Failed to start camera. Please try again.');
+          setError("Failed to start camera. Please try again.");
         }
       } else {
-        setError('Failed to start camera. Please try again.');
+        setError("Failed to start camera. Please try again.");
       }
 
       setIsScanning(false);
-      onError?.(err instanceof Error ? err.message : 'Unknown error');
+      onError?.(err instanceof Error ? err.message : "Unknown error");
     }
   }, [onError, handleScanResult]);
 
@@ -209,14 +209,14 @@ export function QRScanner({
       e.preventDefault();
 
       if (!manualUrl.trim()) {
-        toast.error('Please enter a gallery URL');
+        toast.error("Please enter a gallery URL");
         return;
       }
 
       // Validate URL
       if (!validateQRCodeContent(manualUrl)) {
         toast.error(
-          'Invalid URL. Please enter a valid InstaMoments gallery URL.'
+          "Invalid URL. Please enter a valid InstaMoments gallery URL.",
         );
         return;
       }
@@ -225,12 +225,12 @@ export function QRScanner({
       const eventSlug = extractEventSlugFromQR(manualUrl);
       if (eventSlug) {
         router.push(`/gallery/${eventSlug}`);
-        toast.success('Navigating to gallery...');
+        toast.success("Navigating to gallery...");
       } else {
-        toast.error('Invalid gallery URL format.');
+        toast.error("Invalid gallery URL format.");
       }
     },
-    [manualUrl, router]
+    [manualUrl, router],
   );
 
   // Cleanup on unmount
@@ -248,14 +248,14 @@ export function QRScanner({
       setHasPermission(true);
       setError(null);
     } catch (err: unknown) {
-      if (err instanceof Error && err.name === 'NotAllowedError') {
+      if (err instanceof Error && err.name === "NotAllowedError") {
         setError(
-          'Camera permission denied. Please allow camera access in your browser settings.'
+          "Camera permission denied. Please allow camera access in your browser settings.",
         );
         setHasPermission(false);
       } else {
         setError(
-          'Failed to access camera. Please check your camera connection.'
+          "Failed to access camera. Please check your camera connection.",
         );
         setHasPermission(false);
       }
@@ -324,8 +324,8 @@ export function QRScanner({
                 <div>
                   <p className="text-muted-foreground mb-2">
                     {hasPermission === false
-                      ? 'Camera permission required'
-                      : 'Ready to scan QR codes'}
+                      ? "Camera permission required"
+                      : "Ready to scan QR codes"}
                   </p>
                   {hasPermission === false ? (
                     <Button onClick={requestPermission}>

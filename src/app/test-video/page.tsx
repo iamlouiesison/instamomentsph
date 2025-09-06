@@ -1,39 +1,39 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { VideoRecorder, VideoPlayer } from '@/components/features/video';
-import { VideoUploadForm } from '@/components/features/upload/VideoUploadForm';
-import { VideoGallery } from '@/components/features/gallery/VideoGallery';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Video, Camera, Upload, Grid } from 'lucide-react';
+import React, { useState } from "react";
+import { VideoRecorder, VideoPlayer } from "@/components/features/video";
+import { VideoUploadForm } from "@/components/features/upload/VideoUploadForm";
+import { VideoGallery } from "@/components/features/gallery/VideoGallery";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Video, Camera, Upload, Grid } from "lucide-react";
 
 // Mock video data for testing
 const mockVideos = [
   {
-    id: '1',
-    url: 'https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4',
+    id: "1",
+    url: "https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4",
     thumbnailUrl:
-      'https://via.placeholder.com/320x240/4F46E5/FFFFFF?text=Sample+Video+1',
-    caption: 'Sample greeting video',
-    uploadedBy: 'John Doe',
+      "https://via.placeholder.com/320x240/4F46E5/FFFFFF?text=Sample+Video+1",
+    caption: "Sample greeting video",
+    uploadedBy: "John Doe",
     duration: 20,
     isGreeting: true,
     createdAt: new Date().toISOString(),
-    status: 'completed' as const,
+    status: "completed" as const,
   },
   {
-    id: '2',
-    url: 'https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_2mb.mp4',
+    id: "2",
+    url: "https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_2mb.mp4",
     thumbnailUrl:
-      'https://via.placeholder.com/320x240/059669/FFFFFF?text=Sample+Video+2',
-    caption: 'Another test video',
-    uploadedBy: 'Jane Smith',
+      "https://via.placeholder.com/320x240/059669/FFFFFF?text=Sample+Video+2",
+    caption: "Another test video",
+    uploadedBy: "Jane Smith",
     duration: 15,
     isGreeting: false,
     createdAt: new Date(Date.now() - 3600000).toISOString(),
-    status: 'completed' as const,
+    status: "completed" as const,
   },
 ];
 
@@ -49,18 +49,18 @@ export default function TestVideoPage() {
   };
 
   const handleUploadComplete = (videoId: string) => {
-    console.log('Video uploaded:', videoId);
+    console.log("Video uploaded:", videoId);
     setShowUploadForm(false);
     // In a real app, you'd refresh the video list or add the new video
   };
 
   const handleDownload = (video: { id: string }) => {
-    console.log('Download video:', video.id);
+    console.log("Download video:", video.id);
     // Implement download functionality
   };
 
   const handleShare = (video: { id: string }) => {
-    console.log('Share video:', video.id);
+    console.log("Share video:", video.id);
     // Implement share functionality
   };
 
@@ -100,7 +100,7 @@ export default function TestVideoPage() {
             <h2 className="text-xl font-semibold mb-4">Video Recorder Test</h2>
             <VideoRecorder
               onVideoRecorded={handleVideoRecorded}
-              onCancel={() => console.log('Recording cancelled')}
+              onCancel={() => console.log("Recording cancelled")}
               maxDuration={20}
             />
           </Card>
@@ -117,8 +117,8 @@ export default function TestVideoPage() {
                 caption="This is a test recording"
                 autoPlay={false}
                 showControls={true}
-                onDownload={() => console.log('Download recorded video')}
-                onShare={() => console.log('Share recorded video')}
+                onDownload={() => console.log("Download recorded video")}
+                onShare={() => console.log("Share recorded video")}
               />
             </Card>
           )}
@@ -203,23 +203,23 @@ export default function TestVideoPage() {
         <h3 className="text-lg font-semibold mb-4">Browser Support</h3>
         <div className="space-y-2 text-sm">
           <p>
-            <strong>MediaRecorder API:</strong>{' '}
-            {typeof MediaRecorder !== 'undefined'
-              ? '✅ Supported'
-              : '❌ Not Supported'}
+            <strong>MediaRecorder API:</strong>{" "}
+            {typeof MediaRecorder !== "undefined"
+              ? "✅ Supported"
+              : "❌ Not Supported"}
           </p>
           <p>
-            <strong>getUserMedia:</strong>{' '}
-            {typeof navigator.mediaDevices?.getUserMedia === 'function'
-              ? '✅ Supported'
-              : '❌ Not Supported'}
+            <strong>getUserMedia:</strong>{" "}
+            {typeof navigator.mediaDevices?.getUserMedia === "function"
+              ? "✅ Supported"
+              : "❌ Not Supported"}
           </p>
           <p>
-            <strong>Video Recording:</strong>{' '}
-            {typeof MediaRecorder !== 'undefined' &&
-            typeof navigator.mediaDevices?.getUserMedia === 'function'
-              ? '✅ Available'
-              : '❌ Not Available'}
+            <strong>Video Recording:</strong>{" "}
+            {typeof MediaRecorder !== "undefined" &&
+            typeof navigator.mediaDevices?.getUserMedia === "function"
+              ? "✅ Available"
+              : "❌ Not Available"}
           </p>
         </div>
       </Card>

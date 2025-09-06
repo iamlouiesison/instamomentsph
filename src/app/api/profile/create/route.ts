@@ -1,5 +1,5 @@
-import { NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { NextResponse } from "next/server";
+import { createClient } from "@/lib/supabase/server";
 
 export async function POST() {
   try {
@@ -15,68 +15,68 @@ export async function POST() {
       return NextResponse.json(
         {
           success: false,
-          error: { code: 'UNAUTHORIZED', message: 'User not authenticated' },
+          error: { code: "UNAUTHORIZED", message: "User not authenticated" },
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
     // Check if profile already exists
     const { data: existingProfile } = await supabase
-      .from('profiles')
-      .select('id')
-      .eq('id', user.id)
+      .from("profiles")
+      .select("id")
+      .eq("id", user.id)
       .single();
 
     if (existingProfile) {
       return NextResponse.json({
         success: true,
         data: existingProfile,
-        message: 'Profile already exists',
+        message: "Profile already exists",
       });
     }
 
     // Create new profile
     const { data: profile, error: profileError } = await supabase
-      .from('profiles')
+      .from("profiles")
       .insert({
         id: user.id,
-        email: user.email || '',
+        email: user.email || "",
         full_name: user.user_metadata?.full_name || null,
-        subscription_tier: 'free',
-        subscription_status: 'active',
-        user_type: 'guest',
+        subscription_tier: "free",
+        subscription_status: "active",
+        user_type: "guest",
       })
       .select()
       .single();
 
     if (profileError) {
-      console.error('Profile creation error:', profileError);
+      console.error("Profile creation error:", profileError);
       return NextResponse.json(
         {
           success: false,
           error: {
-            code: 'PROFILE_CREATION_FAILED',
+            code: "PROFILE_CREATION_FAILED",
             message: profileError.message,
           },
         },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
     return NextResponse.json({
       success: true,
       data: profile,
-      message: 'Profile created successfully',
+      message: "Profile created successfully",
     });
   } catch (error) {
-    console.error('API Error:', error);
+    console.error("API Error:", error);
     return NextResponse.json(
       {
         success: false,
-        error: { code: 'INTERNAL_ERROR', message: 'Something went wrong' },
+        error: { code: "INTERNAL_ERROR", message: "Something went wrong" },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

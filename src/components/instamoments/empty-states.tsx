@@ -1,7 +1,7 @@
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
-import { CalendarIcon } from '@/components/ui/calendar-icon';
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { CalendarIcon } from "@/components/ui/calendar-icon";
 import {
   Camera,
   Users,
@@ -10,7 +10,7 @@ import {
   QrCode,
   Heart,
   MessageCircle,
-} from 'lucide-react';
+} from "lucide-react";
 
 interface EmptyStateProps {
   icon: React.ReactNode;
@@ -31,7 +31,7 @@ function EmptyState({
   className,
 }: EmptyStateProps) {
   return (
-    <Card className={cn('w-full max-w-md mx-auto', className)}>
+    <Card className={cn("w-full max-w-md mx-auto", className)}>
       <CardContent className="p-8 text-center space-y-4">
         <div className="mx-auto w-16 h-16 bg-muted rounded-full flex items-center justify-center">
           {icon}
@@ -66,7 +66,7 @@ export function EmptyEvents({ onCreateEvent, className }: EmptyEventsProps) {
       action={
         onCreateEvent
           ? {
-              label: 'Create Event',
+              label: "Create Event",
               onClick: onCreateEvent,
             }
           : undefined
@@ -88,7 +88,7 @@ export function EmptyPhotos({
   className,
 }: EmptyPhotosProps) {
   return (
-    <Card className={cn('w-full max-w-md mx-auto', className)}>
+    <Card className={cn("w-full max-w-md mx-auto", className)}>
       <CardContent className="p-8 text-center space-y-6">
         <div className="mx-auto w-16 h-16 bg-muted rounded-full flex items-center justify-center">
           <ImageIcon
@@ -141,7 +141,7 @@ export function EmptyGallery({
   className,
 }: EmptyGalleryProps) {
   return (
-    <Card className={cn('w-full max-w-md mx-auto', className)}>
+    <Card className={cn("w-full max-w-md mx-auto", className)}>
       <CardContent className="p-8 text-center space-y-6">
         <div className="mx-auto w-16 h-16 bg-golden/20 rounded-full flex items-center justify-center">
           <Camera className="h-8 w-8 text-golden" />
@@ -149,7 +149,7 @@ export function EmptyGallery({
 
         <div className="space-y-2">
           <h3 className="font-semibold mobile-heading">
-            {eventName ? `${eventName} Gallery` : 'Event Gallery'}
+            {eventName ? `${eventName} Gallery` : "Event Gallery"}
           </h3>
           <p className="mobile-text text-muted-foreground">
             Be the first to share a photo from this celebration!
@@ -190,7 +190,7 @@ export function EmptyGuests({ onInviteGuests, className }: EmptyGuestsProps) {
       action={
         onInviteGuests
           ? {
-              label: 'Invite Guests',
+              label: "Invite Guests",
               onClick: onInviteGuests,
             }
           : undefined
@@ -212,7 +212,7 @@ export function EmptySearch({
   className,
 }: EmptySearchProps) {
   return (
-    <Card className={cn('w-full max-w-md mx-auto', className)}>
+    <Card className={cn("w-full max-w-md mx-auto", className)}>
       <CardContent className="p-8 text-center space-y-4">
         <div className="mx-auto w-16 h-16 bg-muted rounded-full flex items-center justify-center">
           <ImageIcon
@@ -226,7 +226,7 @@ export function EmptySearch({
           <p className="mobile-text text-muted-foreground">
             {searchTerm
               ? `No photos found for "${searchTerm}"`
-              : 'No photos match your search criteria'}
+              : "No photos match your search criteria"}
           </p>
         </div>
 
@@ -266,7 +266,7 @@ interface EmptyCommentsProps {
 
 export function EmptyComments({ onAddComment, className }: EmptyCommentsProps) {
   return (
-    <Card className={cn('w-full max-w-md mx-auto', className)}>
+    <Card className={cn("w-full max-w-md mx-auto", className)}>
       <CardContent className="p-8 text-center space-y-4">
         <div className="mx-auto w-16 h-16 bg-muted rounded-full flex items-center justify-center">
           <MessageCircle className="h-8 w-8 text-muted-foreground" />

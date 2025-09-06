@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import React, { useState, useRef, useCallback } from 'react';
-import { VideoRecorder } from '../video/VideoRecorder';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Switch } from '@/components/ui/switch';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Progress } from '@/components/ui/progress';
+import React, { useState, useRef, useCallback } from "react";
+import { VideoRecorder } from "../video/VideoRecorder";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Progress } from "@/components/ui/progress";
 import {
   Upload,
   FileVideo,
@@ -16,13 +16,13 @@ import {
   CheckCircle,
   AlertCircle,
   X,
-} from 'lucide-react';
-import { cn } from '@/lib/utils';
+} from "lucide-react";
+import { cn } from "@/lib/utils";
 import {
   validateVideo,
   formatFileSize,
   formatDuration,
-} from '@/lib/video-processing';
+} from "@/lib/video-processing";
 
 interface VideoUploadFormProps {
   eventId: string;
@@ -32,7 +32,7 @@ interface VideoUploadFormProps {
 }
 
 interface UploadState {
-  step: 'select' | 'record' | 'upload' | 'complete';
+  step: "select" | "record" | "upload" | "complete";
   videoFile: File | null;
   thumbnailFile: File | null;
   caption: string;
@@ -51,10 +51,10 @@ export const VideoUploadForm: React.FC<VideoUploadFormProps> = ({
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [state, setState] = useState<UploadState>({
-    step: 'select',
+    step: "select",
     videoFile: null,
     thumbnailFile: null,
-    caption: '',
+    caption: "",
     isGreeting: false,
     isUploading: false,
     uploadProgress: 0,
@@ -76,7 +76,7 @@ export const VideoUploadForm: React.FC<VideoUploadFormProps> = ({
       setState((prev) => ({
         ...prev,
         validationErrors: validation.errors,
-        error: 'Video validation failed',
+        error: "Video validation failed",
       }));
       return;
     }
@@ -84,28 +84,28 @@ export const VideoUploadForm: React.FC<VideoUploadFormProps> = ({
     setState((prev) => ({
       ...prev,
       videoFile: file,
-      step: 'upload',
+      step: "upload",
     }));
   }, []);
 
   // Handle video recording
   const handleVideoRecorded = useCallback(
     (videoBlob: Blob, thumbnailBlob: Blob) => {
-      const videoFile = new File([videoBlob], 'recorded-video.webm', {
-        type: 'video/webm',
+      const videoFile = new File([videoBlob], "recorded-video.webm", {
+        type: "video/webm",
       });
-      const thumbnailFile = new File([thumbnailBlob], 'thumbnail.jpg', {
-        type: 'image/jpeg',
+      const thumbnailFile = new File([thumbnailBlob], "thumbnail.jpg", {
+        type: "image/jpeg",
       });
 
       setState((prev) => ({
         ...prev,
         videoFile,
         thumbnailFile,
-        step: 'upload',
+        step: "upload",
       }));
     },
-    []
+    [],
   );
 
   // Handle file input change
@@ -116,7 +116,7 @@ export const VideoUploadForm: React.FC<VideoUploadFormProps> = ({
         handleFileSelect(file);
       }
     },
-    [handleFileSelect]
+    [handleFileSelect],
   );
 
   // Handle upload
@@ -132,13 +132,13 @@ export const VideoUploadForm: React.FC<VideoUploadFormProps> = ({
 
     try {
       const formData = new FormData();
-      formData.append('video', state.videoFile);
+      formData.append("video", state.videoFile);
       if (state.thumbnailFile) {
-        formData.append('thumbnail', state.thumbnailFile);
+        formData.append("thumbnail", state.thumbnailFile);
       }
-      formData.append('eventId', eventId);
-      formData.append('caption', state.caption);
-      formData.append('isGreeting', state.isGreeting.toString());
+      formData.append("eventId", eventId);
+      formData.append("caption", state.caption);
+      formData.append("isGreeting", state.isGreeting.toString());
 
       // Simulate upload progress
       const progressInterval = setInterval(() => {
@@ -148,8 +148,8 @@ export const VideoUploadForm: React.FC<VideoUploadFormProps> = ({
         }));
       }, 200);
 
-      const response = await fetch('/api/upload/video', {
-        method: 'POST',
+      const response = await fetch("/api/upload/video", {
+        method: "POST",
         body: formData,
       });
 
@@ -158,13 +158,13 @@ export const VideoUploadForm: React.FC<VideoUploadFormProps> = ({
       const result = await response.json();
 
       if (!result.success) {
-        throw new Error(result.error?.message || 'Upload failed');
+        throw new Error(result.error?.message || "Upload failed");
       }
 
       setState((prev) => ({
         ...prev,
         uploadProgress: 100,
-        step: 'complete',
+        step: "complete",
       }));
 
       // Call completion callback after a short delay
@@ -172,10 +172,10 @@ export const VideoUploadForm: React.FC<VideoUploadFormProps> = ({
         onUploadComplete(result.data.id);
       }, 1000);
     } catch (error) {
-      console.error('Upload error:', error);
+      console.error("Upload error:", error);
       setState((prev) => ({
         ...prev,
-        error: error instanceof Error ? error.message : 'Upload failed',
+        error: error instanceof Error ? error.message : "Upload failed",
         isUploading: false,
         uploadProgress: 0,
       }));
@@ -192,10 +192,10 @@ export const VideoUploadForm: React.FC<VideoUploadFormProps> = ({
   // Reset form
   const handleReset = useCallback(() => {
     setState({
-      step: 'select',
+      step: "select",
       videoFile: null,
       thumbnailFile: null,
-      caption: '',
+      caption: "",
       isGreeting: false,
       isUploading: false,
       uploadProgress: 0,
@@ -203,14 +203,14 @@ export const VideoUploadForm: React.FC<VideoUploadFormProps> = ({
       validationErrors: [],
     });
     if (fileInputRef.current) {
-      fileInputRef.current.value = '';
+      fileInputRef.current.value = "";
     }
   }, []);
 
   // Render step content
   const renderStepContent = () => {
     switch (state.step) {
-      case 'select':
+      case "select":
         return (
           <div className="space-y-6">
             <div className="text-center">
@@ -230,7 +230,7 @@ export const VideoUploadForm: React.FC<VideoUploadFormProps> = ({
                 </p>
                 <Button
                   onClick={() =>
-                    setState((prev) => ({ ...prev, step: 'record' }))
+                    setState((prev) => ({ ...prev, step: "record" }))
                   }
                   className="w-full"
                 >
@@ -266,7 +266,7 @@ export const VideoUploadForm: React.FC<VideoUploadFormProps> = ({
           </div>
         );
 
-      case 'record':
+      case "record":
         return (
           <div className="space-y-4">
             <div className="text-center">
@@ -278,13 +278,13 @@ export const VideoUploadForm: React.FC<VideoUploadFormProps> = ({
 
             <VideoRecorder
               onVideoRecorded={handleVideoRecorded}
-              onCancel={() => setState((prev) => ({ ...prev, step: 'select' }))}
+              onCancel={() => setState((prev) => ({ ...prev, step: "select" }))}
               maxDuration={20}
             />
           </div>
         );
 
-      case 'upload':
+      case "upload":
         return (
           <div className="space-y-6">
             <div className="text-center">
@@ -307,7 +307,7 @@ export const VideoUploadForm: React.FC<VideoUploadFormProps> = ({
                 </div>
                 <div className="flex items-center justify-between text-sm text-muted-foreground">
                   <span>
-                    Duration:{' '}
+                    Duration:{" "}
                     {formatDuration((state.videoFile.size / 1000000) * 20)}
                   </span>
                   <span>Size: {formatFileSize(state.videoFile.size)}</span>
@@ -367,7 +367,7 @@ export const VideoUploadForm: React.FC<VideoUploadFormProps> = ({
           </div>
         );
 
-      case 'complete':
+      case "complete":
         return (
           <div className="text-center space-y-4">
             <CheckCircle className="w-16 h-16 text-green-500 mx-auto" />
@@ -390,11 +390,11 @@ export const VideoUploadForm: React.FC<VideoUploadFormProps> = ({
   };
 
   return (
-    <Card className={cn('p-6', className)}>
+    <Card className={cn("p-6", className)}>
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-xl font-semibold">Upload Video</h2>
-        {state.step !== 'complete' && (
+        {state.step !== "complete" && (
           <Button variant="ghost" size="sm" onClick={onCancel}>
             <X className="w-4 h-4" />
           </Button>

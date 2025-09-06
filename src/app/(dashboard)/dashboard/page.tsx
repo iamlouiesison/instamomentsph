@@ -1,28 +1,28 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { useAuthContext } from '@/components/providers/AuthProvider';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
+import React, { useState, useEffect, useCallback, useRef } from "react";
+import { useAuthContext } from "@/components/providers/AuthProvider";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from "@/components/ui/select";
 import {
   EventCard,
   LoadingSpinner,
   EmptyEvents,
-} from '@/components/instamoments';
-import { CalendarIcon } from '@/components/ui/calendar-icon';
-import { Camera, Search, Filter, Users, Video, User } from 'lucide-react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { toast } from 'sonner';
-import type { Event } from '@/components/instamoments/event-card';
+} from "@/components/instamoments";
+import { CalendarIcon } from "@/components/ui/calendar-icon";
+import { Camera, Search, Filter, Users, Video, User } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import type { Event } from "@/components/instamoments/event-card";
 
 interface DashboardStats {
   totalEvents: number;
@@ -46,11 +46,11 @@ export default function DashboardPage() {
     expiredEvents: 0,
   });
   const [eventsLoading, setEventsLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
   const lastFetchRef = useRef<{ userId: string | null; statusFilter: string }>({
     userId: null,
-    statusFilter: 'all',
+    statusFilter: "all",
   });
   const lastAuthStateRef = useRef<{
     userId: string | null;
@@ -63,7 +63,7 @@ export default function DashboardPage() {
   const fetchEvents = useCallback(async () => {
     // Don't fetch events if user is not authenticated
     if (!user) {
-      console.log('No user authenticated - skipping events fetch');
+      console.log("No user authenticated - skipping events fetch");
       return;
     }
 
@@ -72,33 +72,33 @@ export default function DashboardPage() {
       lastFetchRef.current.userId === user.id &&
       lastFetchRef.current.statusFilter === statusFilter
     ) {
-      console.log('Already fetched events for this user and status filter');
+      console.log("Already fetched events for this user and status filter");
       return;
     }
 
     try {
       setEventsLoading(true);
       const params = new URLSearchParams();
-      if (statusFilter !== 'all') {
-        params.append('status', statusFilter);
+      if (statusFilter !== "all") {
+        params.append("status", statusFilter);
       }
 
       const response = await fetch(`/api/events?${params.toString()}`, {
-        credentials: 'include', // Include cookies in the request
+        credentials: "include", // Include cookies in the request
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
       });
       const result = await response.json();
 
       if (!result.success) {
         // If authentication is required, redirect to sign in instead of throwing error
-        if (result.error?.message === 'Authentication required') {
-          console.log('Authentication required - redirecting to sign in');
-          router.push('/signin');
+        if (result.error?.message === "Authentication required") {
+          console.log("Authentication required - redirecting to sign in");
+          router.push("/signin");
           return;
         }
-        throw new Error(result.error.message || 'Failed to fetch events');
+        throw new Error(result.error.message || "Failed to fetch events");
       }
 
       setEvents(result.data || []);
@@ -110,8 +110,8 @@ export default function DashboardPage() {
           acc.totalContributors += event.totalContributors || 0;
           acc.totalPhotos += event.totalPhotos || 0;
           acc.totalVideos += event.totalVideos || 0;
-          if (event.status === 'active') acc.activeEvents++;
-          if (event.status === 'expired') acc.expiredEvents++;
+          if (event.status === "active") acc.activeEvents++;
+          if (event.status === "expired") acc.expiredEvents++;
           return acc;
         },
         {
@@ -121,7 +121,7 @@ export default function DashboardPage() {
           totalVideos: 0,
           activeEvents: 0,
           expiredEvents: 0,
-        }
+        },
       );
 
       setStats(totalStats);
@@ -132,8 +132,8 @@ export default function DashboardPage() {
         statusFilter: statusFilter,
       };
     } catch (error) {
-      console.error('Error fetching events:', error);
-      toast.error('Failed to load events');
+      console.error("Error fetching events:", error);
+      toast.error("Failed to load events");
     } finally {
       setEventsLoading(false);
     }
@@ -149,11 +149,11 @@ export default function DashboardPage() {
       lastAuthStateRef.current.profileId !== currentProfileId;
 
     if (!authStateChanged && user) {
-      console.log('Dashboard - Auth state unchanged, skipping effect');
+      console.log("Dashboard - Auth state unchanged, skipping effect");
       return;
     }
 
-    console.log('Dashboard useEffect - Auth state:', {
+    console.log("Dashboard useEffect - Auth state:", {
       hasUser: !!user,
       userId: currentUserId,
       loading,
@@ -170,8 +170,8 @@ export default function DashboardPage() {
     if (user) {
       fetchEvents();
     } else if (!loading) {
-      console.log('Dashboard - No user and not loading, redirecting to signin');
-      router.push('/signin');
+      console.log("Dashboard - No user and not loading, redirecting to signin");
+      router.push("/signin");
     }
   }, [user, loading, router, profile?.id, fetchEvents]); // Include fetchEvents in dependencies
 
@@ -193,7 +193,7 @@ export default function DashboardPage() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleEventShare = (_eventId: string) => {
     // TODO: Implement QR code sharing modal
-    toast.info('QR code sharing coming soon!');
+    toast.info("QR code sharing coming soon!");
   };
 
   const handleEventSettings = (eventId: string) => {
@@ -203,7 +203,7 @@ export default function DashboardPage() {
   const filteredEvents = events.filter(
     (event) =>
       event.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      event.location?.toLowerCase().includes(searchQuery.toLowerCase())
+      event.location?.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   if (loading) {
@@ -297,7 +297,7 @@ export default function DashboardPage() {
               <CardContent className="pt-0 space-y-3">
                 <Button
                   variant="outline"
-                  onClick={() => setStatusFilter('active')}
+                  onClick={() => setStatusFilter("active")}
                   className="w-full justify-start"
                   size="sm"
                 >
@@ -365,7 +365,7 @@ export default function DashboardPage() {
                   </div>
                 ) : filteredEvents.length === 0 ? (
                   <EmptyEvents
-                    onCreateEvent={() => router.push('/create-event')}
+                    onCreateEvent={() => router.push("/create-event")}
                   />
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">

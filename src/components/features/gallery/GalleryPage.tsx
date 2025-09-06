@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/button';
-import { Clock } from 'lucide-react';
-import { Event } from '@/types/database';
-import { PhotoGallery } from './PhotoGallery';
-import { User as SupabaseUser } from '@supabase/supabase-js';
+import React from "react";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Clock } from "lucide-react";
+import { Event } from "@/types/database";
+import { PhotoGallery } from "./PhotoGallery";
+import { User as SupabaseUser } from "@supabase/supabase-js";
 
 interface GalleryPageProps {
   event: Event & { host?: Record<string, unknown> };
@@ -25,7 +25,7 @@ export function GalleryPage({
 
   // Check if event is still active
   const isEventActive =
-    event.status === 'active' &&
+    event.status === "active" &&
     (!event.expires_at || new Date(event.expires_at) > new Date());
 
   if (!isEventActive) {
@@ -37,7 +37,7 @@ export function GalleryPage({
           <p className="text-muted-foreground mb-4">
             This event gallery is no longer active or has expired.
           </p>
-          <Button onClick={() => router.push('/')}>Go to Homepage</Button>
+          <Button onClick={() => router.push("/")}>Go to Homepage</Button>
         </div>
       </div>
     );

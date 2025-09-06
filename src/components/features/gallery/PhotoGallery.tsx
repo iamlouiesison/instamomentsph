@@ -1,26 +1,26 @@
-'use client';
+"use client";
 
-import React, { useState, useCallback, useRef, useEffect } from 'react';
-import Image from 'next/image';
-import { Button } from '@/components/ui/button';
+import React, { useState, useCallback, useRef, useEffect } from "react";
+import Image from "next/image";
+import { Button } from "@/components/ui/button";
 // import { Badge } from '@/components/ui/badge';
-import { Card, CardContent } from '@/components/ui/card';
-import type { User } from '@supabase/supabase-js';
+import { Card, CardContent } from "@/components/ui/card";
+import type { User } from "@supabase/supabase-js";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from "@/components/ui/select";
 import {
   Download,
   Share2,
@@ -39,16 +39,16 @@ import {
   Video,
   // Heart,
   // MoreHorizontal,
-} from 'lucide-react';
-import { CalendarIcon } from '@/components/ui/calendar-icon';
-import { toast } from 'sonner';
-import { format } from 'date-fns';
-import { useGalleryRealtime } from '@/hooks/useGalleryRealtime';
-import { Photo, Video as VideoType } from '@/types/database';
+} from "lucide-react";
+import { CalendarIcon } from "@/components/ui/calendar-icon";
+import { toast } from "sonner";
+import { format } from "date-fns";
+import { useGalleryRealtime } from "@/hooks/useGalleryRealtime";
+import { Photo, Video as VideoType } from "@/types/database";
 import {
   LoadingSpinner,
   GalleryLoading,
-} from '@/components/instamoments/loading-states';
+} from "@/components/instamoments/loading-states";
 
 interface PhotoGalleryProps {
   eventId: string;
@@ -59,11 +59,11 @@ interface PhotoGalleryProps {
 }
 
 interface MediaItem extends Photo {
-  type: 'photo';
+  type: "photo";
 }
 
 interface VideoItem extends VideoType {
-  type: 'video';
+  type: "video";
 }
 
 type GalleryItem = MediaItem | VideoItem;
@@ -75,10 +75,10 @@ export function PhotoGallery({
   // isAuthenticated = false,
 }: PhotoGalleryProps) {
   const [selectedItem, setSelectedItem] = useState<GalleryItem | null>(null);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [contributorFilter, setContributorFilter] = useState<string>('all');
-  const [sortBy, setSortBy] = useState<'newest' | 'oldest' | 'contributor'>(
-    'newest'
+  const [searchQuery, setSearchQuery] = useState("");
+  const [contributorFilter, setContributorFilter] = useState<string>("all");
+  const [sortBy, setSortBy] = useState<"newest" | "oldest" | "contributor">(
+    "newest",
   );
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
@@ -108,13 +108,13 @@ export function PhotoGallery({
   const filteredItems = items.filter((item) => {
     const matchesSearch =
       !searchQuery ||
-      (item.type === 'photo' ? item.caption : item.message)
+      (item.type === "photo" ? item.caption : item.message)
         ?.toLowerCase()
         .includes(searchQuery.toLowerCase()) ||
       item.contributor_name.toLowerCase().includes(searchQuery.toLowerCase());
 
     const matchesContributor =
-      contributorFilter === 'all' ||
+      contributorFilter === "all" ||
       item.contributor_name === contributorFilter;
 
     return matchesSearch && matchesContributor;
@@ -128,7 +128,7 @@ export function PhotoGallery({
         loadMore();
       }
     },
-    [hasMore, loading, loadMore]
+    [hasMore, loading, loadMore],
   );
 
   useEffect(() => {
@@ -179,30 +179,30 @@ export function PhotoGallery({
       if (!isLightboxOpen) return;
 
       switch (e.key) {
-        case 'ArrowLeft':
+        case "ArrowLeft":
           handlePrevious();
           break;
-        case 'ArrowRight':
+        case "ArrowRight":
           handleNext();
           break;
-        case 'Escape':
+        case "Escape":
           setIsLightboxOpen(false);
           break;
-        case '+':
-        case '=':
+        case "+":
+        case "=":
           setZoom((prev) => Math.min(prev + 0.25, 3));
           break;
-        case '-':
+        case "-":
           setZoom((prev) => Math.max(prev - 0.25, 0.5));
           break;
-        case 'r':
+        case "r":
           setRotation((prev) => (prev + 90) % 360);
           break;
       }
     };
 
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
   }, [
     isLightboxOpen,
     lightboxIndex,
@@ -214,39 +214,39 @@ export function PhotoGallery({
   // Handle download
   const handleDownload = async (item: GalleryItem) => {
     if (!allowDownloads) {
-      toast.error('Downloads are not allowed for this event');
+      toast.error("Downloads are not allowed for this event");
       return;
     }
 
     try {
-      const fileUrl = item.type === 'photo' ? item.file_url : item.file_url;
-      const fileName = item.type === 'photo' ? item.file_name : item.file_name;
+      const fileUrl = item.type === "photo" ? item.file_url : item.file_url;
+      const fileName = item.type === "photo" ? item.file_name : item.file_name;
 
       const response = await fetch(fileUrl);
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
+      const a = document.createElement("a");
       a.href = url;
       a.download = fileName;
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
-      toast.success('Download started');
+      toast.success("Download started");
     } catch (error) {
-      console.error('Download error:', error);
-      toast.error('Failed to download file');
+      console.error("Download error:", error);
+      toast.error("Failed to download file");
     }
   };
 
   // Handle share
   const handleShare = async (item: GalleryItem) => {
     try {
-      const caption = item.type === 'photo' ? item.caption : item.message;
-      const fileUrl = item.type === 'photo' ? item.file_url : item.file_url;
+      const caption = item.type === "photo" ? item.caption : item.message;
+      const fileUrl = item.type === "photo" ? item.file_url : item.file_url;
 
       const shareData = {
-        title: `${item.type === 'photo' ? 'Photo' : 'Video'} from ${item.contributor_name}`,
+        title: `${item.type === "photo" ? "Photo" : "Video"} from ${item.contributor_name}`,
         text: caption || `Check out this ${item.type}!`,
         url: fileUrl,
       };
@@ -255,19 +255,19 @@ export function PhotoGallery({
         await navigator.share(shareData);
       } else {
         await navigator.clipboard.writeText(fileUrl);
-        toast.success('Photo URL copied to clipboard');
+        toast.success("Photo URL copied to clipboard");
       }
     } catch (error) {
-      console.error('Share error:', error);
-      toast.error('Failed to share photo');
+      console.error("Share error:", error);
+      toast.error("Failed to share photo");
     }
   };
 
   // Clear filters
   const clearFilters = () => {
-    setSearchQuery('');
-    setContributorFilter('all');
-    setSortBy('newest');
+    setSearchQuery("");
+    setContributorFilter("all");
+    setSortBy("newest");
   };
 
   if (error) {
@@ -351,7 +351,7 @@ export function PhotoGallery({
 
           <Select
             value={sortBy}
-            onValueChange={(value: 'newest' | 'oldest' | 'contributor') =>
+            onValueChange={(value: "newest" | "oldest" | "contributor") =>
               setSortBy(value)
             }
           >
@@ -365,7 +365,7 @@ export function PhotoGallery({
             </SelectContent>
           </Select>
 
-          {(searchQuery || contributorFilter !== 'all') && (
+          {(searchQuery || contributorFilter !== "all") && (
             <Button
               variant="ghost"
               size="sm"
@@ -385,14 +385,14 @@ export function PhotoGallery({
             <Camera className="h-12 w-12 text-muted-foreground" />
           </div>
           <h3 className="text-xl font-semibold text-foreground mb-2">
-            {searchQuery || contributorFilter !== 'all'
-              ? 'No photos found'
-              : 'No photos yet'}
+            {searchQuery || contributorFilter !== "all"
+              ? "No photos found"
+              : "No photos yet"}
           </h3>
           <p className="text-muted-foreground max-w-md">
-            {searchQuery || contributorFilter !== 'all'
-              ? 'Try adjusting your search or filters to see more photos'
-              : 'Be the first to share a memory from this event!'}
+            {searchQuery || contributorFilter !== "all"
+              ? "Try adjusting your search or filters to see more photos"
+              : "Be the first to share a memory from this event!"}
           </p>
         </div>
       ) : (
@@ -410,8 +410,8 @@ export function PhotoGallery({
                   <Image
                     src={item.thumbnail_url || item.file_url}
                     alt={
-                      (item.type === 'photo' ? item.caption : item.message) ||
-                      `${item.type === 'photo' ? 'Photo' : 'Video'} by ${item.contributor_name}`
+                      (item.type === "photo" ? item.caption : item.message) ||
+                      `${item.type === "photo" ? "Photo" : "Video"} by ${item.contributor_name}`
                     }
                     width={400}
                     height={300}
@@ -421,7 +421,7 @@ export function PhotoGallery({
                   />
 
                   {/* Video Play Button Overlay */}
-                  {item.type === 'video' && (
+                  {item.type === "video" && (
                     <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/30 transition-colors">
                       <div className="w-12 h-12 bg-white/90 rounded-full flex items-center justify-center shadow-lg">
                         <Play className="h-6 w-6 text-primary ml-1" />
@@ -435,7 +435,7 @@ export function PhotoGallery({
                   {/* Type Indicator */}
                   <div className="absolute top-2 left-2">
                     <div className="flex items-center justify-center w-6 h-6 bg-black/60 rounded-md">
-                      {item.type === 'video' ? (
+                      {item.type === "video" ? (
                         <Video className="h-3 w-3 text-white" />
                       ) : (
                         <Camera className="h-3 w-3 text-white" />
@@ -455,12 +455,12 @@ export function PhotoGallery({
                       </div>
                       <div className="flex items-center gap-1 text-xs text-white/80">
                         <CalendarIcon size="xs" variant="muted" />
-                        {format(new Date(item.uploaded_at), 'MMM d')}
+                        {format(new Date(item.uploaded_at), "MMM d")}
                       </div>
                     </div>
-                    {(item.type === 'photo' ? item.caption : item.message) && (
+                    {(item.type === "photo" ? item.caption : item.message) && (
                       <p className="text-xs text-white/90 truncate">
-                        {item.type === 'photo' ? item.caption : item.message}
+                        {item.type === "photo" ? item.caption : item.message}
                       </p>
                     )}
                   </div>
@@ -489,13 +489,13 @@ export function PhotoGallery({
         <DialogContent className="max-w-7xl w-full h-[90vh] p-0">
           <DialogHeader className="p-6 pb-0">
             <DialogTitle className="sr-only">
-              Photo Gallery -{' '}
-              {selectedItem?.type === 'photo' ? 'Photo' : 'Video'} Viewer
+              Photo Gallery -{" "}
+              {selectedItem?.type === "photo" ? "Photo" : "Video"} Viewer
             </DialogTitle>
             <DialogDescription className="sr-only">
-              {selectedItem?.type === 'photo'
-                ? `Viewing photo: ${selectedItem.caption || 'Untitled photo'}`
-                : `Viewing video: ${(selectedItem as VideoItem)?.message || 'Untitled video'}`}
+              {selectedItem?.type === "photo"
+                ? `Viewing photo: ${selectedItem.caption || "Untitled photo"}`
+                : `Viewing video: ${(selectedItem as VideoItem)?.message || "Untitled video"}`}
             </DialogDescription>
             <div className="flex items-center justify-center">
               <div className="flex items-center gap-3">
@@ -568,31 +568,31 @@ export function PhotoGallery({
             {/* Image/Video Display */}
             {selectedItem && (
               <div className="relative max-w-full max-h-full">
-                {selectedItem.type === 'video' ? (
+                {selectedItem.type === "video" ? (
                   <video
                     src={selectedItem.file_url}
                     controls
                     className="max-w-full max-h-full object-contain"
                     style={{
                       transform: `scale(${zoom}) rotate(${rotation}deg)`,
-                      transition: 'transform 0.2s ease',
+                      transition: "transform 0.2s ease",
                     }}
                   />
                 ) : (
                   <Image
                     src={selectedItem.file_url}
                     alt={
-                      (selectedItem.type === 'photo'
+                      (selectedItem.type === "photo"
                         ? selectedItem.caption
                         : (selectedItem as VideoItem).message) ||
-                      `${selectedItem.type === 'photo' ? 'Photo' : 'Video'} by ${selectedItem.contributor_name}`
+                      `${selectedItem.type === "photo" ? "Photo" : "Video"} by ${selectedItem.contributor_name}`
                     }
                     width={800}
                     height={600}
                     className="max-w-full max-h-full object-contain"
                     style={{
                       transform: `scale(${zoom}) rotate(${rotation}deg)`,
-                      transition: 'transform 0.2s ease',
+                      transition: "transform 0.2s ease",
                     }}
                     unoptimized
                   />
@@ -605,11 +605,11 @@ export function PhotoGallery({
           {selectedItem && (
             <div className="p-6 pt-0 border-t">
               <div className="space-y-2">
-                {(selectedItem.type === 'photo'
+                {(selectedItem.type === "photo"
                   ? selectedItem.caption
                   : (selectedItem as VideoItem).message) && (
                   <p className="text-sm">
-                    {selectedItem.type === 'photo'
+                    {selectedItem.type === "photo"
                       ? selectedItem.caption
                       : (selectedItem as VideoItem).message}
                   </p>
@@ -619,7 +619,7 @@ export function PhotoGallery({
                     <CalendarIcon size="xs" variant="muted" />
                     {format(
                       new Date(selectedItem.uploaded_at),
-                      'MMM d, yyyy h:mm a'
+                      "MMM d, yyyy h:mm a",
                     )}
                   </div>
                   <div className="flex items-center gap-1">

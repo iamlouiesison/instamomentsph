@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/client';
+import { createClient } from "@/lib/supabase/client";
 // import { PhotoUploadData, VideoUploadData } from '@/types/database';
 
 interface UploadPhotoParams {
@@ -28,15 +28,15 @@ export async function uploadPhoto({
 
   try {
     // Generate unique filename
-    const fileExt = file.name.split('.').pop();
+    const fileExt = file.name.split(".").pop();
     const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
     const filePath = `events/${eventId}/photos/${fileName}`;
 
     // Upload file to Supabase Storage
     const { error: uploadError } = await supabase.storage
-      .from('photos')
+      .from("photos")
       .upload(filePath, file, {
-        cacheControl: '3600',
+        cacheControl: "3600",
         upsert: false,
       });
 
@@ -46,26 +46,26 @@ export async function uploadPhoto({
 
     // Get public URL
     const { data: urlData } = supabase.storage
-      .from('photos')
+      .from("photos")
       .getPublicUrl(filePath);
 
     // Create thumbnail (simplified - in production, use a proper image processing service)
     const thumbnailPath = `events/${eventId}/thumbnails/${fileName}`;
     const { error: thumbnailError } = await supabase.storage
-      .from('thumbnails')
+      .from("thumbnails")
       .upload(thumbnailPath, file, {
-        cacheControl: '3600',
+        cacheControl: "3600",
         upsert: false,
       });
 
     const thumbnailUrl = thumbnailError
       ? null
-      : supabase.storage.from('thumbnails').getPublicUrl(thumbnailPath).data
+      : supabase.storage.from("thumbnails").getPublicUrl(thumbnailPath).data
           .publicUrl;
 
     // Save photo record to database
     const { data: photoData, error: dbError } = await supabase
-      .from('photos')
+      .from("photos")
       .insert({
         event_id: eventId,
         contributor_name: contributorName,
@@ -83,16 +83,16 @@ export async function uploadPhoto({
 
     if (dbError) {
       // Clean up uploaded file if database insert fails
-      await supabase.storage.from('photos').remove([filePath]);
+      await supabase.storage.from("photos").remove([filePath]);
       if (thumbnailUrl) {
-        await supabase.storage.from('thumbnails').remove([thumbnailPath]);
+        await supabase.storage.from("thumbnails").remove([thumbnailPath]);
       }
       throw new Error(`Database error: ${dbError.message}`);
     }
 
     return photoData;
   } catch (error) {
-    console.error('Photo upload error:', error);
+    console.error("Photo upload error:", error);
     throw error;
   }
 }
@@ -107,15 +107,15 @@ export async function uploadVideo({
 
   try {
     // Generate unique filename
-    const fileExt = file.name.split('.').pop();
+    const fileExt = file.name.split(".").pop();
     const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
     const filePath = `events/${eventId}/videos/${fileName}`;
 
     // Upload file to Supabase Storage
     const { error: uploadError } = await supabase.storage
-      .from('videos')
+      .from("videos")
       .upload(filePath, file, {
-        cacheControl: '3600',
+        cacheControl: "3600",
         upsert: false,
       });
 
@@ -125,7 +125,7 @@ export async function uploadVideo({
 
     // Get public URL
     const { data: urlData } = supabase.storage
-      .from('videos')
+      .from("videos")
       .getPublicUrl(filePath);
 
     // For now, we'll skip thumbnail generation for videos
@@ -136,7 +136,7 @@ export async function uploadVideo({
 
     // Save video record to database
     const { data: videoData, error: dbError } = await supabase
-      .from('videos')
+      .from("videos")
       .insert({
         event_id: eventId,
         uploaded_by: contributorName,
@@ -147,20 +147,20 @@ export async function uploadVideo({
         duration: duration,
         mime_type: file.type,
         caption: message || null,
-        status: 'completed', // For now, skip processing
+        status: "completed", // For now, skip processing
       })
       .select()
       .single();
 
     if (dbError) {
       // Clean up uploaded file if database insert fails
-      await supabase.storage.from('videos').remove([filePath]);
+      await supabase.storage.from("videos").remove([filePath]);
       throw new Error(`Database error: ${dbError.message}`);
     }
 
     return videoData;
   } catch (error) {
-    console.error('Video upload error:', error);
+    console.error("Video upload error:", error);
     throw error;
   }
 }
@@ -168,8 +168,8 @@ export async function uploadVideo({
 // Helper function to get video duration
 async function getVideoDuration(file: File): Promise<number> {
   return new Promise((resolve) => {
-    const video = document.createElement('video');
-    video.preload = 'metadata';
+    const video = document.createElement("video");
+    video.preload = "metadata";
 
     video.onloadedmetadata = () => {
       window.URL.revokeObjectURL(video.src);
@@ -188,10 +188,10 @@ async function getVideoDuration(file: File): Promise<number> {
 // Helper function to validate file before upload
 export function validateFile(
   file: File,
-  type: 'photo' | 'video'
+  type: "photo" | "video",
 ): { valid: boolean; error?: string } {
   // Check file size
-  const maxSize = type === 'photo' ? 10 * 1024 * 1024 : 50 * 1024 * 1024; // 10MB for photos, 50MB for videos
+  const maxSize = type === "photo" ? 10 * 1024 * 1024 : 50 * 1024 * 1024; // 10MB for photos, 50MB for videos
   if (file.size > maxSize) {
     return {
       valid: false,
@@ -200,25 +200,25 @@ export function validateFile(
   }
 
   // Check file type
-  if (type === 'photo') {
+  if (type === "photo") {
     const validImageTypes = [
-      'image/jpeg',
-      'image/jpg',
-      'image/png',
-      'image/webp',
+      "image/jpeg",
+      "image/jpg",
+      "image/png",
+      "image/webp",
     ];
     if (!validImageTypes.includes(file.type)) {
       return {
         valid: false,
-        error: 'Please upload a valid image file (JPEG, PNG, or WebP)',
+        error: "Please upload a valid image file (JPEG, PNG, or WebP)",
       };
     }
   } else {
-    const validVideoTypes = ['video/mp4', 'video/webm', 'video/mov'];
+    const validVideoTypes = ["video/mp4", "video/webm", "video/mov"];
     if (!validVideoTypes.includes(file.type)) {
       return {
         valid: false,
-        error: 'Please upload a valid video file (MP4, WebM, or MOV)',
+        error: "Please upload a valid video file (MP4, WebM, or MOV)",
       };
     }
   }

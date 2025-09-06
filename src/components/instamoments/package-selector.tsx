@@ -1,17 +1,17 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Check, Star, Video } from 'lucide-react';
+import React from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Check, Star, Video } from "lucide-react";
 import {
   SUBSCRIPTION_TIERS,
   VIDEO_ADDON_PRICING,
   calculateEventPrice,
   type SubscriptionTier,
-} from '@/lib/validations/event';
-import { cn } from '@/lib/utils';
+} from "@/lib/validations/event";
+import { cn } from "@/lib/utils";
 
 interface PackageSelectorProps {
   selectedTier?: SubscriptionTier;
@@ -29,30 +29,30 @@ export const PackageSelector: React.FC<PackageSelectorProps> = ({
   className,
 }) => {
   const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('en-PH', {
-      style: 'currency',
-      currency: 'PHP',
+    return new Intl.NumberFormat("en-PH", {
+      style: "currency",
+      currency: "PHP",
       minimumFractionDigits: 0,
     }).format(price);
   };
 
   return (
-    <div className={cn('space-y-8', className)}>
+    <div className={cn("space-y-8", className)}>
       {/* Package Tiers */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {Object.entries(SUBSCRIPTION_TIERS).map(([key, tier]) => {
           const isSelected = selectedTier === key;
-          const isPopular = key === 'standard';
+          const isPopular = key === "standard";
 
           return (
             <Card
               key={key}
               className={cn(
-                'relative cursor-pointer transition-all duration-200 hover:shadow-xl border-2',
+                "relative cursor-pointer transition-all duration-200 hover:shadow-xl border-2",
                 isSelected
-                  ? 'ring-2 ring-primary bg-primary/5 border-primary/20 shadow-lg'
-                  : 'hover:bg-muted/50 border-border hover:border-primary/30',
-                isPopular && 'border-primary/30'
+                  ? "ring-2 ring-primary bg-primary/5 border-primary/20 shadow-lg"
+                  : "hover:bg-muted/50 border-border hover:border-primary/30",
+                isPopular && "border-primary/30",
               )}
               onClick={(e) => {
                 e.preventDefault();
@@ -126,7 +126,7 @@ export const PackageSelector: React.FC<PackageSelectorProps> = ({
       </div>
 
       {/* Video Addon */}
-      {selectedTier && selectedTier !== 'free' && (
+      {selectedTier && selectedTier !== "free" && (
         <Card className="border-2 border-dashed border-primary/30 bg-primary/5">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
@@ -144,7 +144,7 @@ export const PackageSelector: React.FC<PackageSelectorProps> = ({
               </div>
               <Button
                 type="button"
-                variant={hasVideoAddon ? 'default' : 'outline'}
+                variant={hasVideoAddon ? "default" : "outline"}
                 size="lg"
                 onClick={(e) => {
                   e.preventDefault();
@@ -153,7 +153,7 @@ export const PackageSelector: React.FC<PackageSelectorProps> = ({
                 }}
                 className="ml-4"
               >
-                {hasVideoAddon ? 'Added' : 'Add'}
+                {hasVideoAddon ? "Added" : "Add"}
               </Button>
             </div>
           </CardContent>

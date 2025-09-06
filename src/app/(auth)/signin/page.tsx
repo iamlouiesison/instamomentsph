@@ -1,25 +1,25 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import Link from 'next/link';
-import { Eye, EyeOff, Mail, Lock, Smartphone } from 'lucide-react';
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import Link from "next/link";
+import { Eye, EyeOff, Mail, Lock, Smartphone } from "lucide-react";
 
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
-import { Alert } from '@/components/ui/alert';
-import { useAuthContext } from '@/components/providers/AuthProvider';
-import { signInSchema, type SignInInput } from '@/lib/validations/auth';
+} from "@/components/ui/card";
+import { Alert } from "@/components/ui/alert";
+import { useAuthContext } from "@/components/providers/AuthProvider";
+import { signInSchema, type SignInInput } from "@/lib/validations/auth";
 
 export default function SignInPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -45,45 +45,45 @@ export default function SignInPage() {
       if (error) {
         const errorMessage =
           error instanceof Error ? error.message : String(error);
-        if (errorMessage.includes('Invalid login credentials')) {
-          setError('root', {
-            message: 'Invalid email or password. Please try again.',
+        if (errorMessage.includes("Invalid login credentials")) {
+          setError("root", {
+            message: "Invalid email or password. Please try again.",
           });
-        } else if (errorMessage.includes('Email not confirmed')) {
-          setError('root', {
-            message: 'Please confirm your email before signing in.',
+        } else if (errorMessage.includes("Email not confirmed")) {
+          setError("root", {
+            message: "Please confirm your email before signing in.",
           });
         } else {
-          setError('root', {
-            message: 'Something went wrong. Please try again.',
+          setError("root", {
+            message: "Something went wrong. Please try again.",
           });
         }
       } else {
-        router.push('/dashboard');
+        router.push("/dashboard");
       }
     } catch {
-      setError('root', {
-        message: 'Something went wrong. Please try again.',
+      setError("root", {
+        message: "Something went wrong. Please try again.",
       });
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleSocialSignIn = async (provider: 'google' | 'facebook') => {
+  const handleSocialSignIn = async (provider: "google" | "facebook") => {
     setIsLoading(true);
 
     try {
       const { error } = await signInWithProvider(provider);
 
       if (error) {
-        setError('root', {
+        setError("root", {
           message: `Problem with ${provider} sign in. Please try again.`,
         });
       }
     } catch {
-      setError('root', {
-        message: 'Something went wrong. Please try again.',
+      setError("root", {
+        message: "Something went wrong. Please try again.",
       });
     } finally {
       setIsLoading(false);
@@ -128,7 +128,7 @@ export default function SignInPage() {
                       placeholder="your.email@example.com"
                       className="pl-10 h-12"
                       autoComplete="email"
-                      {...register('email')}
+                      {...register("email")}
                     />
                   </div>
                   {errors.email && (
@@ -146,11 +146,11 @@ export default function SignInPage() {
                     <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
                     <Input
                       id="password"
-                      type={showPassword ? 'text' : 'password'}
+                      type={showPassword ? "text" : "password"}
                       placeholder="Your password"
                       className="pl-10 pr-10 h-12"
                       autoComplete="current-password"
-                      {...register('password')}
+                      {...register("password")}
                     />
                     <button
                       type="button"
@@ -185,7 +185,7 @@ export default function SignInPage() {
                   className="w-full h-12 text-primary-foreground font-semibold"
                   disabled={isLoading}
                 >
-                  {isLoading ? 'Signing in...' : 'Sign In'}
+                  {isLoading ? "Signing in..." : "Sign In"}
                 </Button>
               </form>
 
@@ -204,7 +204,7 @@ export default function SignInPage() {
                 <Button
                   variant="outline"
                   className="h-12 border-border hover:bg-muted"
-                  onClick={() => handleSocialSignIn('google')}
+                  onClick={() => handleSocialSignIn("google")}
                   disabled={isLoading}
                 >
                   <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
@@ -231,7 +231,7 @@ export default function SignInPage() {
                 <Button
                   variant="outline"
                   className="h-12 border-border hover:bg-muted"
-                  onClick={() => handleSocialSignIn('facebook')}
+                  onClick={() => handleSocialSignIn("facebook")}
                   disabled={isLoading}
                 >
                   <svg
@@ -247,7 +247,7 @@ export default function SignInPage() {
 
               <div className="text-center">
                 <p className="text-sm text-muted-foreground">
-                  Don&apos;t have an account?{' '}
+                  Don&apos;t have an account?{" "}
                   <Link
                     href="/signup"
                     className="text-primary hover:text-primary/80 hover:underline font-medium"

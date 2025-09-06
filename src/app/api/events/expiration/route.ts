@@ -1,15 +1,15 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from "next/server";
 import {
   processExpiredEvents,
   getEventsExpiringSoon,
-} from '@/lib/business-logic/event-expiration';
+} from "@/lib/business-logic/event-expiration";
 
 // POST /api/events/expiration - Process expired events
 export async function POST(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const deleteContent = searchParams.get('deleteContent') === 'true';
-    const hoursThreshold = parseInt(searchParams.get('hoursThreshold') || '24');
+    const deleteContent = searchParams.get("deleteContent") === "true";
+    const hoursThreshold = parseInt(searchParams.get("hoursThreshold") || "24");
 
     // Process expired events
     const stats = await processExpiredEvents(deleteContent);
@@ -30,16 +30,16 @@ export async function POST(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Error processing expired events:', error);
+    console.error("Error processing expired events:", error);
     return NextResponse.json(
       {
         success: false,
         error: {
-          code: 'PROCESSING_ERROR',
-          message: 'Failed to process expired events',
+          code: "PROCESSING_ERROR",
+          message: "Failed to process expired events",
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const hoursThreshold = parseInt(searchParams.get('hoursThreshold') || '24');
+    const hoursThreshold = parseInt(searchParams.get("hoursThreshold") || "24");
 
     // Get events expiring soon
     const expiringSoon = await getEventsExpiringSoon(hoursThreshold);
@@ -70,16 +70,16 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Error fetching expiration status:', error);
+    console.error("Error fetching expiration status:", error);
     return NextResponse.json(
       {
         success: false,
         error: {
-          code: 'FETCH_ERROR',
-          message: 'Failed to fetch expiration status',
+          code: "FETCH_ERROR",
+          message: "Failed to fetch expiration status",
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
-import { z } from 'zod';
+import { NextRequest, NextResponse } from "next/server";
+import { createClient } from "@/lib/supabase/server";
+import { z } from "zod";
 
 const GalleryQuerySchema = z.object({
   slug: z.string().min(1),
@@ -8,7 +8,7 @@ const GalleryQuerySchema = z.object({
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ slug: string }> }
+  { params }: { params: Promise<{ slug: string }> },
 ) {
   try {
     const supabase = await createClient();
@@ -18,7 +18,7 @@ export async function GET(
 
     // Get event by gallery slug
     const { data: event, error: eventError } = await supabase
-      .from('events')
+      .from("events")
       .select(
         `
         id,
@@ -48,10 +48,10 @@ export async function GET(
           full_name,
           avatar_url
         )
-      `
+      `,
       )
-      .eq('gallery_slug', slug)
-      .eq('status', 'active')
+      .eq("gallery_slug", slug)
+      .eq("status", "active")
       .single();
 
     if (eventError || !event) {
@@ -59,11 +59,11 @@ export async function GET(
         {
           success: false,
           error: {
-            code: 'GALLERY_NOT_FOUND',
-            message: 'Gallery not found or no longer active',
+            code: "GALLERY_NOT_FOUND",
+            message: "Gallery not found or no longer active",
           },
         },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -73,60 +73,60 @@ export async function GET(
         {
           success: false,
           error: {
-            code: 'GALLERY_EXPIRED',
-            message: 'This gallery has expired',
+            code: "GALLERY_EXPIRED",
+            message: "This gallery has expired",
           },
         },
-        { status: 410 }
+        { status: 410 },
       );
     }
 
     // Get recent contributors
     const { data: contributors } = await supabase
-      .from('event_contributors')
+      .from("event_contributors")
       .select(
-        'contributor_name, contributor_email, photos_count, videos_count, last_contribution_at'
+        "contributor_name, contributor_email, photos_count, videos_count, last_contribution_at",
       )
-      .eq('event_id', event.id)
-      .order('last_contribution_at', { ascending: false })
+      .eq("event_id", event.id)
+      .order("last_contribution_at", { ascending: false })
       .limit(10);
 
     // Get recent photos for preview
     const { data: recentPhotos } = await supabase
-      .from('photos')
-      .select('id, thumbnail_url, contributor_name, uploaded_at')
-      .eq('event_id', event.id)
-      .eq('is_approved', true)
-      .order('uploaded_at', { ascending: false })
+      .from("photos")
+      .select("id, thumbnail_url, contributor_name, uploaded_at")
+      .eq("event_id", event.id)
+      .eq("is_approved", true)
+      .order("uploaded_at", { ascending: false })
       .limit(6);
 
     // Get recent videos for preview
     const { data: recentVideos } = await supabase
-      .from('videos')
-      .select('id, thumbnail_url, contributor_name, uploaded_at')
-      .eq('event_id', event.id)
-      .eq('is_approved', true)
-      .order('uploaded_at', { ascending: false })
+      .from("videos")
+      .select("id, thumbnail_url, contributor_name, uploaded_at")
+      .eq("event_id", event.id)
+      .eq("is_approved", true)
+      .order("uploaded_at", { ascending: false })
       .limit(2);
 
     // Track gallery view analytics
     try {
-      await supabase.from('analytics_events').insert({
+      await supabase.from("analytics_events").insert({
         event_id: event.id,
-        event_type: 'gallery_view',
+        event_type: "gallery_view",
         properties: {
-          user_agent: request.headers.get('user-agent'),
-          referer: request.headers.get('referer'),
+          user_agent: request.headers.get("user-agent"),
+          referer: request.headers.get("referer"),
           timestamp: new Date().toISOString(),
         },
-        user_agent: request.headers.get('user-agent'),
+        user_agent: request.headers.get("user-agent"),
         ip_address:
-          request.headers.get('x-forwarded-for') ||
-          request.headers.get('x-real-ip') ||
-          'unknown',
+          request.headers.get("x-forwarded-for") ||
+          request.headers.get("x-real-ip") ||
+          "unknown",
       });
     } catch (analyticsError) {
-      console.error('Failed to track gallery view:', analyticsError);
+      console.error("Failed to track gallery view:", analyticsError);
       // Don't fail the request if analytics fails
     }
 
@@ -152,18 +152,18 @@ export async function GET(
       },
     });
   } catch (error) {
-    console.error('Gallery API error:', error);
+    console.error("Gallery API error:", error);
 
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {
           success: false,
           error: {
-            code: 'VALIDATION_ERROR',
-            message: 'Invalid gallery slug',
+            code: "VALIDATION_ERROR",
+            message: "Invalid gallery slug",
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -171,11 +171,11 @@ export async function GET(
       {
         success: false,
         error: {
-          code: 'INTERNAL_ERROR',
-          message: 'Failed to load gallery information',
+          code: "INTERNAL_ERROR",
+          message: "Failed to load gallery information",
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -1,26 +1,26 @@
 // Upload Validation Schemas and Utilities
 // Comprehensive validation for photo and video uploads
 
-import { z } from 'zod';
+import { z } from "zod";
 
 // File validation constants
 export const UPLOAD_CONSTRAINTS = {
   PHOTO: {
     MAX_SIZE: 10 * 1024 * 1024, // 10MB
     ALLOWED_TYPES: [
-      'image/jpeg',
-      'image/jpg',
-      'image/png',
-      'image/webp',
-      'image/heic',
-      'image/heif',
+      "image/jpeg",
+      "image/jpg",
+      "image/png",
+      "image/webp",
+      "image/heic",
+      "image/heif",
     ],
     MAX_DIMENSION: 4096, // 4K max
     MIN_DIMENSION: 100, // 100px min
   },
   VIDEO: {
     MAX_SIZE: 50 * 1024 * 1024, // 50MB
-    ALLOWED_TYPES: ['video/mp4', 'video/webm', 'video/mov', 'video/quicktime'],
+    ALLOWED_TYPES: ["video/mp4", "video/webm", "video/mov", "video/quicktime"],
     MAX_DURATION: 20, // 20 seconds
     MIN_DURATION: 1, // 1 second
   },
@@ -43,55 +43,55 @@ export const RATE_LIMITS = {
 export const ContributorInfoSchema = z.object({
   name: z
     .string()
-    .min(1, 'Name is required')
-    .max(50, 'Name must be less than 50 characters')
+    .min(1, "Name is required")
+    .max(50, "Name must be less than 50 characters")
     .regex(
       /^[a-zA-Z\s\u00C0-\u017F\u0100-\u017F\u0180-\u024F\u1E00-\u1EFF]+$/,
-      'Name contains invalid characters'
+      "Name contains invalid characters",
     ),
   email: z
     .string()
-    .email('Invalid email address')
-    .max(100, 'Email must be less than 100 characters')
+    .email("Invalid email address")
+    .max(100, "Email must be less than 100 characters")
     .optional()
-    .or(z.literal('')),
+    .or(z.literal("")),
   phone: z
     .string()
-    .regex(/^[\+]?[1-9][\d]{0,15}$/, 'Invalid phone number format')
+    .regex(/^[\+]?[1-9][\d]{0,15}$/, "Invalid phone number format")
     .optional()
-    .or(z.literal('')),
+    .or(z.literal("")),
 });
 
 // Photo upload validation schema
 export const PhotoUploadValidationSchema = z.object({
-  eventId: z.string().uuid('Invalid event ID'),
+  eventId: z.string().uuid("Invalid event ID"),
   contributor: ContributorInfoSchema,
   caption: z
     .string()
-    .max(200, 'Caption must be less than 200 characters')
+    .max(200, "Caption must be less than 200 characters")
     .optional(),
-  tags: z.array(z.string().max(20)).max(5, 'Maximum 5 tags allowed').optional(),
+  tags: z.array(z.string().max(20)).max(5, "Maximum 5 tags allowed").optional(),
   isPrivate: z.boolean().default(false),
   allowDownload: z.boolean().default(true),
 });
 
 // Video upload validation schema
 export const VideoUploadValidationSchema = z.object({
-  eventId: z.string().uuid('Invalid event ID'),
+  eventId: z.string().uuid("Invalid event ID"),
   contributor: ContributorInfoSchema,
   message: z
     .string()
-    .max(200, 'Message must be less than 200 characters')
+    .max(200, "Message must be less than 200 characters")
     .optional(),
   duration: z
     .number()
     .min(
       UPLOAD_CONSTRAINTS.VIDEO.MIN_DURATION,
-      `Video must be at least ${UPLOAD_CONSTRAINTS.VIDEO.MIN_DURATION} second`
+      `Video must be at least ${UPLOAD_CONSTRAINTS.VIDEO.MIN_DURATION} second`,
     )
     .max(
       UPLOAD_CONSTRAINTS.VIDEO.MAX_DURATION,
-      `Video must be less than ${UPLOAD_CONSTRAINTS.VIDEO.MAX_DURATION} seconds`
+      `Video must be less than ${UPLOAD_CONSTRAINTS.VIDEO.MAX_DURATION} seconds`,
     ),
   isPrivate: z.boolean().default(false),
   allowDownload: z.boolean().default(true),
@@ -99,43 +99,43 @@ export const VideoUploadValidationSchema = z.object({
 
 // File validation schemas
 export const FileValidationSchema = z.object({
-  name: z.string().min(1, 'File name is required'),
+  name: z.string().min(1, "File name is required"),
   size: z
     .number()
-    .min(1, 'File cannot be empty')
+    .min(1, "File cannot be empty")
     .max(
       UPLOAD_CONSTRAINTS.PHOTO.MAX_SIZE,
-      `File size must be less than ${UPLOAD_CONSTRAINTS.PHOTO.MAX_SIZE / (1024 * 1024)}MB`
+      `File size must be less than ${UPLOAD_CONSTRAINTS.PHOTO.MAX_SIZE / (1024 * 1024)}MB`,
     ),
   type: z
     .string()
     .refine(
       (type): type is string =>
         (UPLOAD_CONSTRAINTS.PHOTO.ALLOWED_TYPES as readonly string[]).includes(
-          type
+          type,
         ),
-      `File type must be one of: ${UPLOAD_CONSTRAINTS.PHOTO.ALLOWED_TYPES.join(', ')}`
+      `File type must be one of: ${UPLOAD_CONSTRAINTS.PHOTO.ALLOWED_TYPES.join(", ")}`,
     ),
   lastModified: z.number().optional(),
 });
 
 export const VideoFileValidationSchema = z.object({
-  name: z.string().min(1, 'File name is required'),
+  name: z.string().min(1, "File name is required"),
   size: z
     .number()
-    .min(1, 'File cannot be empty')
+    .min(1, "File cannot be empty")
     .max(
       UPLOAD_CONSTRAINTS.VIDEO.MAX_SIZE,
-      `File size must be less than ${UPLOAD_CONSTRAINTS.VIDEO.MAX_SIZE / (1024 * 1024)}MB`
+      `File size must be less than ${UPLOAD_CONSTRAINTS.VIDEO.MAX_SIZE / (1024 * 1024)}MB`,
     ),
   type: z
     .string()
     .refine(
       (type): type is string =>
         (UPLOAD_CONSTRAINTS.VIDEO.ALLOWED_TYPES as readonly string[]).includes(
-          type
+          type,
         ),
-      `File type must be one of: ${UPLOAD_CONSTRAINTS.VIDEO.ALLOWED_TYPES.join(', ')}`
+      `File type must be one of: ${UPLOAD_CONSTRAINTS.VIDEO.ALLOWED_TYPES.join(", ")}`,
     ),
   lastModified: z.number().optional(),
 });
@@ -179,15 +179,15 @@ export const BatchUploadSchema = z.object({
   contributor: ContributorInfoSchema,
   photos: z
     .array(PhotoUploadRequestSchema)
-    .min(1, 'At least one photo required')
-    .max(10, 'Maximum 10 photos per batch'),
+    .min(1, "At least one photo required")
+    .max(10, "Maximum 10 photos per batch"),
   sharedCaption: z.string().max(200).optional(),
 });
 
 // Event validation for uploads
 export const EventUploadValidationSchema = z.object({
   id: z.string().uuid(),
-  status: z.enum(['active', 'expired', 'archived']),
+  status: z.enum(["active", "expired", "archived"]),
   maxPhotos: z.number().min(1),
   totalPhotos: z.number().min(0),
   maxPhotosPerUser: z.number().min(1),
@@ -221,7 +221,7 @@ export function validateImageDimensions(
   width: number,
   height: number,
   maxDimension: number = UPLOAD_CONSTRAINTS.PHOTO.MAX_DIMENSION,
-  minDimension: number = UPLOAD_CONSTRAINTS.PHOTO.MIN_DIMENSION
+  minDimension: number = UPLOAD_CONSTRAINTS.PHOTO.MIN_DIMENSION,
 ): boolean {
   return (
     width >= minDimension &&
@@ -241,19 +241,19 @@ export function validateVideoDuration(duration: number): boolean {
 export function sanitizeFileName(fileName: string): string {
   // Remove or replace invalid characters
   return fileName
-    .replace(/[^a-zA-Z0-9._-]/g, '_')
-    .replace(/_{2,}/g, '_')
+    .replace(/[^a-zA-Z0-9._-]/g, "_")
+    .replace(/_{2,}/g, "_")
     .substring(0, 100); // Limit length
 }
 
 export function generateUniqueFileName(
   originalName: string,
-  prefix?: string
+  prefix?: string,
 ): string {
   const timestamp = Date.now();
-  const extension = originalName.split('.').pop() || 'jpg';
-  const sanitizedName = sanitizeFileName(originalName.replace(/\.[^/.]+$/, ''));
-  const prefixStr = prefix ? `${prefix}_` : '';
+  const extension = originalName.split(".").pop() || "jpg";
+  const sanitizedName = sanitizeFileName(originalName.replace(/\.[^/.]+$/, ""));
+  const prefixStr = prefix ? `${prefix}_` : "";
 
   return `${prefixStr}${sanitizedName}_${timestamp}.${extension}`;
 }
@@ -267,32 +267,32 @@ export function validateContributorInfo(info: {
 
   // Name validation
   if (!info.name || info.name.trim().length === 0) {
-    errors.push('Name is required');
+    errors.push("Name is required");
   } else if (info.name.length > 50) {
-    errors.push('Name must be less than 50 characters');
+    errors.push("Name must be less than 50 characters");
   } else if (
     !/^[a-zA-Z\s\u00C0-\u017F\u0100-\u017F\u0180-\u024F\u1E00-\u1EFF]+$/.test(
-      info.name
+      info.name,
     )
   ) {
-    errors.push('Name contains invalid characters');
+    errors.push("Name contains invalid characters");
   }
 
   // Email validation (optional)
   if (info.email && info.email.trim().length > 0) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(info.email)) {
-      errors.push('Invalid email format');
+      errors.push("Invalid email format");
     } else if (info.email.length > 100) {
-      errors.push('Email must be less than 100 characters');
+      errors.push("Email must be less than 100 characters");
     }
   }
 
   // Phone validation (optional)
   if (info.phone && info.phone.trim().length > 0) {
     const phoneRegex = /^[\+]?[1-9][\d]{0,15}$/;
-    if (!phoneRegex.test(info.phone.replace(/[\s\-\(\)]/g, ''))) {
-      errors.push('Invalid phone number format');
+    if (!phoneRegex.test(info.phone.replace(/[\s\-\(\)]/g, ""))) {
+      errors.push("Invalid phone number format");
     }
   }
 
@@ -305,7 +305,7 @@ export function validateContributorInfo(info: {
 export function validateUploadLimits(
   userLimits: Record<string, unknown>,
   eventLimits: Record<string, unknown>,
-  isVideo: boolean = false
+  isVideo: boolean = false,
 ): { isValid: boolean; errors: string[] } {
   const errors: string[] = [];
 
@@ -314,29 +314,29 @@ export function validateUploadLimits(
     if (
       (userLimits.videosUploadedToday as number) >= RATE_LIMITS.VIDEOS_PER_DAY
     ) {
-      errors.push('Daily video upload limit reached');
+      errors.push("Daily video upload limit reached");
     }
     if (
       (userLimits.videosUploadedThisHour as number) >=
       RATE_LIMITS.VIDEOS_PER_HOUR
     ) {
-      errors.push('Hourly video upload limit reached');
+      errors.push("Hourly video upload limit reached");
     }
     if (!eventLimits.hasVideoAddon) {
-      errors.push('Video uploads not enabled for this event');
+      errors.push("Video uploads not enabled for this event");
     }
   } else {
     // Photo limits
     if (
       (userLimits.photosUploadedToday as number) >= RATE_LIMITS.PHOTOS_PER_DAY
     ) {
-      errors.push('Daily photo upload limit reached');
+      errors.push("Daily photo upload limit reached");
     }
     if (
       (userLimits.photosUploadedThisHour as number) >=
       RATE_LIMITS.PHOTOS_PER_HOUR
     ) {
-      errors.push('Hourly photo upload limit reached');
+      errors.push("Hourly photo upload limit reached");
     }
   }
 
@@ -344,18 +344,18 @@ export function validateUploadLimits(
   if (
     (eventLimits.totalPhotos as number) >= (eventLimits.maxPhotos as number)
   ) {
-    errors.push('Event has reached maximum photo limit');
+    errors.push("Event has reached maximum photo limit");
   }
 
-  if ((eventLimits.status as string) !== 'active') {
-    errors.push('Event is not active');
+  if ((eventLimits.status as string) !== "active") {
+    errors.push("Event is not active");
   }
 
   if (
     eventLimits.expiresAt &&
     new Date(eventLimits.expiresAt as string) < new Date()
   ) {
-    errors.push('Event has expired');
+    errors.push("Event has expired");
   }
 
   return {
@@ -368,12 +368,12 @@ export function validateUploadLimits(
 export function containsInappropriateContent(text: string): boolean {
   // Basic content filtering - in production, use a proper content moderation service
   const inappropriateWords = [
-    'spam',
-    'scam',
-    'fake',
-    'hate',
-    'abuse',
-    'harassment',
+    "spam",
+    "scam",
+    "fake",
+    "hate",
+    "abuse",
+    "harassment",
   ];
 
   const lowerText = text.toLowerCase();
@@ -381,7 +381,7 @@ export function containsInappropriateContent(text: string): boolean {
 }
 
 export function validateImageContent(
-  file: File
+  file: File,
 ): Promise<{ isValid: boolean; reason?: string }> {
   return new Promise((resolve) => {
     const img = new Image();
@@ -395,7 +395,7 @@ export function validateImageContent(
         img.width < UPLOAD_CONSTRAINTS.PHOTO.MIN_DIMENSION ||
         img.height < UPLOAD_CONSTRAINTS.PHOTO.MIN_DIMENSION
       ) {
-        resolve({ isValid: false, reason: 'Image too small' });
+        resolve({ isValid: false, reason: "Image too small" });
         return;
       }
 
@@ -403,13 +403,13 @@ export function validateImageContent(
         img.width > UPLOAD_CONSTRAINTS.PHOTO.MAX_DIMENSION ||
         img.height > UPLOAD_CONSTRAINTS.PHOTO.MAX_DIMENSION
       ) {
-        resolve({ isValid: false, reason: 'Image too large' });
+        resolve({ isValid: false, reason: "Image too large" });
         return;
       }
 
       // Check if image is corrupted
       if (img.width === 0 || img.height === 0) {
-        resolve({ isValid: false, reason: 'Corrupted image' });
+        resolve({ isValid: false, reason: "Corrupted image" });
         return;
       }
 
@@ -418,7 +418,7 @@ export function validateImageContent(
 
     img.onerror = () => {
       URL.revokeObjectURL(url);
-      resolve({ isValid: false, reason: 'Invalid image file' });
+      resolve({ isValid: false, reason: "Invalid image file" });
     };
 
     img.src = url;

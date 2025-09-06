@@ -1,19 +1,19 @@
-'use client';
+"use client";
 
-import { notFound } from 'next/navigation';
-import Image from 'next/image';
-import { createClient } from '@/lib/supabase/client';
-import { Event } from '@/types/database';
-import { EVENT_TYPES } from '@/lib/validations/event';
-import { format } from 'date-fns';
-import { useEffect, useState } from 'react';
-import { LoadingSpinner } from '@/components/instamoments';
+import { notFound } from "next/navigation";
+import Image from "next/image";
+import { createClient } from "@/lib/supabase/client";
+import { Event } from "@/types/database";
+import { EVENT_TYPES } from "@/lib/validations/event";
+import { format } from "date-fns";
+import { useEffect, useState } from "react";
+import { LoadingSpinner } from "@/components/instamoments";
 
 interface PrintQRPageProps {
   params: { eventId: string };
   searchParams: {
-    layout?: 'simple' | 'detailed' | 'table-tent' | 'invitation';
-    size?: 'small' | 'medium' | 'large';
+    layout?: "simple" | "detailed" | "table-tent" | "invitation";
+    size?: "small" | "medium" | "large";
   };
 }
 
@@ -22,7 +22,7 @@ export default function PrintQRPage({
   searchParams,
 }: PrintQRPageProps) {
   const { eventId } = params;
-  const { layout = 'simple', size = 'medium' } = searchParams;
+  const { layout = "simple", size = "medium" } = searchParams;
   const [event, setEvent] = useState<Event | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -32,10 +32,10 @@ export default function PrintQRPage({
         const supabase = createClient();
 
         const { data: eventData, error } = await supabase
-          .from('events')
-          .select('*')
-          .eq('id', eventId)
-          .eq('status', 'active')
+          .from("events")
+          .select("*")
+          .eq("id", eventId)
+          .eq("status", "active")
           .single();
 
         if (error || !eventData) {
@@ -44,7 +44,7 @@ export default function PrintQRPage({
 
         setEvent(eventData);
       } catch (error) {
-        console.error('Error fetching event:', error);
+        console.error("Error fetching event:", error);
         notFound();
       } finally {
         setLoading(false);
@@ -74,9 +74,9 @@ export default function PrintQRPage({
 
   // Size configurations
   const sizeConfig = {
-    small: { qrSize: 200, containerWidth: 'w-64' },
-    medium: { qrSize: 300, containerWidth: 'w-80' },
-    large: { qrSize: 400, containerWidth: 'w-96' },
+    small: { qrSize: 200, containerWidth: "w-64" },
+    medium: { qrSize: 300, containerWidth: "w-80" },
+    large: { qrSize: 400, containerWidth: "w-96" },
   };
 
   const currentSize = sizeConfig[size];
@@ -125,7 +125,7 @@ export default function PrintQRPage({
       </div>
 
       {/* Layout Selection */}
-      {layout === 'simple' && (
+      {layout === "simple" && (
         <div className="print-container">
           <div className={`${currentSize.containerWidth} text-center`}>
             {/* Event Info */}
@@ -142,7 +142,7 @@ export default function PrintQRPage({
               )}
               {event.event_date && (
                 <p className="text-gray-600">
-                  {format(new Date(event.event_date), 'MMMM d, yyyy')}
+                  {format(new Date(event.event_date), "MMMM d, yyyy")}
                 </p>
               )}
               {event.location && (
@@ -180,7 +180,7 @@ export default function PrintQRPage({
         </div>
       )}
 
-      {layout === 'detailed' && (
+      {layout === "detailed" && (
         <div className="print-container">
           <div className="max-w-2xl w-full">
             {/* Header */}
@@ -202,7 +202,7 @@ export default function PrintQRPage({
               {event.event_date && (
                 <div>
                   <span className="font-semibold">Date:</span>
-                  <p>{format(new Date(event.event_date), 'MMMM d, yyyy')}</p>
+                  <p>{format(new Date(event.event_date), "MMMM d, yyyy")}</p>
                 </div>
               )}
               {event.location && (
@@ -284,7 +284,7 @@ export default function PrintQRPage({
         </div>
       )}
 
-      {layout === 'table-tent' && (
+      {layout === "table-tent" && (
         <div className="print-container">
           <div className="w-full max-w-md">
             {/* Table Tent Layout */}
@@ -330,7 +330,7 @@ export default function PrintQRPage({
         </div>
       )}
 
-      {layout === 'invitation' && (
+      {layout === "invitation" && (
         <div className="print-container">
           <div className="max-w-lg w-full">
             {/* Invitation Style */}
@@ -353,8 +353,8 @@ export default function PrintQRPage({
               <div className="text-center mb-8 space-y-2">
                 {event.event_date && (
                   <p className="text-gray-700">
-                    📅{' '}
-                    {format(new Date(event.event_date), 'EEEE, MMMM d, yyyy')}
+                    📅{" "}
+                    {format(new Date(event.event_date), "EEEE, MMMM d, yyyy")}
                   </p>
                 )}
                 {event.location && (

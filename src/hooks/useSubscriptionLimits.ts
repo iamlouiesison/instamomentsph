@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import {
   getSubscriptionLimits,
   canUploadPhoto,
@@ -10,7 +10,7 @@ import {
   getUpgradeRecommendations,
   type SubscriptionLimits,
   type EventLimits,
-} from '@/lib/business-logic/subscription-limits';
+} from "@/lib/business-logic/subscription-limits";
 
 interface UseSubscriptionLimitsProps {
   subscriptionTier: string;
@@ -47,7 +47,7 @@ export function useSubscriptionLimits({
       const expiration = calculateEventExpiration(
         eventCreatedAt,
         subscriptionTier,
-        customExpiresAt
+        customExpiresAt,
       );
       setEventLimits({
         ...expiration,
@@ -60,7 +60,7 @@ export function useSubscriptionLimits({
         subscriptionTier,
         currentPhotos,
         currentVideos,
-        expiration.daysRemaining
+        expiration.daysRemaining,
       );
       setUpgradeRecommendations(recommendations);
     }
@@ -74,17 +74,17 @@ export function useSubscriptionLimits({
   ]);
 
   const checkPhotoUpload = () => {
-    if (!limits) return { allowed: false, reason: 'Loading...' };
+    if (!limits) return { allowed: false, reason: "Loading..." };
     return canUploadPhoto(subscriptionTier, currentPhotos);
   };
 
   const checkVideoUpload = () => {
-    if (!limits) return { allowed: false, reason: 'Loading...' };
+    if (!limits) return { allowed: false, reason: "Loading..." };
     return canUploadVideo(subscriptionTier, currentVideos, hasVideoAddon);
   };
 
   const checkUserPhotoUpload = (userPhotoCount: number) => {
-    if (!limits) return { allowed: false, reason: 'Loading...' };
+    if (!limits) return { allowed: false, reason: "Loading..." };
     return canUserUploadPhoto(subscriptionTier, userPhotoCount);
   };
 

@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import * as React from 'react';
-import { Calendar as CalendarIcon } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { Input } from '@/components/ui/input';
+import * as React from "react";
+import { Calendar as CalendarIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Input } from "@/components/ui/input";
 
 interface DatePickerProps {
   value?: Date;
@@ -18,24 +18,24 @@ interface DatePickerProps {
 export function DatePicker({
   value,
   onChange,
-  placeholder = 'Pick a date',
+  placeholder = "Pick a date",
   disabled = false,
   className,
   id,
   name,
 }: DatePickerProps) {
   const [selectedDate, setSelectedDate] = React.useState<Date | undefined>(
-    value
+    value,
   );
   const [isOpen, setIsOpen] = React.useState(false);
   const buttonRef = React.useRef<HTMLButtonElement>(null);
   const popoverRef = React.useRef<HTMLDivElement>(null);
 
   const formatDate = (date: Date) => {
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
     });
   };
 
@@ -74,11 +74,11 @@ export function DatePicker({
     };
 
     if (isOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener("mousedown", handleClickOutside);
     }
 
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [isOpen]);
 
@@ -95,11 +95,11 @@ export function DatePicker({
         onClick={handleButtonClick}
         disabled={disabled}
         className={cn(
-          'flex h-11 w-full items-center justify-start rounded-md border border-input bg-background px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50',
-          'focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]',
-          'aria-invalid:ring-destructive/20 aria-invalid:border-destructive',
-          !selectedDate && 'text-muted-foreground',
-          className
+          "flex h-11 w-full items-center justify-start rounded-md border border-input bg-background px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50",
+          "focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]",
+          "aria-invalid:ring-destructive/20 aria-invalid:border-destructive",
+          !selectedDate && "text-muted-foreground",
+          className,
         )}
       >
         <CalendarIcon className="mr-2 h-4 w-4" />
@@ -116,7 +116,7 @@ export function DatePicker({
             <Input
               type="date"
               value={
-                selectedDate ? selectedDate.toISOString().split('T')[0] : ''
+                selectedDate ? selectedDate.toISOString().split("T")[0] : ""
               }
               onChange={handleDateChange}
               onClick={handleInputClick}

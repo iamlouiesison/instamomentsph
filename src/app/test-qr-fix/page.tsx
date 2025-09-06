@@ -1,23 +1,23 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import Image from 'next/image';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import React, { useState, useEffect } from "react";
+import Image from "next/image";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   CheckCircle,
   AlertCircle,
   QrCode,
   Download,
   RefreshCw,
-} from 'lucide-react';
+} from "lucide-react";
 
 // Test with the new event ID
-const TEST_EVENT_ID = '518def38-942c-451d-bb5e-148630bc21e7';
+const TEST_EVENT_ID = "518def38-942c-451d-bb5e-148630bc21e7";
 
 export default function TestQRFixPage() {
-  const [qrCodeUrl, setQrCodeUrl] = useState<string>('');
+  const [qrCodeUrl, setQrCodeUrl] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [testResults, setTestResults] = useState<{
@@ -37,12 +37,12 @@ export default function TestQRFixPage() {
       setError(null);
 
       const response = await fetch(
-        `/api/qr/${TEST_EVENT_ID}?format=png&size=256&branded=true`
+        `/api/qr/${TEST_EVENT_ID}?format=png&size=256&branded=true`,
       );
 
       if (!response.ok) {
         throw new Error(
-          `PNG API returned ${response.status}: ${response.statusText}`
+          `PNG API returned ${response.status}: ${response.statusText}`,
         );
       }
 
@@ -52,8 +52,8 @@ export default function TestQRFixPage() {
 
       setTestResults((prev) => ({ ...prev, pngTest: true, displayTest: true }));
     } catch (err) {
-      console.error('PNG QR Code test failed:', err);
-      setError(err instanceof Error ? err.message : 'PNG test failed');
+      console.error("PNG QR Code test failed:", err);
+      setError(err instanceof Error ? err.message : "PNG test failed");
       setTestResults((prev) => ({
         ...prev,
         pngTest: false,
@@ -68,22 +68,22 @@ export default function TestQRFixPage() {
   const testSVGQRCode = async () => {
     try {
       const response = await fetch(
-        `/api/qr/${TEST_EVENT_ID}?format=svg&size=256&branded=true`
+        `/api/qr/${TEST_EVENT_ID}?format=svg&size=256&branded=true`,
       );
 
       if (!response.ok) {
         throw new Error(
-          `SVG API returned ${response.status}: ${response.statusText}`
+          `SVG API returned ${response.status}: ${response.statusText}`,
         );
       }
 
       const svgText = await response.text();
-      console.log('SVG QR Code received:', svgText.substring(0, 100) + '...');
+      console.log("SVG QR Code received:", svgText.substring(0, 100) + "...");
 
       setTestResults((prev) => ({ ...prev, svgTest: true }));
     } catch (err) {
-      console.error('SVG QR Code test failed:', err);
-      setError(err instanceof Error ? err.message : 'SVG test failed');
+      console.error("SVG QR Code test failed:", err);
+      setError(err instanceof Error ? err.message : "SVG test failed");
       setTestResults((prev) => ({ ...prev, svgTest: false }));
     }
   };
@@ -92,11 +92,11 @@ export default function TestQRFixPage() {
   const testDownload = async () => {
     try {
       const response = await fetch(
-        `/api/qr/${TEST_EVENT_ID}?format=png&size=256&branded=true`
+        `/api/qr/${TEST_EVENT_ID}?format=png&size=256&branded=true`,
       );
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
+      const a = document.createElement("a");
       a.href = url;
       a.download = `qr-${TEST_EVENT_ID}.png`;
       document.body.appendChild(a);
@@ -104,8 +104,8 @@ export default function TestQRFixPage() {
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
     } catch (err) {
-      console.error('Download test failed:', err);
-      setError(err instanceof Error ? err.message : 'Download failed');
+      console.error("Download test failed:", err);
+      setError(err instanceof Error ? err.message : "Download failed");
     }
   };
 
@@ -116,10 +116,10 @@ export default function TestQRFixPage() {
   }, []);
 
   const allTestsPassed = Object.values(testResults).every(
-    (result) => result === true
+    (result) => result === true,
   );
   const anyTestFailed = Object.values(testResults).some(
-    (result) => result === false
+    (result) => result === false,
   );
 
   return (
@@ -166,10 +166,10 @@ export default function TestQRFixPage() {
                 )}
                 <span className="text-sm">
                   {testResults.pngTest === null
-                    ? 'Testing...'
+                    ? "Testing..."
                     : testResults.pngTest
-                      ? 'Passed'
-                      : 'Failed'}
+                      ? "Passed"
+                      : "Failed"}
                 </span>
               </div>
             </CardContent>
@@ -193,10 +193,10 @@ export default function TestQRFixPage() {
                 )}
                 <span className="text-sm">
                   {testResults.svgTest === null
-                    ? 'Testing...'
+                    ? "Testing..."
                     : testResults.svgTest
-                      ? 'Passed'
-                      : 'Failed'}
+                      ? "Passed"
+                      : "Failed"}
                 </span>
               </div>
             </CardContent>
@@ -220,10 +220,10 @@ export default function TestQRFixPage() {
                 )}
                 <span className="text-sm">
                   {testResults.displayTest === null
-                    ? 'Testing...'
+                    ? "Testing..."
                     : testResults.displayTest
-                      ? 'Passed'
-                      : 'Failed'}
+                      ? "Passed"
+                      : "Failed"}
                 </span>
               </div>
             </CardContent>

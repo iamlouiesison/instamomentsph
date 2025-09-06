@@ -1,2 +1,2 @@
-export { MainNavigation } from './MainNavigation';
-export { GlobalNavigation } from './GlobalNavigation';
+export { MainNavigation } from "./MainNavigation";
+export { GlobalNavigation } from "./GlobalNavigation";

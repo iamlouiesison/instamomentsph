@@ -1,10 +1,10 @@
-import { Suspense } from 'react';
-import { createClient } from '@/lib/supabase/server';
-import { Event } from '@/types/database';
+import { Suspense } from "react";
+import { createClient } from "@/lib/supabase/server";
+import { Event } from "@/types/database";
 // import { GalleryPage } from '@/components/features/gallery/GalleryPage';
-import { LoadingStates } from '@/components/instamoments/loading-states';
-import { PublicGalleryWrapper } from '@/components/features/gallery/PublicGalleryWrapper';
-import { PrivateGalleryNotification } from '@/components/instamoments/private-gallery-notification';
+import { LoadingStates } from "@/components/instamoments/loading-states";
+import { PublicGalleryWrapper } from "@/components/features/gallery/PublicGalleryWrapper";
+import { PrivateGalleryNotification } from "@/components/instamoments/private-gallery-notification";
 
 interface GalleryPageProps {
   params: Promise<{ slug: string }>;
@@ -21,18 +21,18 @@ export async function generateMetadata({
   const { slug } = await params;
 
   const { data: event } = await supabase
-    .from('events')
+    .from("events")
     .select(
-      'name, description, event_type, event_date, location, custom_message'
+      "name, description, event_type, event_date, location, custom_message",
     )
-    .eq('gallery_slug', slug)
-    .eq('status', 'active')
+    .eq("gallery_slug", slug)
+    .eq("status", "active")
     .single();
 
   if (!event) {
     return {
-      title: 'Gallery Not Found - InstaMoments',
-      description: 'The requested gallery could not be found.',
+      title: "Gallery Not Found - InstaMoments",
+      description: "The requested gallery could not be found.",
     };
   }
 
@@ -45,10 +45,10 @@ export async function generateMetadata({
       title: `${event.name} - InstaMoments Gallery`,
       description:
         event.description || `Join the photo sharing for ${event.name}!`,
-      type: 'website',
+      type: "website",
     },
     twitter: {
-      card: 'summary_large_image',
+      card: "summary_large_image",
       title: `${event.name} - InstaMoments Gallery`,
       description:
         event.description || `Join the photo sharing for ${event.name}!`,
@@ -66,13 +66,13 @@ async function checkEventExists(slug: string): Promise<{
   try {
     // Use our special API endpoint that can check event existence without RLS restrictions
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/gallery/${slug}/check`,
+      `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/api/gallery/${slug}/check`,
       {
-        method: 'GET',
+        method: "GET",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
-      }
+      },
     );
 
     if (!response.ok) {
@@ -87,7 +87,7 @@ async function checkEventExists(slug: string): Promise<{
 
     return result.data;
   } catch (error) {
-    console.error('Error checking event existence:', error);
+    console.error("Error checking event existence:", error);
     return { exists: false };
   }
 }
@@ -97,10 +97,10 @@ async function getEventData(slug: string): Promise<Event | null> {
   const supabase = await createClient();
 
   const { data: event, error } = await supabase
-    .from('events')
-    .select('*')
-    .eq('gallery_slug', slug)
-    .eq('status', 'active')
+    .from("events")
+    .select("*")
+    .eq("gallery_slug", slug)
+    .eq("status", "active")
     .single();
 
   if (error || !event) {
@@ -114,14 +114,14 @@ async function getEventData(slug: string): Promise<Event | null> {
 async function trackGalleryView(
   eventId: string,
   userAgent?: string,
-  ipAddress?: string
+  ipAddress?: string,
 ) {
   try {
     const supabase = await createClient();
 
-    await supabase.from('analytics_events').insert({
+    await supabase.from("analytics_events").insert({
       event_id: eventId,
-      event_type: 'gallery_view',
+      event_type: "gallery_view",
       properties: {
         user_agent: userAgent,
         ip_address: ipAddress,
@@ -131,7 +131,7 @@ async function trackGalleryView(
       ip_address: ipAddress,
     });
   } catch (error) {
-    console.error('Failed to track gallery view:', error);
+    console.error("Failed to track gallery view:", error);
     // Don't fail the page load if analytics fails
   }
 }

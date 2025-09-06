@@ -1,16 +1,16 @@
-'use client';
+"use client";
 
-import { useState, useEffect, useCallback, useRef } from 'react';
-import { createClient } from '@/lib/supabase/client';
-import { Photo, Video } from '@/types/database';
-import { RealtimeChannel } from '@supabase/supabase-js';
+import { useState, useEffect, useCallback, useRef } from "react";
+import { createClient } from "@/lib/supabase/client";
+import { Photo, Video } from "@/types/database";
+import { RealtimeChannel } from "@supabase/supabase-js";
 
 interface GalleryItem extends Photo {
-  type: 'photo';
+  type: "photo";
 }
 
 interface VideoItem extends Video {
-  type: 'video';
+  type: "video";
 }
 
 type MediaItem = GalleryItem | VideoItem;
@@ -24,7 +24,7 @@ interface GalleryStats {
 interface UseGalleryRealtimeOptions {
   search?: string;
   contributor?: string;
-  sortBy?: 'newest' | 'oldest' | 'contributor';
+  sortBy?: "newest" | "oldest" | "contributor";
   limit?: number;
 }
 
@@ -42,9 +42,9 @@ interface UseGalleryRealtimeReturn {
 
 export function useGalleryRealtime(
   eventId: string,
-  options: UseGalleryRealtimeOptions = {}
+  options: UseGalleryRealtimeOptions = {},
 ): UseGalleryRealtimeReturn {
-  const { sortBy = 'newest', limit = 20 } = options;
+  const { sortBy = "newest", limit = 20 } = options;
 
   const [items, setItems] = useState<MediaItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -89,26 +89,26 @@ export function useGalleryRealtime(
             page: page.toString(),
             limit: limit.toString(),
             sortBy: sortBy,
-            type: 'photos', // Only fetch photos for now
+            type: "photos", // Only fetch photos for now
           });
 
           // Add search and contributor filters if provided
           if (options.search) {
-            params.set('search', options.search);
+            params.set("search", options.search);
           }
           if (options.contributor) {
-            params.set('contributor', options.contributor);
+            params.set("contributor", options.contributor);
           }
 
           // Fetch data from API endpoint
           const response = await fetch(
             `/api/gallery/${gallerySlug}/photos?${params.toString()}`,
             {
-              credentials: 'include',
+              credentials: "include",
               headers: {
-                'Content-Type': 'application/json',
+                "Content-Type": "application/json",
               },
-            }
+            },
           );
 
           if (!response.ok) {
@@ -119,7 +119,7 @@ export function useGalleryRealtime(
 
           if (!result.success) {
             throw new Error(
-              result.error?.message || 'Failed to fetch gallery data'
+              result.error?.message || "Failed to fetch gallery data",
             );
           }
 
@@ -130,20 +130,20 @@ export function useGalleryRealtime(
             (item: Record<string, unknown>) => ({
               id: item.id,
               event_id: eventId,
-              contributor_name: item.uploaded_by || 'Unknown',
-              contributor_email: '',
-              file_name: (item.url as string)?.split('/').pop() || '',
+              contributor_name: item.uploaded_by || "Unknown",
+              contributor_email: "",
+              file_name: (item.url as string)?.split("/").pop() || "",
               file_url: item.url,
               thumbnail_url: item.thumbnail_url,
               file_size: item.file_size || 0,
-              mime_type: 'image/jpeg', // Default for now
-              caption: item.caption || '',
+              mime_type: "image/jpeg", // Default for now
+              caption: item.caption || "",
               uploaded_at: item.created_at,
               is_approved: true,
               exif_data: null,
               type: item.type,
-              message: item.type === 'video' ? item.caption : undefined,
-            })
+              message: item.type === "video" ? item.caption : undefined,
+            }),
           );
 
           if (reset) {
@@ -169,9 +169,9 @@ export function useGalleryRealtime(
             totalContributors: uniqueContributors.length,
           });
         } catch (err) {
-          console.error('Error fetching gallery data:', err);
+          console.error("Error fetching gallery data:", err);
           setError(
-            err instanceof Error ? err.message : 'Failed to load gallery'
+            err instanceof Error ? err.message : "Failed to load gallery",
           );
         } finally {
           setLoading(false);
@@ -179,7 +179,7 @@ export function useGalleryRealtime(
         }
       }, 100); // 100ms debounce
     },
-    [eventId, limit, sortBy, options.search, options.contributor]
+    [eventId, limit, sortBy, options.search, options.contributor],
   );
 
   // Load more data
@@ -209,17 +209,17 @@ export function useGalleryRealtime(
     const channel = supabase
       .channel(`gallery-${eventId}`)
       .on(
-        'postgres_changes',
+        "postgres_changes",
         {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'photos',
+          event: "INSERT",
+          schema: "public",
+          table: "photos",
           filter: `event_id=eq.${eventId}`,
         },
         (payload) => {
           const newPhoto: GalleryItem = {
             ...(payload.new as Photo),
-            type: 'photo' as const,
+            type: "photo" as const,
           };
 
           setItems((prev) => {
@@ -228,7 +228,7 @@ export function useGalleryRealtime(
             if (exists) return prev;
 
             // Add to beginning for newest first, or end for oldest first
-            if (sortBy === 'newest') {
+            if (sortBy === "newest") {
               return [newPhoto, ...prev];
             } else {
               return [...prev, newPhoto];
@@ -248,20 +248,20 @@ export function useGalleryRealtime(
             }
             return prev;
           });
-        }
+        },
       )
       .on(
-        'postgres_changes',
+        "postgres_changes",
         {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'videos',
+          event: "INSERT",
+          schema: "public",
+          table: "videos",
           filter: `event_id=eq.${eventId}`,
         },
         (payload) => {
           const newVideo: VideoItem = {
             ...(payload.new as Video),
-            type: 'video' as const,
+            type: "video" as const,
             message: (payload.new as Video).message,
           };
 
@@ -271,7 +271,7 @@ export function useGalleryRealtime(
             if (exists) return prev;
 
             // Add to beginning for newest first, or end for oldest first
-            if (sortBy === 'newest') {
+            if (sortBy === "newest") {
               return [newVideo, ...prev];
             } else {
               return [...prev, newVideo];
@@ -291,57 +291,57 @@ export function useGalleryRealtime(
             }
             return prev;
           });
-        }
+        },
       )
       .on(
-        'postgres_changes',
+        "postgres_changes",
         {
-          event: 'UPDATE',
-          schema: 'public',
-          table: 'photos',
+          event: "UPDATE",
+          schema: "public",
+          table: "photos",
           filter: `event_id=eq.${eventId}`,
         },
         (payload) => {
           const updatedPhoto: GalleryItem = {
             ...(payload.new as Photo),
-            type: 'photo' as const,
+            type: "photo" as const,
           };
 
           setItems((prev) =>
             prev.map((item) =>
-              item.id === updatedPhoto.id ? updatedPhoto : item
-            )
+              item.id === updatedPhoto.id ? updatedPhoto : item,
+            ),
           );
-        }
+        },
       )
       .on(
-        'postgres_changes',
+        "postgres_changes",
         {
-          event: 'UPDATE',
-          schema: 'public',
-          table: 'videos',
+          event: "UPDATE",
+          schema: "public",
+          table: "videos",
           filter: `event_id=eq.${eventId}`,
         },
         (payload) => {
           const updatedVideo: VideoItem = {
             ...(payload.new as Video),
-            type: 'video' as const,
+            type: "video" as const,
             message: (payload.new as Video).message,
           };
 
           setItems((prev) =>
             prev.map((item) =>
-              item.id === updatedVideo.id ? updatedVideo : item
-            )
+              item.id === updatedVideo.id ? updatedVideo : item,
+            ),
           );
-        }
+        },
       )
       .on(
-        'postgres_changes',
+        "postgres_changes",
         {
-          event: 'DELETE',
-          schema: 'public',
-          table: 'photos',
+          event: "DELETE",
+          schema: "public",
+          table: "photos",
           filter: `event_id=eq.${eventId}`,
         },
         (payload) => {
@@ -352,14 +352,14 @@ export function useGalleryRealtime(
             ...prev,
             totalPhotos: Math.max(0, prev.totalPhotos - 1),
           }));
-        }
+        },
       )
       .on(
-        'postgres_changes',
+        "postgres_changes",
         {
-          event: 'DELETE',
-          schema: 'public',
-          table: 'videos',
+          event: "DELETE",
+          schema: "public",
+          table: "videos",
           filter: `event_id=eq.${eventId}`,
         },
         (payload) => {
@@ -370,14 +370,14 @@ export function useGalleryRealtime(
             ...prev,
             totalVideos: Math.max(0, prev.totalVideos - 1),
           }));
-        }
+        },
       )
       .subscribe((status) => {
-        setIsConnected(status === 'SUBSCRIBED');
+        setIsConnected(status === "SUBSCRIBED");
 
-        if (status === 'CHANNEL_ERROR') {
-          console.error('Realtime channel error');
-          setError('Connection error. Please refresh the page.');
+        if (status === "CHANNEL_ERROR") {
+          console.error("Realtime channel error");
+          setError("Connection error. Please refresh the page.");
         }
       });
 
@@ -417,12 +417,12 @@ export function useGalleryRealtime(
       setIsConnected(false);
     };
 
-    window.addEventListener('online', handleOnline);
-    window.addEventListener('offline', handleOffline);
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
 
     return () => {
-      window.removeEventListener('online', handleOnline);
-      window.removeEventListener('offline', handleOffline);
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
       if (fetchTimeoutRef.current) {
         clearTimeout(fetchTimeoutRef.current);
         fetchTimeoutRef.current = null;

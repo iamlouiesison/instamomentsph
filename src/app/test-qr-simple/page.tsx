@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import Image from 'next/image';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import React, { useState, useEffect } from "react";
+import Image from "next/image";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   CheckCircle,
   AlertCircle,
@@ -12,16 +12,16 @@ import {
   QrCode,
   Download,
   Printer,
-} from 'lucide-react';
+} from "lucide-react";
 import {
   generateQRCodeDataUrl,
   generateQRCodeSVG,
   generateQRCodeBuffer,
-} from '@/lib/qr-code';
+} from "@/lib/qr-code";
 
 export default function TestQRSimplePage() {
-  const [qrCodeDataUrl, setQrCodeDataUrl] = useState<string>('');
-  const [qrCodeSvg, setQrCodeSvg] = useState<string>('');
+  const [qrCodeDataUrl, setQrCodeDataUrl] = useState<string>("");
+  const [qrCodeSvg, setQrCodeSvg] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [testResults, setTestResults] = useState<{
@@ -34,7 +34,7 @@ export default function TestQRSimplePage() {
     buffer: null,
   });
 
-  const testUrl = 'https://instamoments.ph/gallery/test-wedding-2024';
+  const testUrl = "https://instamoments.ph/gallery/test-wedding-2024";
 
   // Test QR code generation functions
   const testQRCodeGeneration = async () => {
@@ -48,7 +48,7 @@ export default function TestQRSimplePage() {
         setQrCodeDataUrl(dataUrl);
         setTestResults((prev) => ({ ...prev, dataUrl: true }));
       } catch (err) {
-        console.error('Data URL generation failed:', err);
+        console.error("Data URL generation failed:", err);
         setTestResults((prev) => ({ ...prev, dataUrl: false }));
       }
 
@@ -58,22 +58,22 @@ export default function TestQRSimplePage() {
         setQrCodeSvg(svg);
         setTestResults((prev) => ({ ...prev, svg: true }));
       } catch (err) {
-        console.error('SVG generation failed:', err);
+        console.error("SVG generation failed:", err);
         setTestResults((prev) => ({ ...prev, svg: false }));
       }
 
       // Test Buffer generation
       try {
         const buffer = await generateQRCodeBuffer(testUrl);
-        console.log('Buffer generated successfully, size:', buffer.length);
+        console.log("Buffer generated successfully, size:", buffer.length);
         setTestResults((prev) => ({ ...prev, buffer: true }));
       } catch (err) {
-        console.error('Buffer generation failed:', err);
+        console.error("Buffer generation failed:", err);
         setTestResults((prev) => ({ ...prev, buffer: false }));
       }
     } catch (err) {
-      console.error('QR Code generation test failed:', err);
-      setError(err instanceof Error ? err.message : 'Unknown error');
+      console.error("QR Code generation test failed:", err);
+      setError(err instanceof Error ? err.message : "Unknown error");
     } finally {
       setIsLoading(false);
     }
@@ -83,22 +83,22 @@ export default function TestQRSimplePage() {
   const testDownload = async () => {
     try {
       if (!qrCodeDataUrl) {
-        throw new Error('No QR code data available');
+        throw new Error("No QR code data available");
       }
 
       const response = await fetch(qrCodeDataUrl);
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
+      const a = document.createElement("a");
       a.href = url;
-      a.download = 'test-qr-code.png';
+      a.download = "test-qr-code.png";
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
     } catch (err) {
-      console.error('Download test failed:', err);
-      setError(err instanceof Error ? err.message : 'Download failed');
+      console.error("Download test failed:", err);
+      setError(err instanceof Error ? err.message : "Download failed");
     }
   };
 
@@ -106,10 +106,10 @@ export default function TestQRSimplePage() {
   const testPrint = () => {
     try {
       if (!qrCodeDataUrl) {
-        throw new Error('No QR code data available');
+        throw new Error("No QR code data available");
       }
 
-      const printWindow = window.open('', '_blank');
+      const printWindow = window.open("", "_blank");
       if (printWindow) {
         const printContent = `
           <!DOCTYPE html>
@@ -145,8 +145,8 @@ export default function TestQRSimplePage() {
         printWindow.print();
       }
     } catch (err) {
-      console.error('Print test failed:', err);
-      setError(err instanceof Error ? err.message : 'Print failed');
+      console.error("Print test failed:", err);
+      setError(err instanceof Error ? err.message : "Print failed");
     }
   };
 
@@ -156,10 +156,10 @@ export default function TestQRSimplePage() {
   }, []);
 
   const allTestsPassed = Object.values(testResults).every(
-    (result) => result === true
+    (result) => result === true,
   );
   const anyTestFailed = Object.values(testResults).some(
-    (result) => result === false
+    (result) => result === false,
   );
 
   return (
@@ -195,10 +195,10 @@ export default function TestQRSimplePage() {
                 )}
                 <span className="text-sm">
                   {testResults.dataUrl === null
-                    ? 'Testing...'
+                    ? "Testing..."
                     : testResults.dataUrl
-                      ? 'Passed'
-                      : 'Failed'}
+                      ? "Passed"
+                      : "Failed"}
                 </span>
               </div>
             </CardContent>
@@ -222,10 +222,10 @@ export default function TestQRSimplePage() {
                 )}
                 <span className="text-sm">
                   {testResults.svg === null
-                    ? 'Testing...'
+                    ? "Testing..."
                     : testResults.svg
-                      ? 'Passed'
-                      : 'Failed'}
+                      ? "Passed"
+                      : "Failed"}
                 </span>
               </div>
             </CardContent>
@@ -249,10 +249,10 @@ export default function TestQRSimplePage() {
                 )}
                 <span className="text-sm">
                   {testResults.buffer === null
-                    ? 'Testing...'
+                    ? "Testing..."
                     : testResults.buffer
-                      ? 'Passed'
-                      : 'Failed'}
+                      ? "Passed"
+                      : "Failed"}
                 </span>
               </div>
             </CardContent>
@@ -339,7 +339,7 @@ export default function TestQRSimplePage() {
             disabled={isLoading}
             variant="outline"
           >
-            {isLoading ? 'Testing...' : 'Test Again'}
+            {isLoading ? "Testing..." : "Test Again"}
           </Button>
           <Button
             onClick={testDownload}

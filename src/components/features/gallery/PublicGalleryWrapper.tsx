@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import React, { useEffect, useState } from 'react';
-import { Event } from '@/types/database';
-import { GalleryPage } from './GalleryPage';
-import { useAuth } from '@/hooks/useAuth';
+import React, { useEffect, useState } from "react";
+import { Event } from "@/types/database";
+import { GalleryPage } from "./GalleryPage";
+import { useAuth } from "@/hooks/useAuth";
 
 interface PublicGalleryWrapperProps {
   event: Event & { host?: Record<string, unknown> };
@@ -17,7 +17,7 @@ export function PublicGalleryWrapper({ event }: PublicGalleryWrapperProps) {
     // If we have a user and not loading, we can initialize immediately
     if (user && !loading) {
       console.log(
-        '🔄 PublicGalleryWrapper: User found, initializing immediately'
+        "🔄 PublicGalleryWrapper: User found, initializing immediately",
       );
       setIsAuthInitialized(true);
       return;
@@ -26,7 +26,7 @@ export function PublicGalleryWrapper({ event }: PublicGalleryWrapperProps) {
     // If we're not loading and no user, we can also initialize
     if (!loading && !user) {
       console.log(
-        '🔄 PublicGalleryWrapper: No user and not loading, initializing'
+        "🔄 PublicGalleryWrapper: No user and not loading, initializing",
       );
       setIsAuthInitialized(true);
       return;
@@ -35,12 +35,12 @@ export function PublicGalleryWrapper({ event }: PublicGalleryWrapperProps) {
     // Give auth state time to initialize with a shorter timeout
     const timer = setTimeout(() => {
       console.log(
-        '🔄 PublicGalleryWrapper: Auth initialization timeout reached',
+        "🔄 PublicGalleryWrapper: Auth initialization timeout reached",
         {
           hasUser: !!user,
           loading,
           timestamp: new Date().toISOString(),
-        }
+        },
       );
       setIsAuthInitialized(true);
     }, 1000); // Reduced to 1 second

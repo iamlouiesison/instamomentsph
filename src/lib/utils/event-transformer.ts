@@ -1,7 +1,7 @@
-import { Database } from '@/types/database';
+import { Database } from "@/types/database";
 
 // Database Event type (snake_case)
-type DatabaseEvent = Database['public']['Tables']['events']['Row'];
+type DatabaseEvent = Database["public"]["Tables"]["events"]["Row"];
 
 // Frontend Event interface (camelCase)
 export interface FrontendEvent {
@@ -9,14 +9,14 @@ export interface FrontendEvent {
   name: string;
   description?: string;
   eventType:
-    | 'wedding'
-    | 'birthday'
-    | 'debut'
-    | 'christening'
-    | 'graduation'
-    | 'anniversary'
-    | 'corporate'
-    | 'other';
+    | "wedding"
+    | "birthday"
+    | "debut"
+    | "christening"
+    | "graduation"
+    | "anniversary"
+    | "corporate"
+    | "other";
   eventDate?: string;
   location?: string;
   gallerySlug: string;
@@ -24,7 +24,7 @@ export interface FrontendEvent {
   totalPhotos: number;
   totalVideos: number;
   totalContributors: number;
-  status: 'active' | 'expired' | 'archived';
+  status: "active" | "expired" | "archived";
   createdAt: string;
   expiresAt?: string;
   hasVideoAddon: boolean;
@@ -35,7 +35,7 @@ export interface FrontendEvent {
  * Transform database event data (snake_case) to frontend event interface (camelCase)
  */
 export function transformDatabaseEventToFrontend(
-  dbEvent: DatabaseEvent
+  dbEvent: DatabaseEvent,
 ): FrontendEvent {
   return {
     id: dbEvent.id,
@@ -45,7 +45,7 @@ export function transformDatabaseEventToFrontend(
     eventDate: dbEvent.event_date || undefined,
     location: dbEvent.location || undefined,
     gallerySlug: dbEvent.gallery_slug,
-    subscriptionTier: dbEvent.subscription_tier || 'free',
+    subscriptionTier: dbEvent.subscription_tier || "free",
     totalPhotos: dbEvent.total_photos,
     totalVideos: dbEvent.total_videos,
     totalContributors: dbEvent.total_contributors,
@@ -65,7 +65,7 @@ export function transformDatabaseEventToFrontend(
  * Transform array of database events to frontend events
  */
 export function transformDatabaseEventsToFrontend(
-  dbEvents: DatabaseEvent[]
+  dbEvents: DatabaseEvent[],
 ): FrontendEvent[] {
   return dbEvents.map(transformDatabaseEventToFrontend);
 }

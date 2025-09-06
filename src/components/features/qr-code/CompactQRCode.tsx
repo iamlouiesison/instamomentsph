@@ -1,39 +1,39 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import Image from 'next/image';
-import { Button } from '@/components/ui/button';
-import { LoadingSpinner } from '@/components/instamoments';
+import React, { useState, useEffect } from "react";
+import Image from "next/image";
+import { Button } from "@/components/ui/button";
+import { LoadingSpinner } from "@/components/instamoments";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
-import { QrCode, Download, Share2, Copy, ExternalLink } from 'lucide-react';
-import { FrontendEvent } from '@/lib/utils/event-transformer';
-import { toast } from 'sonner';
+} from "@/components/ui/dialog";
+import { QrCode, Download, Share2, Copy, ExternalLink } from "lucide-react";
+import { FrontendEvent } from "@/lib/utils/event-transformer";
+import { toast } from "sonner";
 
 interface CompactQRCodeProps {
   event: FrontendEvent;
-  size?: 'small' | 'medium';
+  size?: "small" | "medium";
   className?: string;
 }
 
 export function CompactQRCode({
   event,
-  size = 'small',
-  className = '',
+  size = "small",
+  className = "",
 }: CompactQRCodeProps) {
-  const [qrCodeUrl, setQrCodeUrl] = useState<string>('');
+  const [qrCodeUrl, setQrCodeUrl] = useState<string>("");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   // Size configurations
   const sizeConfig = {
-    small: { qrSize: 64, containerSize: 'w-16 h-16' },
-    medium: { qrSize: 96, containerSize: 'w-24 h-24' },
+    small: { qrSize: 64, containerSize: "w-16 h-16" },
+    medium: { qrSize: 96, containerSize: "w-24 h-24" },
   };
 
   const currentSize = sizeConfig[size];
@@ -46,16 +46,16 @@ export function CompactQRCode({
         setError(null);
 
         const params = new URLSearchParams({
-          format: 'png',
+          format: "png",
           size: currentSize.qrSize.toString(),
-          branded: 'true',
+          branded: "true",
         });
 
         const qrUrl = `/api/qr/${event.id}?${params.toString()}`;
         setQrCodeUrl(qrUrl);
       } catch (err) {
-        console.error('Error generating QR code:', err);
-        setError('Failed to generate QR code');
+        console.error("Error generating QR code:", err);
+        setError("Failed to generate QR code");
       } finally {
         setIsLoading(false);
       }
@@ -69,10 +69,10 @@ export function CompactQRCode({
     try {
       const galleryUrl = `${window.location.origin}/gallery/${event.gallerySlug}`;
       await navigator.clipboard.writeText(galleryUrl);
-      toast.success('Gallery URL copied to clipboard');
+      toast.success("Gallery URL copied to clipboard");
     } catch (err) {
-      console.error('Copy error:', err);
-      toast.error('Failed to copy URL');
+      console.error("Copy error:", err);
+      toast.error("Failed to copy URL");
     }
   };
 
@@ -92,7 +92,7 @@ export function CompactQRCode({
         await handleCopyUrl();
       }
     } catch (err) {
-      console.error('Share error:', err);
+      console.error("Share error:", err);
       // Fallback to copying URL
       await handleCopyUrl();
     }
@@ -102,20 +102,20 @@ export function CompactQRCode({
   const handleDownload = async () => {
     try {
       const params = new URLSearchParams({
-        format: 'png',
-        size: '256',
-        branded: 'true',
+        format: "png",
+        size: "256",
+        branded: "true",
       });
 
       const response = await fetch(`/api/qr/${event.id}?${params.toString()}`);
 
       if (!response.ok) {
-        throw new Error('Failed to download QR code');
+        throw new Error("Failed to download QR code");
       }
 
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
+      const a = document.createElement("a");
       a.href = url;
       a.download = `qr-${event.gallerySlug}.png`;
       document.body.appendChild(a);
@@ -123,10 +123,10 @@ export function CompactQRCode({
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
 
-      toast.success('QR code downloaded');
+      toast.success("QR code downloaded");
     } catch (err) {
-      console.error('Download error:', err);
-      toast.error('Failed to download QR code');
+      console.error("Download error:", err);
+      toast.error("Failed to download QR code");
     }
   };
 
@@ -229,7 +229,7 @@ export function CompactQRCode({
               variant="outline"
               size="sm"
               onClick={() =>
-                window.open(`/gallery/${event.gallerySlug}`, '_blank')
+                window.open(`/gallery/${event.gallerySlug}`, "_blank")
               }
               disabled={isLoading}
             >

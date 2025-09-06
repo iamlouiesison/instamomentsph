@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import React, { useState, useRef, useCallback, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Camera, Video, Square, RotateCcw, X } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import React, { useState, useRef, useCallback, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Camera, Video, Square, RotateCcw, X } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface VideoRecorderProps {
   onVideoRecorded: (videoBlob: Blob, thumbnailBlob: Blob) => void;
@@ -55,7 +55,7 @@ export const VideoRecorder: React.FC<VideoRecorderProps> = ({
         video: {
           width: { ideal: 1280 },
           height: { ideal: 720 },
-          facingMode: 'user',
+          facingMode: "user",
         },
         audio: true,
       });
@@ -73,10 +73,10 @@ export const VideoRecorder: React.FC<VideoRecorderProps> = ({
         isInitializing: false,
       }));
     } catch (error) {
-      console.error('Camera initialization failed:', error);
+      console.error("Camera initialization failed:", error);
       setState((prev) => ({
         ...prev,
-        error: 'Camera access denied or not available',
+        error: "Camera access denied or not available",
         isInitializing: false,
         hasPermission: false,
       }));
@@ -87,7 +87,7 @@ export const VideoRecorder: React.FC<VideoRecorderProps> = ({
   const generateThumbnail = useCallback(
     async (videoBlob: Blob) => {
       try {
-        const video = document.createElement('video');
+        const video = document.createElement("video");
         video.src = URL.createObjectURL(videoBlob);
 
         await new Promise((resolve) => {
@@ -101,10 +101,10 @@ export const VideoRecorder: React.FC<VideoRecorderProps> = ({
         });
 
         const canvas =
-          thumbnailCanvasRef.current || document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
+          thumbnailCanvasRef.current || document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
 
-        if (!ctx) throw new Error('Canvas context not available');
+        if (!ctx) throw new Error("Canvas context not available");
 
         canvas.width = 320;
         canvas.height = 240;
@@ -118,16 +118,16 @@ export const VideoRecorder: React.FC<VideoRecorderProps> = ({
             }
             URL.revokeObjectURL(video.src);
           },
-          'image/jpeg',
-          0.8
+          "image/jpeg",
+          0.8,
         );
       } catch (error) {
-        console.error('Thumbnail generation failed:', error);
+        console.error("Thumbnail generation failed:", error);
         // Still proceed with video recording even if thumbnail fails
         onVideoRecorded(videoBlob, new Blob());
       }
     },
-    [onVideoRecorded]
+    [onVideoRecorded],
   );
 
   // Stop recording
@@ -149,7 +149,7 @@ export const VideoRecorder: React.FC<VideoRecorderProps> = ({
 
     try {
       const mediaRecorder = new MediaRecorder(streamRef.current, {
-        mimeType: 'video/webm;codecs=vp9,opus',
+        mimeType: "video/webm;codecs=vp9,opus",
       });
 
       mediaRecorderRef.current = mediaRecorder;
@@ -162,7 +162,7 @@ export const VideoRecorder: React.FC<VideoRecorderProps> = ({
       };
 
       mediaRecorder.onstop = () => {
-        const videoBlob = new Blob(chunksRef.current, { type: 'video/webm' });
+        const videoBlob = new Blob(chunksRef.current, { type: "video/webm" });
         generateThumbnail(videoBlob);
       };
 
@@ -187,10 +187,10 @@ export const VideoRecorder: React.FC<VideoRecorderProps> = ({
         });
       }, 100);
     } catch (error) {
-      console.error('Recording start failed:', error);
+      console.error("Recording start failed:", error);
       setState((prev) => ({
         ...prev,
-        error: 'Failed to start recording',
+        error: "Failed to start recording",
         isRecording: false,
       }));
     }
@@ -243,7 +243,7 @@ export const VideoRecorder: React.FC<VideoRecorderProps> = ({
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = Math.floor(seconds % 60);
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
+    return `${mins}:${secs.toString().padStart(2, "0")}`;
   };
 
   const progressPercentage = (state.duration / maxDuration) * 100;
@@ -251,10 +251,10 @@ export const VideoRecorder: React.FC<VideoRecorderProps> = ({
 
   if (!state.hasPermission && !state.isInitializing) {
     return (
-      <Card className={cn('p-6 text-center', className)}>
+      <Card className={cn("p-6 text-center", className)}>
         <Alert className="mb-4">
           <AlertDescription>
-            {state.error || 'Camera access is required to record videos'}
+            {state.error || "Camera access is required to record videos"}
           </AlertDescription>
         </Alert>
         <div className="space-y-4">
@@ -272,7 +272,7 @@ export const VideoRecorder: React.FC<VideoRecorderProps> = ({
 
   if (state.isInitializing) {
     return (
-      <Card className={cn('p-6 text-center', className)}>
+      <Card className={cn("p-6 text-center", className)}>
         <div className="space-y-4">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
           <p>Initializing camera...</p>
@@ -282,7 +282,7 @@ export const VideoRecorder: React.FC<VideoRecorderProps> = ({
   }
 
   return (
-    <Card className={cn('p-6', className)}>
+    <Card className={cn("p-6", className)}>
       <div className="space-y-4">
         {/* Video Preview */}
         <div className="relative bg-black rounded-lg overflow-hidden">
@@ -298,7 +298,7 @@ export const VideoRecorder: React.FC<VideoRecorderProps> = ({
             <div className="absolute top-4 left-4 flex items-center space-x-2">
               <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
               <span className="text-white text-sm font-medium">
-                {state.isPaused ? 'PAUSED' : 'REC'}
+                {state.isPaused ? "PAUSED" : "REC"}
               </span>
             </div>
           )}
@@ -307,10 +307,10 @@ export const VideoRecorder: React.FC<VideoRecorderProps> = ({
           <div className="absolute top-4 right-4">
             <div
               className={cn(
-                'px-3 py-1 rounded-full text-sm font-bold',
+                "px-3 py-1 rounded-full text-sm font-bold",
                 remainingTime <= 5
-                  ? 'bg-red-500 text-white'
-                  : 'bg-black/50 text-white'
+                  ? "bg-red-500 text-white"
+                  : "bg-black/50 text-white",
               )}
             >
               {formatTime(state.duration)} / {formatTime(maxDuration)}
@@ -348,7 +348,7 @@ export const VideoRecorder: React.FC<VideoRecorderProps> = ({
           ) : (
             <div className="flex space-x-2">
               <Button onClick={togglePause} variant="outline" size="lg">
-                {state.isPaused ? 'Resume' : 'Pause'}
+                {state.isPaused ? "Resume" : "Pause"}
               </Button>
               <Button onClick={stopRecording} variant="destructive" size="lg">
                 <Square className="w-4 h-4 mr-2" />

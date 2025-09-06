@@ -1,31 +1,31 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Progress } from '@/components/ui/progress';
-import { DatePicker } from '@/components/ui/date-picker';
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Progress } from "@/components/ui/progress";
+import { DatePicker } from "@/components/ui/date-picker";
 import {
   EventTypeSelector,
   PackageSelector,
   LoadingSpinner,
-} from '@/components/instamoments';
+} from "@/components/instamoments";
 import {
   EventCreateSchema,
   type EventType,
   type SubscriptionTier,
-} from '@/lib/validations/event';
+} from "@/lib/validations/event";
 import {
   getSubscriptionLimits,
   formatPrice,
   calculateTotalPrice,
-} from '@/lib/business-logic/subscription-limits';
+} from "@/lib/business-logic/subscription-limits";
 import {
   ArrowLeft,
   ArrowRight,
@@ -34,25 +34,25 @@ import {
   PartyPopper,
   Gem,
   CheckCircle,
-} from 'lucide-react';
-import { toast } from 'sonner';
+} from "lucide-react";
+import { toast } from "sonner";
 
 const STEPS = [
   {
     id: 1,
-    title: 'Event Details',
-    description: 'Basic information about your event',
+    title: "Event Details",
+    description: "Basic information about your event",
   },
-  { id: 2, title: 'Event Type', description: 'Choose the type of celebration' },
+  { id: 2, title: "Event Type", description: "Choose the type of celebration" },
   {
     id: 3,
-    title: 'Package Selection',
-    description: 'Select your event package',
+    title: "Package Selection",
+    description: "Select your event package",
   },
   {
     id: 4,
-    title: 'Review & Create',
-    description: 'Review and create your event',
+    title: "Review & Create",
+    description: "Review and create your event",
   },
 ] as const;
 
@@ -61,23 +61,23 @@ export default function CreateEventPage() {
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedEventType, setSelectedEventType] = useState<EventType>();
-  const [selectedTier, setSelectedTier] = useState<SubscriptionTier>('free');
+  const [selectedTier, setSelectedTier] = useState<SubscriptionTier>("free");
   const [hasVideoAddon, setHasVideoAddon] = useState(false);
 
   const form = useForm({
     resolver: zodResolver(EventCreateSchema),
     defaultValues: {
-      name: '',
-      description: '',
+      name: "",
+      description: "",
       eventType: undefined,
-      eventDate: '',
-      location: '',
-      subscriptionTier: 'free',
+      eventDate: "",
+      location: "",
+      subscriptionTier: "free",
       hasVideoAddon: false,
       requiresModeration: false,
       allowDownloads: true,
       isPublic: true,
-      customMessage: '',
+      customMessage: "",
     },
   });
 
@@ -90,24 +90,24 @@ export default function CreateEventPage() {
   const watchedValues = watch();
 
   const nextStep = () => {
-    console.log('nextStep called, current step:', currentStep);
+    console.log("nextStep called, current step:", currentStep);
 
     // Validate current step before proceeding
     if (currentStep === 1 && !watchedValues.name) {
-      toast.error('Please enter an event name');
+      toast.error("Please enter an event name");
       return;
     }
     if (currentStep === 2 && !selectedEventType) {
-      toast.error('Please select an event type');
+      toast.error("Please select an event type");
       return;
     }
     if (currentStep === 3 && !selectedTier) {
-      toast.error('Please select a package');
+      toast.error("Please select a package");
       return;
     }
 
     if (currentStep < STEPS.length) {
-      console.log('Moving to step:', currentStep + 1);
+      console.log("Moving to step:", currentStep + 1);
       setCurrentStep(currentStep + 1);
     }
   };
@@ -119,15 +119,15 @@ export default function CreateEventPage() {
   };
 
   const onSubmit = async (data: Record<string, unknown>) => {
-    console.log('onSubmit called with data:', data);
+    console.log("onSubmit called with data:", data);
     setIsSubmitting(true);
 
     try {
-      const response = await fetch('/api/events', {
-        credentials: 'include',
-        method: 'POST',
+      const response = await fetch("/api/events", {
+        credentials: "include",
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(data),
       });
@@ -135,15 +135,15 @@ export default function CreateEventPage() {
       const result = await response.json();
 
       if (!result.success) {
-        throw new Error(result.error.message || 'Failed to create event');
+        throw new Error(result.error.message || "Failed to create event");
       }
 
-      toast.success('Event created successfully!');
+      toast.success("Event created successfully!");
       router.push(`/dashboard/events/${result.data.id}`);
     } catch (error) {
-      console.error('Error creating event:', error);
+      console.error("Error creating event:", error);
       toast.error(
-        error instanceof Error ? error.message : 'Failed to create event'
+        error instanceof Error ? error.message : "Failed to create event",
       );
     } finally {
       setIsSubmitting(false);
@@ -151,30 +151,30 @@ export default function CreateEventPage() {
   };
 
   const handleCreateEvent = async () => {
-    console.log('handleCreateEvent called, current step:', currentStep);
+    console.log("handleCreateEvent called, current step:", currentStep);
     if (currentStep !== 4) {
-      console.log('Cannot create event - not on final step');
+      console.log("Cannot create event - not on final step");
       return;
     }
 
     const formData = form.getValues();
-    console.log('Form data:', formData);
+    console.log("Form data:", formData);
     await onSubmit(formData);
   };
 
   const handleEventTypeSelect = (type: EventType) => {
     setSelectedEventType(type);
-    setValue('eventType', type);
+    setValue("eventType", type);
   };
 
   const handleTierSelect = (tier: SubscriptionTier) => {
     setSelectedTier(tier);
-    setValue('subscriptionTier', tier);
+    setValue("subscriptionTier", tier);
   };
 
   const handleVideoAddonToggle = (enabled: boolean) => {
     setHasVideoAddon(enabled);
-    setValue('hasVideoAddon', enabled);
+    setValue("hasVideoAddon", enabled);
   };
 
   const progress = (currentStep / STEPS.length) * 100;
@@ -209,8 +209,8 @@ export default function CreateEventPage() {
                 <div
                   className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-200 ${
                     currentStep >= step.id
-                      ? 'bg-primary text-primary-foreground shadow-lg'
-                      : 'bg-muted text-muted-foreground'
+                      ? "bg-primary text-primary-foreground shadow-lg"
+                      : "bg-muted text-muted-foreground"
                   }`}
                 >
                   {currentStep > step.id ? (
@@ -230,7 +230,7 @@ export default function CreateEventPage() {
                 {index < STEPS.length - 1 && (
                   <div
                     className={`w-16 h-1 mx-6 hidden sm:block rounded-full transition-colors duration-200 ${
-                      currentStep > step.id ? 'bg-primary' : 'bg-muted'
+                      currentStep > step.id ? "bg-primary" : "bg-muted"
                     }`}
                   />
                 )}
@@ -283,7 +283,7 @@ export default function CreateEventPage() {
                         id="name"
                         placeholder="e.g., Maria's Wedding"
                         className="h-11 text-base"
-                        {...form.register('name')}
+                        {...form.register("name")}
                       />
                       {errors.name && (
                         <p className="text-sm text-destructive mt-1">
@@ -310,8 +310,8 @@ export default function CreateEventPage() {
                         onChange={(date) => {
                           if (date) {
                             setValue(
-                              'eventDate',
-                              date.toISOString().split('T')[0]
+                              "eventDate",
+                              date.toISOString().split("T")[0],
                             );
                           }
                         }}
@@ -337,7 +337,7 @@ export default function CreateEventPage() {
                       id="location"
                       placeholder="e.g., Manila Hotel, Makati City"
                       className="h-11 text-base"
-                      {...form.register('location')}
+                      {...form.register("location")}
                     />
                     {errors.location && (
                       <p className="text-sm text-destructive mt-1">
@@ -359,7 +359,7 @@ export default function CreateEventPage() {
                       placeholder="Tell your guests about your event..."
                       rows={4}
                       className="text-base resize-none"
-                      {...form.register('description')}
+                      {...form.register("description")}
                     />
                     {errors.description && (
                       <p className="text-sm text-destructive mt-1">
@@ -435,12 +435,12 @@ export default function CreateEventPage() {
                           </p>
                           <p className="text-lg font-semibold text-gray-900">
                             {new Date(
-                              watchedValues.eventDate
-                            ).toLocaleDateString('en-PH', {
-                              weekday: 'long',
-                              year: 'numeric',
-                              month: 'long',
-                              day: 'numeric',
+                              watchedValues.eventDate,
+                            ).toLocaleDateString("en-PH", {
+                              weekday: "long",
+                              year: "numeric",
+                              month: "long",
+                              day: "numeric",
                             })}
                           </p>
                         </div>
@@ -480,7 +480,7 @@ export default function CreateEventPage() {
                         <div>
                           <h5 className="text-lg font-bold text-gray-900">
                             {selectedTier.charAt(0).toUpperCase() +
-                              selectedTier.slice(1)}{' '}
+                              selectedTier.slice(1)}{" "}
                             Package
                           </h5>
                           <p className="text-sm text-gray-600">
@@ -490,7 +490,7 @@ export default function CreateEventPage() {
                         <div className="text-right">
                           <p className="text-2xl font-bold text-purple-600">
                             {formatPrice(
-                              calculateTotalPrice(selectedTier, hasVideoAddon)
+                              calculateTotalPrice(selectedTier, hasVideoAddon),
                             )}
                           </p>
                           <p className="text-sm text-gray-500">
@@ -525,7 +525,7 @@ export default function CreateEventPage() {
                             {
                               getSubscriptionLimits(selectedTier)
                                 .maxPhotosPerUser
-                            }{' '}
+                            }{" "}
                             per person
                           </p>
                         </div>
@@ -550,7 +550,7 @@ export default function CreateEventPage() {
                               : 0}
                           </p>
                           <p className="text-sm text-gray-600">
-                            {hasVideoAddon ? 'Maximum videos' : 'Not included'}
+                            {hasVideoAddon ? "Maximum videos" : "Not included"}
                           </p>
                           {hasVideoAddon && (
                             <p className="text-xs text-green-600 font-medium">
@@ -685,7 +685,7 @@ export default function CreateEventPage() {
                         Creating Event...
                       </>
                     ) : (
-                      'Create Event'
+                      "Create Event"
                     )}
                   </Button>
                 )}

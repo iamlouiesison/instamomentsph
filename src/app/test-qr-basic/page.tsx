@@ -1,26 +1,26 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect, useCallback } from 'react';
-import Image from 'next/image';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import React, { useState, useEffect, useCallback } from "react";
+import Image from "next/image";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   CheckCircle,
   AlertCircle,
   QrCode,
   Download,
   RefreshCw,
-} from 'lucide-react';
+} from "lucide-react";
 
 export default function TestQRBasicPage() {
-  const [qrCodeUrl, setQrCodeUrl] = useState<string>('');
+  const [qrCodeUrl, setQrCodeUrl] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [testText, setTestText] = useState(
-    'https://instamoments.ph/gallery/test-event'
+    "https://instamoments.ph/gallery/test-event",
   );
   const [testResults, setTestResults] = useState<{
     apiTest: boolean | null;
@@ -38,13 +38,13 @@ export default function TestQRBasicPage() {
       setTestResults({ apiTest: null, qrGeneration: null });
 
       const response = await fetch(
-        `/api/test-qr?text=${encodeURIComponent(testText)}&format=png&size=256`
+        `/api/test-qr?text=${encodeURIComponent(testText)}&format=png&size=256`,
       );
 
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(
-          `API returned ${response.status}: ${errorData.error?.message || response.statusText}`
+          `API returned ${response.status}: ${errorData.error?.message || response.statusText}`,
         );
       }
 
@@ -54,8 +54,8 @@ export default function TestQRBasicPage() {
 
       setTestResults({ apiTest: true, qrGeneration: true });
     } catch (err) {
-      console.error('QR Code generation test failed:', err);
-      setError(err instanceof Error ? err.message : 'Unknown error');
+      console.error("QR Code generation test failed:", err);
+      setError(err instanceof Error ? err.message : "Unknown error");
       setTestResults({ apiTest: false, qrGeneration: false });
     } finally {
       setIsLoading(false);
@@ -66,20 +66,20 @@ export default function TestQRBasicPage() {
   const testDownload = async () => {
     try {
       const response = await fetch(
-        `/api/test-qr?text=${encodeURIComponent(testText)}&format=png&size=256`
+        `/api/test-qr?text=${encodeURIComponent(testText)}&format=png&size=256`,
       );
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
+      const a = document.createElement("a");
       a.href = url;
-      a.download = 'test-qr-code.png';
+      a.download = "test-qr-code.png";
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
     } catch (err) {
-      console.error('Download test failed:', err);
-      setError(err instanceof Error ? err.message : 'Download failed');
+      console.error("Download test failed:", err);
+      setError(err instanceof Error ? err.message : "Download failed");
     }
   };
 
@@ -89,10 +89,10 @@ export default function TestQRBasicPage() {
   }, [testQRCodeGeneration]);
 
   const allTestsPassed = Object.values(testResults).every(
-    (result) => result === true
+    (result) => result === true,
   );
   const anyTestFailed = Object.values(testResults).some(
-    (result) => result === false
+    (result) => result === false,
   );
 
   return (
@@ -162,10 +162,10 @@ export default function TestQRBasicPage() {
                 )}
                 <span className="text-sm">
                   {testResults.apiTest === null
-                    ? 'Testing...'
+                    ? "Testing..."
                     : testResults.apiTest
-                      ? 'Passed'
-                      : 'Failed'}
+                      ? "Passed"
+                      : "Failed"}
                 </span>
               </div>
             </CardContent>
@@ -189,10 +189,10 @@ export default function TestQRBasicPage() {
                 )}
                 <span className="text-sm">
                   {testResults.qrGeneration === null
-                    ? 'Testing...'
+                    ? "Testing..."
                     : testResults.qrGeneration
-                      ? 'Passed'
-                      : 'Failed'}
+                      ? "Passed"
+                      : "Failed"}
                 </span>
               </div>
             </CardContent>

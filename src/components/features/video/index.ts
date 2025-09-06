@@ -1,2 +1,2 @@
-export { VideoRecorder } from './VideoRecorder';
-export { VideoPlayer } from './VideoPlayer';
+export { VideoRecorder } from "./VideoRecorder";
+export { VideoPlayer } from "./VideoPlayer";

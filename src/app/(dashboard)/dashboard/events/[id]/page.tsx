@@ -1,21 +1,21 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect, useCallback } from 'react';
-import { useRouter, useParams } from 'next/navigation';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Switch } from '@/components/ui/switch';
-import { Progress } from '@/components/ui/progress';
-import { DatePicker } from '@/components/ui/date-picker';
-import { CalendarIcon } from '@/components/ui/calendar-icon';
-import { QRCodeDisplay } from '@/components/features/qr-code';
-import { LoadingSpinner } from '@/components/instamoments';
+import React, { useState, useEffect, useCallback } from "react";
+import { useRouter, useParams } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
+import { Progress } from "@/components/ui/progress";
+import { DatePicker } from "@/components/ui/date-picker";
+import { CalendarIcon } from "@/components/ui/calendar-icon";
+import { QRCodeDisplay } from "@/components/features/qr-code";
+import { LoadingSpinner } from "@/components/instamoments";
 import {
   ArrowLeft,
   Settings,
@@ -36,9 +36,9 @@ import {
   Eye,
   Download as DownloadIcon,
   RefreshCw,
-} from 'lucide-react';
-import { toast } from 'sonner';
-import { formatDistanceToNow } from 'date-fns';
+} from "lucide-react";
+import { toast } from "sonner";
+import { formatDistanceToNow } from "date-fns";
 
 interface Event {
   id: string;
@@ -46,18 +46,18 @@ interface Event {
   description: string | null;
   location: string | null;
   event_type:
-    | 'wedding'
-    | 'birthday'
-    | 'corporate'
-    | 'graduation'
-    | 'anniversary'
-    | 'debut'
-    | 'other';
+    | "wedding"
+    | "birthday"
+    | "corporate"
+    | "graduation"
+    | "anniversary"
+    | "debut"
+    | "other";
   event_date: string | null;
   host_id: string;
   qr_code_url: string;
   gallery_slug: string;
-  subscription_tier: 'free' | 'basic' | 'standard' | 'premium' | 'pro';
+  subscription_tier: "free" | "basic" | "standard" | "premium" | "pro";
   max_photos: number;
   max_photos_per_user: number;
   storage_days: number;
@@ -69,7 +69,7 @@ interface Event {
   total_photos: number;
   total_videos: number;
   total_contributors: number;
-  status: 'active' | 'expired' | 'archived';
+  status: "active" | "expired" | "archived";
   created_at: string;
   updated_at: string;
   expires_at: string | null;
@@ -81,7 +81,7 @@ interface Event {
   videoLimitReached: boolean;
 }
 
-import { EVENT_TYPES } from '@/lib/validations/event';
+import { EVENT_TYPES } from "@/lib/validations/event";
 
 const getEventTypeConfig = (eventType: string) => {
   return (
@@ -90,44 +90,44 @@ const getEventTypeConfig = (eventType: string) => {
 };
 
 const formatDate = (dateString: string) => {
-  return new Date(dateString).toLocaleDateString('en-PH', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
+  return new Date(dateString).toLocaleDateString("en-PH", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
   });
 };
 
 const getSubscriptionTierInfo = (tier?: string) => {
   const tiers = {
     free: {
-      label: 'Free',
-      icon: '🆓',
-      color: 'text-gray-600',
-      features: ['Basic features'],
+      label: "Free",
+      icon: "🆓",
+      color: "text-gray-600",
+      features: ["Basic features"],
     },
     basic: {
-      label: 'Basic',
-      icon: '⭐',
-      color: 'text-blue-600',
-      features: ['Enhanced storage'],
+      label: "Basic",
+      icon: "⭐",
+      color: "text-blue-600",
+      features: ["Enhanced storage"],
     },
     standard: {
-      label: 'Standard',
-      icon: '💎',
-      color: 'text-purple-600',
-      features: ['Video support', 'Priority support'],
+      label: "Standard",
+      icon: "💎",
+      color: "text-purple-600",
+      features: ["Video support", "Priority support"],
     },
     premium: {
-      label: 'Premium',
-      icon: '👑',
-      color: 'text-yellow-600',
-      features: ['Unlimited storage', 'Advanced analytics'],
+      label: "Premium",
+      icon: "👑",
+      color: "text-yellow-600",
+      features: ["Unlimited storage", "Advanced analytics"],
     },
     pro: {
-      label: 'Pro',
-      icon: '🚀',
-      color: 'text-red-600',
-      features: ['White-label', 'API access'],
+      label: "Pro",
+      icon: "🚀",
+      color: "text-red-600",
+      features: ["White-label", "API access"],
     },
   };
   return tiers[tier as keyof typeof tiers] || tiers.free;
@@ -144,16 +144,16 @@ export default function EventManagementPage() {
   const [isDeleting, setIsDeleting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showQRCode, setShowQRCode] = useState(false);
-  const [activeTab, setActiveTab] = useState('overview');
+  const [activeTab, setActiveTab] = useState("overview");
 
   // Form state
   const [formData, setFormData] = useState({
-    name: '',
-    description: '',
-    location: '',
-    eventType: 'birthday',
-    eventDate: '',
-    customMessage: '',
+    name: "",
+    description: "",
+    location: "",
+    eventType: "birthday",
+    eventDate: "",
+    customMessage: "",
     requiresModeration: false,
     allowDownloads: true,
     isPublic: true,
@@ -163,15 +163,15 @@ export default function EventManagementPage() {
     try {
       setIsLoading(true);
       const response = await fetch(`/api/events/${eventId}`, {
-        credentials: 'include',
+        credentials: "include",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
       });
       const result = await response.json();
 
       if (!result.success) {
-        throw new Error(result.error.message || 'Failed to fetch event');
+        throw new Error(result.error.message || "Failed to fetch event");
       }
 
       const eventData = result.data;
@@ -179,19 +179,19 @@ export default function EventManagementPage() {
 
       // Populate form with event data
       setFormData({
-        name: eventData.name || '',
-        description: eventData.description || '',
-        location: eventData.location || '',
-        eventType: eventData.event_type || 'birthday',
-        eventDate: eventData.event_date || '',
-        customMessage: eventData.custom_message || '',
+        name: eventData.name || "",
+        description: eventData.description || "",
+        location: eventData.location || "",
+        eventType: eventData.event_type || "birthday",
+        eventDate: eventData.event_date || "",
+        customMessage: eventData.custom_message || "",
         requiresModeration: eventData.requires_moderation || false,
         allowDownloads: eventData.allow_downloads !== false,
         isPublic: eventData.is_public !== false,
       });
     } catch (error) {
-      console.error('Error fetching event:', error);
-      setError(error instanceof Error ? error.message : 'Failed to load event');
+      console.error("Error fetching event:", error);
+      setError(error instanceof Error ? error.message : "Failed to load event");
     } finally {
       setIsLoading(false);
     }
@@ -207,10 +207,10 @@ export default function EventManagementPage() {
     try {
       setIsSaving(true);
       const response = await fetch(`/api/events/${eventId}`, {
-        method: 'PUT',
-        credentials: 'include',
+        method: "PUT",
+        credentials: "include",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(formData),
       });
@@ -218,15 +218,15 @@ export default function EventManagementPage() {
       const result = await response.json();
 
       if (!result.success) {
-        throw new Error(result.error.message || 'Failed to update event');
+        throw new Error(result.error.message || "Failed to update event");
       }
 
-      toast.success('Event updated successfully!');
+      toast.success("Event updated successfully!");
       await fetchEvent(); // Refresh data
     } catch (error) {
-      console.error('Error updating event:', error);
+      console.error("Error updating event:", error);
       toast.error(
-        error instanceof Error ? error.message : 'Failed to update event'
+        error instanceof Error ? error.message : "Failed to update event",
       );
     } finally {
       setIsSaving(false);
@@ -238,14 +238,14 @@ export default function EventManagementPage() {
 
     if (event.total_photos > 0 || event.total_videos > 0) {
       toast.error(
-        'Cannot delete event with photos or videos. Archive instead.'
+        "Cannot delete event with photos or videos. Archive instead.",
       );
       return;
     }
 
     if (
       !confirm(
-        'Are you sure you want to delete this event? This action cannot be undone.'
+        "Are you sure you want to delete this event? This action cannot be undone.",
       )
     ) {
       return;
@@ -254,25 +254,25 @@ export default function EventManagementPage() {
     try {
       setIsDeleting(true);
       const response = await fetch(`/api/events/${eventId}`, {
-        method: 'DELETE',
-        credentials: 'include',
+        method: "DELETE",
+        credentials: "include",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
       });
 
       const result = await response.json();
 
       if (!result.success) {
-        throw new Error(result.error.message || 'Failed to delete event');
+        throw new Error(result.error.message || "Failed to delete event");
       }
 
-      toast.success('Event deleted successfully!');
-      router.push('/dashboard');
+      toast.success("Event deleted successfully!");
+      router.push("/dashboard");
     } catch (error) {
-      console.error('Error deleting event:', error);
+      console.error("Error deleting event:", error);
       toast.error(
-        error instanceof Error ? error.message : 'Failed to delete event'
+        error instanceof Error ? error.message : "Failed to delete event",
       );
     } finally {
       setIsDeleting(false);
@@ -282,19 +282,19 @@ export default function EventManagementPage() {
   const handleDuplicate = () => {
     if (!event) return;
     // TODO: Implement duplicate functionality
-    toast.info('Duplicate functionality coming soon!');
+    toast.info("Duplicate functionality coming soon!");
   };
 
   const handleExport = () => {
     if (!event) return;
     // TODO: Implement export functionality
-    toast.info('Export functionality coming soon!');
+    toast.info("Export functionality coming soon!");
   };
 
   const handleArchive = () => {
     if (!event) return;
     // TODO: Implement archive functionality
-    toast.info('Archive functionality coming soon!');
+    toast.info("Archive functionality coming soon!");
   };
 
   if (isLoading) {
@@ -325,10 +325,10 @@ export default function EventManagementPage() {
                 <div className="space-y-2">
                   <h3 className="font-semibold text-lg">Event Not Found</h3>
                   <p className="text-muted-foreground">
-                    {error || 'The event you are looking for does not exist.'}
+                    {error || "The event you are looking for does not exist."}
                   </p>
                 </div>
-                <Button onClick={() => router.push('/dashboard')}>
+                <Button onClick={() => router.push("/dashboard")}>
                   Back to Dashboard
                 </Button>
               </CardContent>
@@ -340,7 +340,7 @@ export default function EventManagementPage() {
   }
 
   const isExpired =
-    event.status === 'expired' ||
+    event.status === "expired" ||
     (event.expires_at && new Date(event.expires_at) < new Date());
   const isExpiringSoon =
     event.expires_at &&
@@ -374,15 +374,15 @@ export default function EventManagementPage() {
                 <Badge variant="secondary" className="border">
                   {eventTypeConfig.label}
                 </Badge>
-                <Badge variant={isExpired ? 'destructive' : 'default'}>
-                  {isExpired ? 'Expired' : 'Active'}
+                <Badge variant={isExpired ? "destructive" : "default"}>
+                  {isExpired ? "Expired" : "Active"}
                 </Badge>
                 <Badge variant="outline" className="flex items-center gap-1">
                   {tierInfo.icon} {tierInfo.label}
                 </Badge>
               </div>
               <p className="text-gray-600 text-lg">
-                {eventTypeConfig.description} • Created{' '}
+                {eventTypeConfig.description} • Created{" "}
                 {formatDistanceToNow(new Date(event.created_at), {
                   addSuffix: true,
                 })}
@@ -396,7 +396,7 @@ export default function EventManagementPage() {
           <Alert className="mb-6">
             <AlertTriangle className="h-4 w-4" />
             <AlertDescription>
-              This event expires{' '}
+              This event expires{" "}
               {formatDistanceToNow(new Date(event.expires_at!), {
                 addSuffix: true,
               })}
@@ -604,8 +604,8 @@ export default function EventManagementPage() {
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-sm font-medium">Video Storage</span>
                       <span className="text-sm text-gray-600">
-                        {event.total_videos} /{' '}
-                        {event.has_video_addon ? 'Unlimited' : '0'}
+                        {event.total_videos} /{" "}
+                        {event.has_video_addon ? "Unlimited" : "0"}
                       </span>
                     </div>
                     <Progress
@@ -718,7 +718,7 @@ export default function EventManagementPage() {
                         if (date) {
                           setFormData({
                             ...formData,
-                            eventDate: date.toISOString().split('T')[0],
+                            eventDate: date.toISOString().split("T")[0],
                           });
                         }
                       }}
@@ -873,9 +873,9 @@ export default function EventManagementPage() {
                         size="sm"
                         onClick={() => {
                           navigator.clipboard.writeText(
-                            `${window.location.origin}/gallery/${event.gallery_slug}`
+                            `${window.location.origin}/gallery/${event.gallery_slug}`,
                           );
-                          toast.success('Gallery link copied to clipboard!');
+                          toast.success("Gallery link copied to clipboard!");
                         }}
                       >
                         <Copy className="w-4 h-4" />
@@ -886,7 +886,7 @@ export default function EventManagementPage() {
                         onClick={() => {
                           window.open(
                             `/gallery/${event.gallery_slug}`,
-                            '_blank'
+                            "_blank",
                           );
                         }}
                       >
@@ -905,7 +905,7 @@ export default function EventManagementPage() {
                         className="w-full"
                       >
                         <QrCode className="w-4 h-4 mr-2" />
-                        {showQRCode ? 'Hide QR Code' : 'Show QR Code'}
+                        {showQRCode ? "Hide QR Code" : "Show QR Code"}
                       </Button>
                     </div>
                   </div>
@@ -993,7 +993,7 @@ export default function EventManagementPage() {
                         Permanently delete this event and all its data
                         {event.total_photos > 0 || event.total_videos > 0 ? (
                           <span className="block text-red-600 mt-1">
-                            Cannot delete with {event.total_photos} photos and{' '}
+                            Cannot delete with {event.total_photos} photos and{" "}
                             {event.total_videos} videos
                           </span>
                         ) : null}

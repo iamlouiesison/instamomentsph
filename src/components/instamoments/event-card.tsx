@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import React from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   MapPin,
   Users,
@@ -11,12 +11,12 @@ import {
   Video,
   ExternalLink,
   Clock,
-} from 'lucide-react';
-import { CalendarIcon } from '@/components/ui/calendar-icon';
-import { formatDistanceToNow, format } from 'date-fns';
-import { cn } from '@/lib/utils';
-import { FrontendEvent } from '@/lib/utils/event-transformer';
-import { CompactQRCode } from '@/components/features/qr-code';
+} from "lucide-react";
+import { CalendarIcon } from "@/components/ui/calendar-icon";
+import { formatDistanceToNow, format } from "date-fns";
+import { cn } from "@/lib/utils";
+import { FrontendEvent } from "@/lib/utils/event-transformer";
+import { CompactQRCode } from "@/components/features/qr-code";
 
 // Re-export the FrontendEvent as Event for backward compatibility
 export type Event = FrontendEvent;
@@ -40,7 +40,7 @@ export const EventCard: React.FC<EventCardProps> = ({
   className,
 }) => {
   const isExpired =
-    event.status === 'expired' ||
+    event.status === "expired" ||
     (event.expiresAt && new Date(event.expiresAt) < new Date());
   const isExpiringSoon =
     event.expiresAt &&
@@ -58,20 +58,20 @@ export const EventCard: React.FC<EventCardProps> = ({
 
   const getTierBadge = () => {
     const tierColors = {
-      free: 'bg-gray-100 text-gray-800',
-      basic: 'bg-blue-100 text-blue-800',
-      standard: 'bg-green-100 text-green-800',
-      premium: 'bg-purple-100 text-purple-800',
-      pro: 'bg-yellow-100 text-yellow-800',
+      free: "bg-gray-100 text-gray-800",
+      basic: "bg-blue-100 text-blue-800",
+      standard: "bg-green-100 text-green-800",
+      premium: "bg-purple-100 text-purple-800",
+      pro: "bg-yellow-100 text-yellow-800",
     };
 
     return (
       <Badge
         variant="outline"
         className={cn(
-          'text-xs',
+          "text-xs",
           tierColors[event.subscriptionTier as keyof typeof tierColors] ||
-            'bg-gray-100 text-gray-800'
+            "bg-gray-100 text-gray-800",
         )}
       >
         {event.subscriptionTier.charAt(0).toUpperCase() +
@@ -83,8 +83,8 @@ export const EventCard: React.FC<EventCardProps> = ({
   return (
     <Card
       className={cn(
-        'hover:shadow-md transition-shadow duration-200',
-        className
+        "hover:shadow-md transition-shadow duration-200",
+        className,
       )}
     >
       <CardHeader className="pb-3">
@@ -120,7 +120,7 @@ export const EventCard: React.FC<EventCardProps> = ({
           {event.eventDate && (
             <div className="flex items-center gap-2">
               <CalendarIcon size="sm" variant="muted" />
-              <span>{format(new Date(event.eventDate), 'MMM dd, yyyy')}</span>
+              <span>{format(new Date(event.eventDate), "MMM dd, yyyy")}</span>
             </div>
           )}
           {event.location && (
@@ -132,12 +132,12 @@ export const EventCard: React.FC<EventCardProps> = ({
           <div className="flex items-center gap-2">
             <Clock className="w-4 h-4" />
             <span>
-              Created{' '}
+              Created{" "}
               {event.createdAt
                 ? formatDistanceToNow(new Date(event.createdAt), {
                     addSuffix: true,
                   })
-                : 'Unknown'}
+                : "Unknown"}
             </span>
           </div>
         </div>
@@ -190,7 +190,7 @@ export const EventCard: React.FC<EventCardProps> = ({
             <div className="flex items-center gap-2 text-yellow-800">
               <Clock className="w-4 h-4" />
               <span className="text-sm font-medium">
-                Event expires{' '}
+                Event expires{" "}
                 {formatDistanceToNow(new Date(event.expiresAt!), {
                   addSuffix: true,
                 })}

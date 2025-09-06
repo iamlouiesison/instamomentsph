@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
-import { z } from 'zod';
+import { NextRequest, NextResponse } from "next/server";
+import { createClient } from "@/lib/supabase/server";
+import { z } from "zod";
 
 const StatsQuerySchema = z.object({
   slug: z.string().min(1),
@@ -8,7 +8,7 @@ const StatsQuerySchema = z.object({
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ slug: string }> }
+  { params }: { params: Promise<{ slug: string }> },
 ) {
   try {
     const supabase = await createClient();
@@ -18,10 +18,10 @@ export async function GET(
 
     // Get event by gallery slug
     const { data: event, error: eventError } = await supabase
-      .from('events')
-      .select('id, status, is_public, expires_at')
-      .eq('gallery_slug', slug)
-      .eq('status', 'active')
+      .from("events")
+      .select("id, status, is_public, expires_at")
+      .eq("gallery_slug", slug)
+      .eq("status", "active")
       .single();
 
     if (eventError || !event) {
@@ -29,11 +29,11 @@ export async function GET(
         {
           success: false,
           error: {
-            code: 'GALLERY_NOT_FOUND',
-            message: 'Gallery not found or no longer active',
+            code: "GALLERY_NOT_FOUND",
+            message: "Gallery not found or no longer active",
           },
         },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -43,52 +43,52 @@ export async function GET(
         {
           success: false,
           error: {
-            code: 'GALLERY_EXPIRED',
-            message: 'This gallery has expired',
+            code: "GALLERY_EXPIRED",
+            message: "This gallery has expired",
           },
         },
-        { status: 410 }
+        { status: 410 },
       );
     }
 
     // Get basic stats from events table
     const { data: eventStats } = await supabase
-      .from('events')
+      .from("events")
       .select(
-        'total_photos, total_videos, total_contributors, created_at, updated_at'
+        "total_photos, total_videos, total_contributors, created_at, updated_at",
       )
-      .eq('id', event.id)
+      .eq("id", event.id)
       .single();
 
     // Get detailed contributor stats
     const { data: contributors } = await supabase
-      .from('event_contributors')
+      .from("event_contributors")
       .select(
-        'contributor_name, photos_count, videos_count, first_contribution_at, last_contribution_at'
+        "contributor_name, photos_count, videos_count, first_contribution_at, last_contribution_at",
       )
-      .eq('event_id', event.id)
-      .order('last_contribution_at', { ascending: false });
+      .eq("event_id", event.id)
+      .order("last_contribution_at", { ascending: false });
 
     // Get recent activity (last 24 hours)
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
 
     const { data: recentPhotos } = await supabase
-      .from('photos')
-      .select('id, uploaded_at, contributor_name')
-      .eq('event_id', event.id)
-      .eq('is_approved', true)
-      .gte('uploaded_at', yesterday.toISOString())
-      .order('uploaded_at', { ascending: false });
+      .from("photos")
+      .select("id, uploaded_at, contributor_name")
+      .eq("event_id", event.id)
+      .eq("is_approved", true)
+      .gte("uploaded_at", yesterday.toISOString())
+      .order("uploaded_at", { ascending: false });
 
     const { data: recentVideos } = await supabase
-      .from('videos')
-      .select('id, uploaded_at, contributor_name')
-      .eq('event_id', event.id)
-      .eq('is_approved', true)
-      .eq('processing_status', 'completed')
-      .gte('uploaded_at', yesterday.toISOString())
-      .order('uploaded_at', { ascending: false });
+      .from("videos")
+      .select("id, uploaded_at, contributor_name")
+      .eq("event_id", event.id)
+      .eq("is_approved", true)
+      .eq("processing_status", "completed")
+      .gte("uploaded_at", yesterday.toISOString())
+      .order("uploaded_at", { ascending: false });
 
     // Get top contributors
     const topContributors =
@@ -114,17 +114,17 @@ export async function GET(
 
     // Get storage usage (approximate)
     const { data: storageData } = await supabase
-      .from('photos')
-      .select('file_size')
-      .eq('event_id', event.id)
-      .eq('is_approved', true);
+      .from("photos")
+      .select("file_size")
+      .eq("event_id", event.id)
+      .eq("is_approved", true);
 
     const { data: videoStorageData } = await supabase
-      .from('videos')
-      .select('file_size')
-      .eq('event_id', event.id)
-      .eq('is_approved', true)
-      .eq('processing_status', 'completed');
+      .from("videos")
+      .select("file_size")
+      .eq("event_id", event.id)
+      .eq("is_approved", true)
+      .eq("processing_status", "completed");
 
     const totalStorageBytes = [
       ...(storageData?.map((p) => p.file_size) || []),
@@ -136,15 +136,15 @@ export async function GET(
 
     // Get engagement metrics (if analytics are available)
     const { data: analytics } = await supabase
-      .from('analytics_events')
-      .select('event_type, created_at')
-      .eq('event_id', event.id)
-      .gte('created_at', yesterday.toISOString());
+      .from("analytics_events")
+      .select("event_type, created_at")
+      .eq("event_id", event.id)
+      .gte("created_at", yesterday.toISOString());
 
     const galleryViews =
-      analytics?.filter((a) => a.event_type === 'gallery_view').length || 0;
+      analytics?.filter((a) => a.event_type === "gallery_view").length || 0;
     const qrScans =
-      analytics?.filter((a) => a.event_type === 'qr_scan').length || 0;
+      analytics?.filter((a) => a.event_type === "qr_scan").length || 0;
 
     return NextResponse.json({
       success: true,
@@ -181,7 +181,7 @@ export async function GET(
                 (((eventStats?.total_photos || 0) +
                   (eventStats?.total_videos || 0)) /
                   contributors.length) *
-                  100
+                  100,
               ) / 100
             : 0,
         },
@@ -191,35 +191,35 @@ export async function GET(
             ? Math.round(
                 storageData.reduce((sum, p) => sum + (p.file_size || 0), 0) /
                   storageData.length /
-                  1024
+                  1024,
               )
             : 0,
           averageVideoSize: videoStorageData?.length
             ? Math.round(
                 videoStorageData.reduce(
                   (sum, v) => sum + (v.file_size || 0),
-                  0
+                  0,
                 ) /
                   videoStorageData.length /
-                  (1024 * 1024)
+                  (1024 * 1024),
               )
             : 0,
         },
       },
     });
   } catch (error) {
-    console.error('Stats API error:', error);
+    console.error("Stats API error:", error);
 
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {
           success: false,
           error: {
-            code: 'VALIDATION_ERROR',
-            message: 'Invalid gallery slug',
+            code: "VALIDATION_ERROR",
+            message: "Invalid gallery slug",
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -227,11 +227,11 @@ export async function GET(
       {
         success: false,
         error: {
-          code: 'INTERNAL_ERROR',
-          message: 'Failed to fetch gallery statistics',
+          code: "INTERNAL_ERROR",
+          message: "Failed to fetch gallery statistics",
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

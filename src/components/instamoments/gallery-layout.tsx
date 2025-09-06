@@ -1,6 +1,6 @@
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import {
   Grid,
   List,
@@ -8,10 +8,10 @@ import {
   Share2,
   Heart,
   MessageCircle,
-} from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { useState } from 'react';
-import Image from 'next/image';
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+import { useState } from "react";
+import Image from "next/image";
 
 interface Photo {
   id: string;
@@ -26,8 +26,8 @@ interface Photo {
 
 interface GalleryLayoutProps {
   photos: Photo[];
-  viewMode?: 'grid' | 'list';
-  onViewModeChange?: (mode: 'grid' | 'list') => void;
+  viewMode?: "grid" | "list";
+  onViewModeChange?: (mode: "grid" | "list") => void;
   onPhotoClick?: (photo: Photo) => void;
   onLike?: (photoId: string) => void;
   onDownload?: (photoId: string) => void;
@@ -37,7 +37,7 @@ interface GalleryLayoutProps {
 
 export function GalleryLayout({
   photos,
-  viewMode = 'grid',
+  viewMode = "grid",
   onViewModeChange,
   onPhotoClick,
   onLike,
@@ -51,21 +51,21 @@ export function GalleryLayout({
     setSelectedPhotos((prev) =>
       prev.includes(photoId)
         ? prev.filter((id) => id !== photoId)
-        : [...prev, photoId]
+        : [...prev, photoId],
     );
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-PH', {
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
+    return new Date(dateString).toLocaleDateString("en-PH", {
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   };
 
   return (
-    <div className={cn('space-y-4', className)}>
+    <div className={cn("space-y-4", className)}>
       {/* Gallery Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
@@ -84,17 +84,17 @@ export function GalleryLayout({
 
         <div className="flex items-center gap-2">
           <Button
-            variant={viewMode === 'grid' ? 'default' : 'outline'}
+            variant={viewMode === "grid" ? "default" : "outline"}
             size="sm"
-            onClick={() => onViewModeChange?.('grid')}
+            onClick={() => onViewModeChange?.("grid")}
             className="mobile-button"
           >
             <Grid className="h-4 w-4" />
           </Button>
           <Button
-            variant={viewMode === 'list' ? 'default' : 'outline'}
+            variant={viewMode === "list" ? "default" : "outline"}
             size="sm"
-            onClick={() => onViewModeChange?.('list')}
+            onClick={() => onViewModeChange?.("list")}
             className="mobile-button"
           >
             <List className="h-4 w-4" />
@@ -122,15 +122,16 @@ export function GalleryLayout({
       )}
 
       {/* Photos Grid/List */}
-      {viewMode === 'grid' ? (
+      {viewMode === "grid" ? (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
           {photos.map((photo) => (
             <Card
               key={photo.id}
               className={cn(
-                'group cursor-pointer transition-all duration-200',
-                'border-2 hover:border-golden/30',
-                selectedPhotos.includes(photo.id) && 'border-golden bg-golden/5'
+                "group cursor-pointer transition-all duration-200",
+                "border-2 hover:border-golden/30",
+                selectedPhotos.includes(photo.id) &&
+                  "border-golden bg-golden/5",
               )}
               onClick={() => onPhotoClick?.(photo)}
             >
@@ -203,8 +204,8 @@ export function GalleryLayout({
                         >
                           <Heart
                             className={cn(
-                              'h-3 w-3',
-                              photo.isLiked && 'fill-red-500'
+                              "h-3 w-3",
+                              photo.isLiked && "fill-red-500",
                             )}
                           />
                           <span>{photo.likes}</span>
@@ -237,9 +238,10 @@ export function GalleryLayout({
             <Card
               key={photo.id}
               className={cn(
-                'group cursor-pointer transition-all duration-200',
-                'border-2 hover:border-golden/30',
-                selectedPhotos.includes(photo.id) && 'border-golden bg-golden/5'
+                "group cursor-pointer transition-all duration-200",
+                "border-2 hover:border-golden/30",
+                selectedPhotos.includes(photo.id) &&
+                  "border-golden bg-golden/5",
               )}
               onClick={() => onPhotoClick?.(photo)}
             >
@@ -286,8 +288,8 @@ export function GalleryLayout({
                       >
                         <Heart
                           className={cn(
-                            'h-4 w-4',
-                            photo.isLiked && 'fill-red-500'
+                            "h-4 w-4",
+                            photo.isLiked && "fill-red-500",
                           )}
                         />
                         <span>{photo.likes}</span>

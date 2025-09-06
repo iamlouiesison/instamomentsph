@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import Link from 'next/link';
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import Link from "next/link";
 import {
   Eye,
   EyeOff,
@@ -13,21 +13,21 @@ import {
   User,
   Smartphone,
   CheckCircle,
-} from 'lucide-react';
+} from "lucide-react";
 
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
-import { Alert } from '@/components/ui/alert';
-import { useAuthContext } from '@/components/providers/AuthProvider';
-import { signUpSchema, type SignUpInput } from '@/lib/validations/auth';
+} from "@/components/ui/card";
+import { Alert } from "@/components/ui/alert";
+import { useAuthContext } from "@/components/providers/AuthProvider";
+import { signUpSchema, type SignUpInput } from "@/lib/validations/auth";
 
 export default function SignUpPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -55,45 +55,45 @@ export default function SignUpPage() {
       if (error) {
         const errorMessage =
           error instanceof Error ? error.message : String(error);
-        if (errorMessage.includes('User already registered')) {
-          setError('root', {
-            message: 'Email already exists. Please sign in instead.',
+        if (errorMessage.includes("User already registered")) {
+          setError("root", {
+            message: "Email already exists. Please sign in instead.",
           });
-        } else if (errorMessage.includes('Password should be at least')) {
-          setError('root', {
-            message: 'Password must be at least 6 characters long.',
+        } else if (errorMessage.includes("Password should be at least")) {
+          setError("root", {
+            message: "Password must be at least 6 characters long.",
           });
         } else {
-          setError('root', {
-            message: 'Something went wrong. Please try again.',
+          setError("root", {
+            message: "Something went wrong. Please try again.",
           });
         }
       } else {
         setIsSuccess(true);
       }
     } catch {
-      setError('root', {
-        message: 'Something went wrong. Please try again.',
+      setError("root", {
+        message: "Something went wrong. Please try again.",
       });
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleSocialSignUp = async (provider: 'google' | 'facebook') => {
+  const handleSocialSignUp = async (provider: "google" | "facebook") => {
     setIsLoading(true);
 
     try {
       const { error } = await signInWithProvider(provider);
 
       if (error) {
-        setError('root', {
+        setError("root", {
           message: `Problem with ${provider} sign up. Please try again.`,
         });
       }
     } catch {
-      setError('root', {
-        message: 'Something went wrong. Please try again.',
+      setError("root", {
+        message: "Something went wrong. Please try again.",
       });
     } finally {
       setIsLoading(false);
@@ -113,10 +113,10 @@ export default function SignUpPage() {
                 </div>
                 <div className="space-y-2">
                   <CardTitle className="text-2xl font-bold text-green-600">
-                    {'Success!'}
+                    {"Success!"}
                   </CardTitle>
                   <CardDescription className="text-muted-foreground">
-                    {'Your account has been created successfully!'}
+                    {"Your account has been created successfully!"}
                   </CardDescription>
                 </div>
               </CardHeader>
@@ -130,10 +130,10 @@ export default function SignUpPage() {
 
                   <div className="space-y-2">
                     <Button
-                      onClick={() => router.push('/signin')}
+                      onClick={() => router.push("/signin")}
                       className="w-full h-12 text-primary-foreground font-semibold"
                     >
-                      {'Sign In'}
+                      {"Sign In"}
                     </Button>
 
                     <Button
@@ -141,7 +141,7 @@ export default function SignUpPage() {
                       onClick={() => setIsSuccess(false)}
                       className="w-full h-12 border-border hover:bg-muted"
                     >
-                      {'Sign Up'} Again
+                      {"Sign Up"} Again
                     </Button>
                   </div>
                 </div>
@@ -165,10 +165,10 @@ export default function SignUpPage() {
               </div>
               <div className="space-y-2">
                 <CardTitle className="text-2xl font-bold">
-                  {'Join InstaMoments!'}
+                  {"Join InstaMoments!"}
                 </CardTitle>
                 <CardDescription className="text-muted-foreground">
-                  {'Create your account to start sharing celebration moments'}
+                  {"Create your account to start sharing celebration moments"}
                 </CardDescription>
               </div>
             </CardHeader>
@@ -181,7 +181,7 @@ export default function SignUpPage() {
 
                 <div className="space-y-2">
                   <Label htmlFor="fullName" className="text-sm font-medium">
-                    {'Full Name'}
+                    {"Full Name"}
                   </Label>
                   <div className="relative">
                     <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
@@ -191,7 +191,7 @@ export default function SignUpPage() {
                       placeholder="Your full name"
                       className="pl-10 h-12"
                       autoComplete="name"
-                      {...register('fullName')}
+                      {...register("fullName")}
                     />
                   </div>
                   {errors.fullName && (
@@ -203,7 +203,7 @@ export default function SignUpPage() {
 
                 <div className="space-y-2">
                   <Label htmlFor="email" className="text-sm font-medium">
-                    {'Email Address'}
+                    {"Email Address"}
                   </Label>
                   <div className="relative">
                     <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
@@ -213,7 +213,7 @@ export default function SignUpPage() {
                       placeholder="your.email@example.com"
                       className="pl-10 h-12"
                       autoComplete="email"
-                      {...register('email')}
+                      {...register("email")}
                     />
                   </div>
                   {errors.email && (
@@ -225,17 +225,17 @@ export default function SignUpPage() {
 
                 <div className="space-y-2">
                   <Label htmlFor="password" className="text-sm font-medium">
-                    {'Password'}
+                    {"Password"}
                   </Label>
                   <div className="relative">
                     <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
                     <Input
                       id="password"
-                      type={showPassword ? 'text' : 'password'}
+                      type={showPassword ? "text" : "password"}
                       placeholder="Your password"
                       className="pl-10 pr-10 h-12"
                       autoComplete="new-password"
-                      {...register('password')}
+                      {...register("password")}
                     />
                     <button
                       type="button"
@@ -261,17 +261,17 @@ export default function SignUpPage() {
                     htmlFor="confirmPassword"
                     className="text-sm font-medium"
                   >
-                    {'Confirm Password'}
+                    {"Confirm Password"}
                   </Label>
                   <div className="relative">
                     <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
                     <Input
                       id="confirmPassword"
-                      type={showConfirmPassword ? 'text' : 'password'}
+                      type={showConfirmPassword ? "text" : "password"}
                       placeholder="Confirm your password"
                       className="pl-10 pr-10 h-12"
                       autoComplete="new-password"
-                      {...register('confirmPassword')}
+                      {...register("confirmPassword")}
                     />
                     <button
                       type="button"
@@ -299,7 +299,7 @@ export default function SignUpPage() {
                   className="w-full h-12 text-primary-foreground font-semibold"
                   disabled={isLoading}
                 >
-                  {isLoading ? 'Creating account...' : 'Sign Up'}
+                  {isLoading ? "Creating account..." : "Sign Up"}
                 </Button>
               </form>
 
@@ -318,7 +318,7 @@ export default function SignUpPage() {
                 <Button
                   variant="outline"
                   className="h-12 border-border hover:bg-muted"
-                  onClick={() => handleSocialSignUp('google')}
+                  onClick={() => handleSocialSignUp("google")}
                   disabled={isLoading}
                 >
                   <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
@@ -345,7 +345,7 @@ export default function SignUpPage() {
                 <Button
                   variant="outline"
                   className="h-12 border-border hover:bg-muted"
-                  onClick={() => handleSocialSignUp('facebook')}
+                  onClick={() => handleSocialSignUp("facebook")}
                   disabled={isLoading}
                 >
                   <svg
@@ -361,12 +361,12 @@ export default function SignUpPage() {
 
               <div className="text-center">
                 <p className="text-sm text-muted-foreground">
-                  {'Already have an account?'}{' '}
+                  {"Already have an account?"}{" "}
                   <Link
                     href="/signin"
                     className="text-primary hover:text-primary/80 hover:underline font-medium"
                   >
-                    {'Sign In'}
+                    {"Sign In"}
                   </Link>
                 </p>
               </div>

@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
-import { z } from 'zod';
+import { NextRequest, NextResponse } from "next/server";
+import { createClient } from "@/lib/supabase/server";
+import { z } from "zod";
 
 const PhotosQuerySchema = z.object({
   slug: z.string().min(1),
@@ -15,18 +15,18 @@ const PhotosSearchParamsSchema = z.object({
     .string()
     .optional()
     .transform((val) => (val ? parseInt(val, 10) : 20)),
-  search: z.string().optional().default(''),
-  contributor: z.string().optional().default(''),
+  search: z.string().optional().default(""),
+  contributor: z.string().optional().default(""),
   sortBy: z
-    .enum(['newest', 'oldest', 'contributor'])
+    .enum(["newest", "oldest", "contributor"])
     .optional()
-    .default('newest'),
-  type: z.enum(['all', 'photos', 'videos']).optional().default('all'),
+    .default("newest"),
+  type: z.enum(["all", "photos", "videos"]).optional().default("all"),
 });
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ slug: string }> }
+  { params }: { params: Promise<{ slug: string }> },
 ) {
   try {
     const supabase = await createClient();
@@ -35,20 +35,20 @@ export async function GET(
     const { slug } = PhotosQuerySchema.parse(await params);
     const searchParams = new URL(request.url).searchParams;
     const query = PhotosSearchParamsSchema.parse({
-      page: searchParams.get('page') || undefined,
-      limit: searchParams.get('limit') || undefined,
-      search: searchParams.get('search') || undefined,
-      contributor: searchParams.get('contributor') || undefined,
-      sortBy: searchParams.get('sortBy') || undefined,
-      type: searchParams.get('type') || undefined,
+      page: searchParams.get("page") || undefined,
+      limit: searchParams.get("limit") || undefined,
+      search: searchParams.get("search") || undefined,
+      contributor: searchParams.get("contributor") || undefined,
+      sortBy: searchParams.get("sortBy") || undefined,
+      type: searchParams.get("type") || undefined,
     });
 
     // Get event by gallery slug
     const { data: event, error: eventError } = await supabase
-      .from('events')
-      .select('id, status, is_public, expires_at')
-      .eq('gallery_slug', slug)
-      .eq('status', 'active')
+      .from("events")
+      .select("id, status, is_public, expires_at")
+      .eq("gallery_slug", slug)
+      .eq("status", "active")
       .single();
 
     if (eventError || !event) {
@@ -56,11 +56,11 @@ export async function GET(
         {
           success: false,
           error: {
-            code: 'GALLERY_NOT_FOUND',
-            message: 'Gallery not found or no longer active',
+            code: "GALLERY_NOT_FOUND",
+            message: "Gallery not found or no longer active",
           },
         },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -70,18 +70,18 @@ export async function GET(
         {
           success: false,
           error: {
-            code: 'GALLERY_EXPIRED',
-            message: 'This gallery has expired',
+            code: "GALLERY_EXPIRED",
+            message: "This gallery has expired",
           },
         },
-        { status: 410 }
+        { status: 410 },
       );
     }
 
     const offset = query.page * query.limit;
     const results: Array<{
       id: string;
-      type: 'photo' | 'video';
+      type: "photo" | "video";
       url: string;
       thumbnail_url?: string;
       caption?: string;
@@ -92,9 +92,9 @@ export async function GET(
     }> = [];
 
     // Fetch photos if requested
-    if (query.type === 'all' || query.type === 'photos') {
+    if (query.type === "all" || query.type === "photos") {
       let photosQuery = supabase
-        .from('photos')
+        .from("photos")
         .select(
           `
           id,
@@ -109,30 +109,30 @@ export async function GET(
           caption,
           uploaded_at,
           exif_data
-        `
+        `,
         )
-        .eq('event_id', event.id)
-        .eq('is_approved', true);
+        .eq("event_id", event.id)
+        .eq("is_approved", true);
 
       // Apply search filter
       if (query.search) {
         photosQuery = photosQuery.or(
-          `caption.ilike.%${query.search}%,contributor_name.ilike.%${query.search}%`
+          `caption.ilike.%${query.search}%,contributor_name.ilike.%${query.search}%`,
         );
       }
 
       // Apply contributor filter
-      if (query.contributor && query.contributor !== 'all') {
-        photosQuery = photosQuery.eq('contributor_name', query.contributor);
+      if (query.contributor && query.contributor !== "all") {
+        photosQuery = photosQuery.eq("contributor_name", query.contributor);
       }
 
       // Apply sorting
-      if (query.sortBy === 'newest') {
-        photosQuery = photosQuery.order('uploaded_at', { ascending: false });
-      } else if (query.sortBy === 'oldest') {
-        photosQuery = photosQuery.order('uploaded_at', { ascending: true });
-      } else if (query.sortBy === 'contributor') {
-        photosQuery = photosQuery.order('contributor_name', {
+      if (query.sortBy === "newest") {
+        photosQuery = photosQuery.order("uploaded_at", { ascending: false });
+      } else if (query.sortBy === "oldest") {
+        photosQuery = photosQuery.order("uploaded_at", { ascending: true });
+      } else if (query.sortBy === "contributor") {
+        photosQuery = photosQuery.order("contributor_name", {
           ascending: true,
         });
       }
@@ -143,16 +143,16 @@ export async function GET(
       const { data: photos, error: photosError } = await photosQuery;
 
       if (photosError) {
-        console.error('Error fetching photos:', photosError);
+        console.error("Error fetching photos:", photosError);
         return NextResponse.json(
           {
             success: false,
             error: {
-              code: 'DATABASE_ERROR',
-              message: 'Failed to fetch photos',
+              code: "DATABASE_ERROR",
+              message: "Failed to fetch photos",
             },
           },
-          { status: 500 }
+          { status: 500 },
         );
       }
 
@@ -160,7 +160,7 @@ export async function GET(
       const photosWithType =
         photos?.map((photo) => ({
           id: photo.id,
-          type: 'photo' as const,
+          type: "photo" as const,
           url: photo.file_url,
           thumbnail_url: photo.thumbnail_url,
           caption: photo.caption,
@@ -173,9 +173,9 @@ export async function GET(
     }
 
     // Fetch videos if requested
-    if (query.type === 'all' || query.type === 'videos') {
+    if (query.type === "all" || query.type === "videos") {
       let videosQuery = supabase
-        .from('videos')
+        .from("videos")
         .select(
           `
           id,
@@ -190,10 +190,10 @@ export async function GET(
           caption,
           created_at,
           status
-        `
+        `,
         )
-        .eq('event_id', event.id)
-        .eq('status', 'completed');
+        .eq("event_id", event.id)
+        .eq("status", "completed");
 
       // Apply search filter
       if (query.search) {
@@ -201,17 +201,17 @@ export async function GET(
       }
 
       // Apply contributor filter
-      if (query.contributor && query.contributor !== 'all') {
-        videosQuery = videosQuery.eq('uploaded_by', query.contributor);
+      if (query.contributor && query.contributor !== "all") {
+        videosQuery = videosQuery.eq("uploaded_by", query.contributor);
       }
 
       // Apply sorting
-      if (query.sortBy === 'newest') {
-        videosQuery = videosQuery.order('created_at', { ascending: false });
-      } else if (query.sortBy === 'oldest') {
-        videosQuery = videosQuery.order('created_at', { ascending: true });
-      } else if (query.sortBy === 'contributor') {
-        videosQuery = videosQuery.order('uploaded_by', {
+      if (query.sortBy === "newest") {
+        videosQuery = videosQuery.order("created_at", { ascending: false });
+      } else if (query.sortBy === "oldest") {
+        videosQuery = videosQuery.order("created_at", { ascending: true });
+      } else if (query.sortBy === "contributor") {
+        videosQuery = videosQuery.order("uploaded_by", {
           ascending: true,
         });
       }
@@ -222,16 +222,16 @@ export async function GET(
       const { data: videos, error: videosError } = await videosQuery;
 
       if (videosError) {
-        console.error('Error fetching videos:', videosError);
+        console.error("Error fetching videos:", videosError);
         return NextResponse.json(
           {
             success: false,
             error: {
-              code: 'DATABASE_ERROR',
-              message: 'Failed to fetch videos',
+              code: "DATABASE_ERROR",
+              message: "Failed to fetch videos",
             },
           },
-          { status: 500 }
+          { status: 500 },
         );
       }
 
@@ -239,7 +239,7 @@ export async function GET(
       const videosWithType =
         videos?.map((video) => ({
           id: video.id,
-          type: 'video' as const,
+          type: "video" as const,
           url: video.file_url,
           thumbnail_url: video.thumbnail_url,
           caption: video.caption,
@@ -253,20 +253,20 @@ export async function GET(
     }
 
     // Sort combined results if both types are requested
-    if (query.type === 'all') {
-      if (query.sortBy === 'newest') {
+    if (query.type === "all") {
+      if (query.sortBy === "newest") {
         results.sort(
           (a, b) =>
-            new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+            new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
         );
-      } else if (query.sortBy === 'oldest') {
+      } else if (query.sortBy === "oldest") {
         results.sort(
           (a, b) =>
-            new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+            new Date(a.created_at).getTime() - new Date(b.created_at).getTime(),
         );
-      } else if (query.sortBy === 'contributor') {
+      } else if (query.sortBy === "contributor") {
         results.sort((a, b) =>
-          (a.uploaded_by || '').localeCompare(b.uploaded_by || '')
+          (a.uploaded_by || "").localeCompare(b.uploaded_by || ""),
         );
       }
     }
@@ -274,22 +274,22 @@ export async function GET(
     // Get total count for pagination
     let totalCount = 0;
 
-    if (query.type === 'all' || query.type === 'photos') {
+    if (query.type === "all" || query.type === "photos") {
       const { count: photosCount } = await supabase
-        .from('photos')
-        .select('*', { count: 'exact', head: true })
-        .eq('event_id', event.id)
-        .eq('is_approved', true);
+        .from("photos")
+        .select("*", { count: "exact", head: true })
+        .eq("event_id", event.id)
+        .eq("is_approved", true);
 
       totalCount += photosCount || 0;
     }
 
-    if (query.type === 'all' || query.type === 'videos') {
+    if (query.type === "all" || query.type === "videos") {
       const { count: videosCount } = await supabase
-        .from('videos')
-        .select('*', { count: 'exact', head: true })
-        .eq('event_id', event.id)
-        .eq('status', 'completed');
+        .from("videos")
+        .select("*", { count: "exact", head: true })
+        .eq("event_id", event.id)
+        .eq("status", "completed");
 
       totalCount += videosCount || 0;
     }
@@ -316,19 +316,19 @@ export async function GET(
       },
     });
   } catch (error) {
-    console.error('Photos API error:', error);
+    console.error("Photos API error:", error);
 
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {
           success: false,
           error: {
-            code: 'VALIDATION_ERROR',
-            message: 'Invalid request parameters',
+            code: "VALIDATION_ERROR",
+            message: "Invalid request parameters",
             details: error.issues,
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -336,11 +336,11 @@ export async function GET(
       {
         success: false,
         error: {
-          code: 'INTERNAL_ERROR',
-          message: 'Failed to fetch photos',
+          code: "INTERNAL_ERROR",
+          message: "Failed to fetch photos",
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

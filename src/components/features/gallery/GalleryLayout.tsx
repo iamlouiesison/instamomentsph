@@ -1,16 +1,16 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Camera,
   Video,
@@ -23,13 +23,13 @@ import {
   Download,
   QrCode,
   Smartphone,
-} from 'lucide-react';
-import { CalendarIcon } from '@/components/ui/calendar-icon';
-import { PhotoGallery } from './PhotoGallery';
-import { GalleryOptimization } from './GalleryOptimization';
-import { Event } from '@/types/database';
-import { EVENT_TYPES } from '@/lib/validations/event';
-import { format } from 'date-fns';
+} from "lucide-react";
+import { CalendarIcon } from "@/components/ui/calendar-icon";
+import { PhotoGallery } from "./PhotoGallery";
+import { GalleryOptimization } from "./GalleryOptimization";
+import { Event } from "@/types/database";
+import { EVENT_TYPES } from "@/lib/validations/event";
+import { format } from "date-fns";
 
 interface GalleryLayoutProps {
   event: Event & { host?: Record<string, unknown> };
@@ -44,13 +44,13 @@ export function GalleryLayout({
   onUploadClick,
   onQRScanClick,
 }: GalleryLayoutProps) {
-  const [activeTab, setActiveTab] = useState('gallery');
+  const [activeTab, setActiveTab] = useState("gallery");
 
   const eventTypeInfo = EVENT_TYPES[event.event_type];
 
   // Check if event is still active
   const isEventActive =
-    event.status === 'active' &&
+    event.status === "active" &&
     (!event.expires_at || new Date(event.expires_at) > new Date());
 
   if (!isEventActive) {
@@ -68,7 +68,7 @@ export function GalleryLayout({
           </CardHeader>
           <CardContent className="text-center">
             <Button
-              onClick={() => (window.location.href = '/')}
+              onClick={() => (window.location.href = "/")}
               className="w-full"
             >
               Go to Homepage
@@ -146,7 +146,7 @@ export function GalleryLayout({
                 <div className="flex items-center gap-2 text-muted-foreground">
                   <CalendarIcon size="sm" variant="muted" />
                   <span>
-                    {format(new Date(event.event_date), 'MMMM d, yyyy')}
+                    {format(new Date(event.event_date), "MMMM d, yyyy")}
                   </span>
                 </div>
               )}
@@ -345,9 +345,9 @@ export function GalleryLayout({
                       </div>
                     </div>
                     <Badge
-                      variant={event.allow_downloads ? 'default' : 'secondary'}
+                      variant={event.allow_downloads ? "default" : "secondary"}
                     >
-                      {event.allow_downloads ? 'Enabled' : 'Disabled'}
+                      {event.allow_downloads ? "Enabled" : "Disabled"}
                     </Badge>
                   </div>
                 </div>

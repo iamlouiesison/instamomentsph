@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
+import React from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
 import {
   Camera,
   Video,
@@ -12,8 +12,8 @@ import {
   Clock,
   Download,
   Eye,
-} from 'lucide-react';
-import { cn } from '@/lib/utils';
+} from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface EventStatsProps {
   eventId: string;
@@ -40,14 +40,14 @@ export const EventStats: React.FC<EventStatsProps> = ({ stats, className }) => {
     ((stats.storageDays - stats.daysRemaining) / stats.storageDays) * 100;
 
   const getUsageStatus = (percent: number) => {
-    if (percent >= 90) return 'Critical';
-    if (percent >= 75) return 'High';
-    if (percent >= 50) return 'Medium';
-    return 'Low';
+    if (percent >= 90) return "Critical";
+    if (percent >= 75) return "High";
+    if (percent >= 50) return "Medium";
+    return "Low";
   };
 
   return (
-    <div className={cn('space-y-6', className)}>
+    <div className={cn("space-y-6", className)}>
       {/* Overview Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Card>
@@ -121,10 +121,10 @@ export const EventStats: React.FC<EventStatsProps> = ({ stats, className }) => {
               <Badge
                 variant={
                   photoUsagePercent >= 90
-                    ? 'destructive'
+                    ? "destructive"
                     : photoUsagePercent >= 75
-                      ? 'secondary'
-                      : 'default'
+                      ? "secondary"
+                      : "default"
                 }
               >
                 {getUsageStatus(photoUsagePercent)}
@@ -154,10 +154,10 @@ export const EventStats: React.FC<EventStatsProps> = ({ stats, className }) => {
                 <Badge
                   variant={
                     videoUsagePercent >= 90
-                      ? 'destructive'
+                      ? "destructive"
                       : videoUsagePercent >= 75
-                        ? 'secondary'
-                        : 'default'
+                        ? "secondary"
+                        : "default"
                   }
                 >
                   {getUsageStatus(videoUsagePercent)}
@@ -187,10 +187,10 @@ export const EventStats: React.FC<EventStatsProps> = ({ stats, className }) => {
               <Badge
                 variant={
                   storageUsagePercent >= 90
-                    ? 'destructive'
+                    ? "destructive"
                     : storageUsagePercent >= 75
-                      ? 'secondary'
-                      : 'default'
+                      ? "secondary"
+                      : "default"
                 }
               >
                 {getUsageStatus(storageUsagePercent)}

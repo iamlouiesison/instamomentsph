@@ -1,7 +1,7 @@
 // Image Processing Utilities for InstaMoments
 // Handles compression, format conversion, and EXIF data processing
 
-import imageCompression from 'browser-image-compression';
+import imageCompression from "browser-image-compression";
 
 export interface ImageProcessingOptions {
   maxSizeMB?: number;
@@ -47,7 +47,7 @@ const DEFAULT_OPTIONS: ImageProcessingOptions = {
  */
 export async function compressImage(
   file: File,
-  options: ImageProcessingOptions = {}
+  options: ImageProcessingOptions = {},
 ): Promise<ProcessedImage> {
   const opts = { ...DEFAULT_OPTIONS, ...options };
 
@@ -60,7 +60,7 @@ export async function compressImage(
     // Validate file size
     if (file.size > 10 * 1024 * 1024) {
       // 10MB max
-      throw new Error('File size exceeds 10MB limit');
+      throw new Error("File size exceeds 10MB limit");
     }
 
     const originalSize = file.size;
@@ -90,7 +90,7 @@ export async function compressImage(
 
     const compressedSize = finalFile.size;
     const compressionRatio = Math.round(
-      ((originalSize - compressedSize) / originalSize) * 100
+      ((originalSize - compressedSize) / originalSize) * 100,
     );
 
     return {
@@ -102,9 +102,9 @@ export async function compressImage(
       compressionRatio,
     };
   } catch (error) {
-    console.error('Image compression failed:', error);
+    console.error("Image compression failed:", error);
     throw new Error(
-      `Image processing failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+      `Image processing failed: ${error instanceof Error ? error.message : "Unknown error"}`,
     );
   }
 }
@@ -114,7 +114,7 @@ export async function compressImage(
  */
 export async function generateThumbnail(
   file: File,
-  options: { maxWidthOrHeight?: number; quality?: number } = {}
+  options: { maxWidthOrHeight?: number; quality?: number } = {},
 ): Promise<File> {
   const opts = {
     maxWidthOrHeight: 300,
@@ -137,8 +137,8 @@ export async function generateThumbnail(
 
     return thumbnailFile;
   } catch (error) {
-    console.error('Thumbnail generation failed:', error);
-    throw new Error('Failed to generate thumbnail');
+    console.error("Thumbnail generation failed:", error);
+    throw new Error("Failed to generate thumbnail");
   }
 }
 
@@ -148,8 +148,8 @@ export async function generateThumbnail(
 export async function extractEXIFData(file: File): Promise<EXIFData | null> {
   try {
     // Create a canvas to read image data
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
     if (!ctx) return null;
 
     const img = new Image();
@@ -181,7 +181,7 @@ export async function extractEXIFData(file: File): Promise<EXIFData | null> {
       img.src = url;
     });
   } catch (error) {
-    console.error('EXIF extraction failed:', error);
+    console.error("EXIF extraction failed:", error);
     return null;
   }
 }
@@ -191,11 +191,11 @@ export async function extractEXIFData(file: File): Promise<EXIFData | null> {
  */
 export async function convertToWebP(
   file: File,
-  quality: number = 0.8
+  quality: number = 0.8,
 ): Promise<File> {
   try {
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
     if (!ctx) return file; // Fallback to original if WebP not supported
 
     const img = new Image();
@@ -213,16 +213,16 @@ export async function convertToWebP(
             if (blob) {
               const webpFile = new File(
                 [blob],
-                file.name.replace(/\.[^/.]+$/, '.webp'),
-                { type: 'image/webp' }
+                file.name.replace(/\.[^/.]+$/, ".webp"),
+                { type: "image/webp" },
               );
               resolve(webpFile);
             } else {
               resolve(file); // Fallback to original
             }
           },
-          'image/webp',
-          quality
+          "image/webp",
+          quality,
         );
       };
 
@@ -234,7 +234,7 @@ export async function convertToWebP(
       img.src = url;
     });
   } catch (error) {
-    console.error('WebP conversion failed:', error);
+    console.error("WebP conversion failed:", error);
     return file; // Fallback to original
   }
 }
@@ -243,11 +243,11 @@ export async function convertToWebP(
  * Check if the browser supports WebP format
  */
 export function supportsWebP(): boolean {
-  const canvas = document.createElement('canvas');
+  const canvas = document.createElement("canvas");
   canvas.width = 1;
   canvas.height = 1;
 
-  return canvas.toDataURL('image/webp').indexOf('data:image/webp') === 0;
+  return canvas.toDataURL("image/webp").indexOf("data:image/webp") === 0;
 }
 
 /**
@@ -255,12 +255,12 @@ export function supportsWebP(): boolean {
  */
 export function isValidImageType(mimeType: string): boolean {
   const validTypes = [
-    'image/jpeg',
-    'image/jpg',
-    'image/png',
-    'image/webp',
-    'image/heic',
-    'image/heif',
+    "image/jpeg",
+    "image/jpg",
+    "image/png",
+    "image/webp",
+    "image/heic",
+    "image/heif",
   ];
   return validTypes.includes(mimeType.toLowerCase());
 }
@@ -269,20 +269,20 @@ export function isValidImageType(mimeType: string): boolean {
  * Get file size in human readable format
  */
 export function formatFileSize(bytes: number): string {
-  if (bytes === 0) return '0 Bytes';
+  if (bytes === 0) return "0 Bytes";
 
   const k = 1024;
-  const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+  const sizes = ["Bytes", "KB", "MB", "GB"];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
 
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
 }
 
 /**
  * Get image dimensions from file
  */
 export async function getImageDimensions(
-  file: File
+  file: File,
 ): Promise<{ width: number; height: number }> {
   return new Promise((resolve, reject) => {
     const img = new Image();
@@ -295,7 +295,7 @@ export async function getImageDimensions(
 
     img.onerror = () => {
       URL.revokeObjectURL(url);
-      reject(new Error('Failed to load image'));
+      reject(new Error("Failed to load image"));
     };
 
     img.src = url;
@@ -341,7 +341,7 @@ export function sanitizeEXIFData(exifData: EXIFData | null): EXIFData | null {
  */
 export async function batchProcessImages(
   files: File[],
-  options: ImageProcessingOptions = {}
+  options: ImageProcessingOptions = {},
 ): Promise<ProcessedImage[]> {
   const results: ProcessedImage[] = [];
 

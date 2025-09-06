@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Switch } from '@/components/ui/switch';
-import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import React from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   Shield,
   Download,
@@ -14,8 +14,8 @@ import {
   AlertTriangle,
   CheckCircle,
   Clock,
-} from 'lucide-react';
-import { cn } from '@/lib/utils';
+} from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface EventSettingsProps {
   event: {
@@ -38,7 +38,7 @@ export const EventSettings: React.FC<EventSettingsProps> = ({
   className,
 }) => {
   const isExpired =
-    event.status === 'expired' ||
+    event.status === "expired" ||
     (event.expiresAt && new Date(event.expiresAt) < new Date());
   const isExpiringSoon =
     event.expiresAt &&
@@ -46,7 +46,7 @@ export const EventSettings: React.FC<EventSettingsProps> = ({
     !isExpired;
 
   return (
-    <div className={cn('space-y-6', className)}>
+    <div className={cn("space-y-6", className)}>
       {/* Privacy & Security Settings */}
       <Card>
         <CardHeader>
@@ -69,7 +69,7 @@ export const EventSettings: React.FC<EventSettingsProps> = ({
             <Switch
               id="isPublic"
               checked={event.isPublic}
-              onCheckedChange={(checked) => onUpdate('isPublic', checked)}
+              onCheckedChange={(checked) => onUpdate("isPublic", checked)}
               disabled={!!isExpired}
             />
           </div>
@@ -91,7 +91,7 @@ export const EventSettings: React.FC<EventSettingsProps> = ({
               id="requiresModeration"
               checked={event.requiresModeration}
               onCheckedChange={(checked) =>
-                onUpdate('requiresModeration', checked)
+                onUpdate("requiresModeration", checked)
               }
               disabled={!!isExpired}
             />
@@ -113,7 +113,7 @@ export const EventSettings: React.FC<EventSettingsProps> = ({
             <Switch
               id="allowDownloads"
               checked={event.allowDownloads}
-              onCheckedChange={(checked) => onUpdate('allowDownloads', checked)}
+              onCheckedChange={(checked) => onUpdate("allowDownloads", checked)}
               disabled={!!isExpired}
             />
           </div>
@@ -134,8 +134,8 @@ export const EventSettings: React.FC<EventSettingsProps> = ({
             <textarea
               id="customMessage"
               placeholder="Add a special message that will be shown to guests when they scan the QR code..."
-              value={event.customMessage || ''}
-              onChange={(e) => onUpdate('customMessage', e.target.value)}
+              value={event.customMessage || ""}
+              onChange={(e) => onUpdate("customMessage", e.target.value)}
               disabled={!!isExpired}
               className="w-full min-h-[80px] px-3 py-2 border border-input rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-ring disabled:opacity-50"
             />
@@ -159,8 +159,8 @@ export const EventSettings: React.FC<EventSettingsProps> = ({
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium">Status</span>
-              <Badge variant={isExpired ? 'destructive' : 'default'}>
-                {isExpired ? 'Expired' : 'Active'}
+              <Badge variant={isExpired ? "destructive" : "default"}>
+                {isExpired ? "Expired" : "Active"}
               </Badge>
             </div>
 
@@ -168,7 +168,7 @@ export const EventSettings: React.FC<EventSettingsProps> = ({
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium">Expires</span>
                 <span className="text-sm text-muted-foreground">
-                  {new Date(event.expiresAt).toLocaleDateString('en-PH')}
+                  {new Date(event.expiresAt).toLocaleDateString("en-PH")}
                 </span>
               </div>
             )}
@@ -206,22 +206,22 @@ export const EventSettings: React.FC<EventSettingsProps> = ({
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <span className="text-sm">Gallery Visibility</span>
-              <Badge variant={event.isPublic ? 'default' : 'secondary'}>
-                {event.isPublic ? 'Public' : 'Private'}
+              <Badge variant={event.isPublic ? "default" : "secondary"}>
+                {event.isPublic ? "Public" : "Private"}
               </Badge>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-sm">Content Moderation</span>
               <Badge
-                variant={event.requiresModeration ? 'default' : 'secondary'}
+                variant={event.requiresModeration ? "default" : "secondary"}
               >
-                {event.requiresModeration ? 'Enabled' : 'Disabled'}
+                {event.requiresModeration ? "Enabled" : "Disabled"}
               </Badge>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-sm">Downloads</span>
-              <Badge variant={event.allowDownloads ? 'default' : 'secondary'}>
-                {event.allowDownloads ? 'Allowed' : 'Disabled'}
+              <Badge variant={event.allowDownloads ? "default" : "secondary"}>
+                {event.allowDownloads ? "Allowed" : "Disabled"}
               </Badge>
             </div>
           </div>

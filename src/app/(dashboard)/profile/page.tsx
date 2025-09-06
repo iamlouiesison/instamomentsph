@@ -1,24 +1,24 @@
-'use client';
+"use client";
 
-import { useState, useEffect, useCallback } from 'react';
-import { useAuthContext } from '@/components/providers/AuthProvider';
+import { useState, useEffect, useCallback } from "react";
+import { useAuthContext } from "@/components/providers/AuthProvider";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { User, Mail } from 'lucide-react';
-import { PaymentLoading } from '@/components/instamoments/loading-states';
+} from "@/components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { User, Mail } from "lucide-react";
+import { PaymentLoading } from "@/components/instamoments/loading-states";
 
 export default function ProfilePage() {
   const { profile, loading, user, error } = useAuthContext();
   const [isCreatingProfile, setIsCreatingProfile] = useState(false);
 
   // Debug information
-  console.log('ProfilePage Debug:', { profile, loading, user, error });
+  console.log("ProfilePage Debug:", { profile, loading, user, error });
 
   // Create profile if user exists but no profile
   const createProfile = useCallback(async () => {
@@ -26,11 +26,11 @@ export default function ProfilePage() {
 
     setIsCreatingProfile(true);
     try {
-      const response = await fetch('/api/profile/create', {
-        credentials: 'include',
-        method: 'POST',
+      const response = await fetch("/api/profile/create", {
+        credentials: "include",
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
       });
 
@@ -40,7 +40,7 @@ export default function ProfilePage() {
         // Refresh the page to load the new profile
         window.location.reload();
       } else {
-        console.error('Failed to create profile:', result.error);
+        console.error("Failed to create profile:", result.error);
       }
     } catch {
       // Error handling is done in the hook
@@ -58,9 +58,9 @@ export default function ProfilePage() {
 
   const getInitials = (name: string) => {
     return name
-      .split(' ')
+      .split(" ")
       .map((word) => word[0])
-      .join('')
+      .join("")
       .toUpperCase()
       .slice(0, 2);
   };
@@ -146,26 +146,26 @@ export default function ProfilePage() {
           <div className="flex items-center space-x-6">
             <Avatar className="w-20 h-20 ring-4 ring-background shadow-lg">
               <AvatarImage
-                src={profile?.avatar_url || ''}
-                alt={profile?.full_name || ''}
+                src={profile?.avatar_url || ""}
+                alt={profile?.full_name || ""}
               />
               <AvatarFallback className="text-2xl font-bold">
-                {profile?.full_name ? getInitials(profile.full_name) : 'U'}
+                {profile?.full_name ? getInitials(profile.full_name) : "U"}
               </AvatarFallback>
             </Avatar>
             <div className="flex-1">
               <h1 className="text-3xl font-bold mb-2">
-                {profile?.full_name || 'Walang Pangalan'}
+                {profile?.full_name || "Walang Pangalan"}
               </h1>
               <p className="text-muted-foreground text-lg mb-3">
                 {profile?.email}
               </p>
               <div className="flex items-center space-x-4">
                 <span className="text-sm text-muted-foreground">
-                  Member since{' '}
+                  Member since{" "}
                   {profile?.created_at
-                    ? new Date(profile.created_at).toLocaleDateString('en-PH')
-                    : 'Unknown'}
+                    ? new Date(profile.created_at).toLocaleDateString("en-PH")
+                    : "Unknown"}
                 </span>
               </div>
             </div>
@@ -205,7 +205,7 @@ export default function ProfilePage() {
                   <div>
                     <p className="font-medium">Full Name</p>
                     <p className="text-sm text-muted-foreground">
-                      {profile?.full_name || 'Not set'}
+                      {profile?.full_name || "Not set"}
                     </p>
                   </div>
                 </div>

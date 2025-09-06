@@ -1,7 +1,7 @@
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { cn } from '@/lib/utils';
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 import {
   Volume2,
   VolumeX,
@@ -11,8 +11,8 @@ import {
   Contrast,
   Settings,
   HelpCircle,
-} from 'lucide-react';
-import { useState } from 'react';
+} from "lucide-react";
+import { useState } from "react";
 
 interface AccessibilitySettingsProps {
   onSettingsChange?: (settings: AccessibilitySettings) => void;
@@ -45,19 +45,19 @@ export function AccessibilitySettings({
     onSettingsChange?.(newSettings);
 
     // Apply settings to document
-    if (key === 'highContrast') {
-      document.documentElement.classList.toggle('high-contrast', value);
+    if (key === "highContrast") {
+      document.documentElement.classList.toggle("high-contrast", value);
     }
-    if (key === 'largeText') {
-      document.documentElement.classList.toggle('large-text', value);
+    if (key === "largeText") {
+      document.documentElement.classList.toggle("large-text", value);
     }
-    if (key === 'reducedMotion') {
-      document.documentElement.classList.toggle('reduced-motion', value);
+    if (key === "reducedMotion") {
+      document.documentElement.classList.toggle("reduced-motion", value);
     }
   };
 
   return (
-    <Card className={cn('w-full max-w-md mx-auto', className)}>
+    <Card className={cn("w-full max-w-md mx-auto", className)}>
       <CardContent className="p-6 space-y-4">
         <div className="flex items-center gap-2 mb-4">
           <Settings className="h-5 w-5" />
@@ -78,10 +78,10 @@ export function AccessibilitySettings({
               </div>
             </div>
             <Button
-              variant={settings.highContrast ? 'default' : 'outline'}
+              variant={settings.highContrast ? "default" : "outline"}
               size="sm"
               onClick={() =>
-                updateSetting('highContrast', !settings.highContrast)
+                updateSetting("highContrast", !settings.highContrast)
               }
               className="mobile-button"
             >
@@ -102,9 +102,9 @@ export function AccessibilitySettings({
               </div>
             </div>
             <Button
-              variant={settings.largeText ? 'default' : 'outline'}
+              variant={settings.largeText ? "default" : "outline"}
               size="sm"
-              onClick={() => updateSetting('largeText', !settings.largeText)}
+              onClick={() => updateSetting("largeText", !settings.largeText)}
               className="mobile-button"
             >
               {settings.largeText ? (
@@ -124,10 +124,10 @@ export function AccessibilitySettings({
               </div>
             </div>
             <Button
-              variant={settings.audioDescriptions ? 'default' : 'outline'}
+              variant={settings.audioDescriptions ? "default" : "outline"}
               size="sm"
               onClick={() =>
-                updateSetting('audioDescriptions', !settings.audioDescriptions)
+                updateSetting("audioDescriptions", !settings.audioDescriptions)
               }
               className="mobile-button"
             >
@@ -163,7 +163,7 @@ export function AccessibilityHelper({
   className,
 }: AccessibilityHelperProps) {
   return (
-    <div className={cn('relative group', className)}>
+    <div className={cn("relative group", className)}>
       {children}
       <div className="absolute -top-2 -right-2 opacity-0 group-hover:opacity-100 transition-opacity">
         <Badge
@@ -184,9 +184,9 @@ interface VoiceGuidanceProps {
 
 export function VoiceGuidance({ text, className }: VoiceGuidanceProps) {
   const speak = () => {
-    if ('speechSynthesis' in window) {
+    if ("speechSynthesis" in window) {
       const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = 'en-PH'; // Filipino English
+      utterance.lang = "en-PH"; // Filipino English
       utterance.rate = 0.8; // Slower for better understanding
       speechSynthesis.speak(utterance);
     }
@@ -197,7 +197,7 @@ export function VoiceGuidance({ text, className }: VoiceGuidanceProps) {
       variant="ghost"
       size="sm"
       onClick={speak}
-      className={cn('h-8 w-8 p-0', className)}
+      className={cn("h-8 w-8 p-0", className)}
       aria-label={`Read aloud: ${text}`}
     >
       <Volume2 className="h-4 w-4" />
@@ -217,8 +217,8 @@ export function LargeTouchTarget({
   return (
     <div
       className={cn(
-        'min-h-[44px] min-w-[44px] flex items-center justify-center',
-        className
+        "min-h-[44px] min-w-[44px] flex items-center justify-center",
+        className,
       )}
     >
       {children}
@@ -250,7 +250,7 @@ export function FilipinoLanguageSupport({
   const [showFilipino, setShowFilipino] = useState(false);
 
   return (
-    <div className={cn('space-y-2', className)}>
+    <div className={cn("space-y-2", className)}>
       {children}
       <div className="flex items-center gap-2">
         <Button
@@ -259,7 +259,7 @@ export function FilipinoLanguageSupport({
           onClick={() => setShowFilipino(!showFilipino)}
           className="text-xs"
         >
-          {showFilipino ? 'English' : 'Filipino'}
+          {showFilipino ? "English" : "Filipino"}
         </Button>
         <span className="text-xs text-muted-foreground">
           {showFilipino ? filipinoText : englishText}
@@ -271,12 +271,12 @@ export function FilipinoLanguageSupport({
 
 interface AccessibilityAnnouncementProps {
   message: string;
-  priority?: 'polite' | 'assertive';
+  priority?: "polite" | "assertive";
 }
 
 export function AccessibilityAnnouncement({
   message,
-  priority = 'polite',
+  priority = "polite",
 }: AccessibilityAnnouncementProps) {
   return (
     <div role="status" aria-live={priority} className="sr-only">
@@ -308,7 +308,7 @@ export function AccessibleFormField({
   const helpId = helpText ? `${fieldId}-help` : undefined;
 
   return (
-    <div className={cn('space-y-2', className)}>
+    <div className={cn("space-y-2", className)}>
       <label htmlFor={fieldId} className="block text-sm font-medium">
         {label}
         {required && <span className="text-destructive ml-1">*</span>}

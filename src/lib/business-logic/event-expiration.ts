@@ -2,8 +2,8 @@
  * Event expiration handling and cleanup service
  */
 
-import { createAdminClient } from '@/lib/supabase/admin';
-import { getSubscriptionLimits } from './subscription-limits';
+import { createAdminClient } from "@/lib/supabase/admin";
+import { getSubscriptionLimits } from "./subscription-limits";
 
 export interface ExpiredEvent {
   id: string;
@@ -32,7 +32,7 @@ export async function findExpiredEvents(): Promise<ExpiredEvent[]> {
   const now = new Date().toISOString();
 
   const { data: events, error } = await supabase
-    .from('events')
+    .from("events")
     .select(
       `
       id,
@@ -44,14 +44,14 @@ export async function findExpiredEvents(): Promise<ExpiredEvent[]> {
       total_videos,
       created_at,
       expires_at
-    `
+    `,
     )
-    .eq('status', 'active')
-    .lt('expires_at', now);
+    .eq("status", "active")
+    .lt("expires_at", now);
 
   if (error) {
-    console.error('Error finding expired events:', error);
-    throw new Error('Failed to find expired events');
+    console.error("Error finding expired events:", error);
+    throw new Error("Failed to find expired events");
   }
 
   return (
@@ -76,16 +76,16 @@ export async function markEventAsExpired(eventId: string): Promise<void> {
   const supabase = createAdminClient();
 
   const { error } = await supabase
-    .from('events')
+    .from("events")
     .update({
-      status: 'expired',
+      status: "expired",
       updated_at: new Date().toISOString(),
     })
-    .eq('id', eventId);
+    .eq("id", eventId);
 
   if (error) {
-    console.error('Error marking event as expired:', error);
-    throw new Error('Failed to mark event as expired');
+    console.error("Error marking event as expired:", error);
+    throw new Error("Failed to mark event as expired");
   }
 }
 
@@ -105,24 +105,24 @@ export async function deleteEventContent(eventId: string): Promise<{
   try {
     // Get photos to delete
     const { data: photos, error: photosError } = await supabase
-      .from('photos')
-      .select('id, file_url, thumbnail_url, file_size')
-      .eq('event_id', eventId);
+      .from("photos")
+      .select("id, file_url, thumbnail_url, file_size")
+      .eq("event_id", eventId);
 
     if (photosError) {
-      console.error('Error fetching photos for deletion:', photosError);
-      throw new Error('Failed to fetch photos for deletion');
+      console.error("Error fetching photos for deletion:", photosError);
+      throw new Error("Failed to fetch photos for deletion");
     }
 
     // Get videos to delete
     const { data: videos, error: videosError } = await supabase
-      .from('videos')
-      .select('id, file_url, thumbnail_url, file_size')
-      .eq('event_id', eventId);
+      .from("videos")
+      .select("id, file_url, thumbnail_url, file_size")
+      .eq("event_id", eventId);
 
     if (videosError) {
-      console.error('Error fetching videos for deletion:', videosError);
-      throw new Error('Failed to fetch videos for deletion');
+      console.error("Error fetching videos for deletion:", videosError);
+      throw new Error("Failed to fetch videos for deletion");
     }
 
     // Delete photos from storage
@@ -133,23 +133,23 @@ export async function deleteEventContent(eventId: string): Promise<{
         .filter(Boolean);
 
       const { error: photoStorageError } = await supabase.storage
-        .from('photos')
+        .from("photos")
         .remove(photoUrls);
 
       if (photoStorageError) {
-        console.error('Error deleting photos from storage:', photoStorageError);
+        console.error("Error deleting photos from storage:", photoStorageError);
         // Continue with database cleanup even if storage deletion fails
       }
 
       // Delete photos from database
       const { error: photoDbError } = await supabase
-        .from('photos')
+        .from("photos")
         .delete()
-        .eq('event_id', eventId);
+        .eq("event_id", eventId);
 
       if (photoDbError) {
-        console.error('Error deleting photos from database:', photoDbError);
-        throw new Error('Failed to delete photos from database');
+        console.error("Error deleting photos from database:", photoDbError);
+        throw new Error("Failed to delete photos from database");
       }
 
       photosDeleted = photos.length;
@@ -164,23 +164,23 @@ export async function deleteEventContent(eventId: string): Promise<{
         .filter(Boolean);
 
       const { error: videoStorageError } = await supabase.storage
-        .from('videos')
+        .from("videos")
         .remove(videoUrls);
 
       if (videoStorageError) {
-        console.error('Error deleting videos from storage:', videoStorageError);
+        console.error("Error deleting videos from storage:", videoStorageError);
         // Continue with database cleanup even if storage deletion fails
       }
 
       // Delete videos from database
       const { error: videoDbError } = await supabase
-        .from('videos')
+        .from("videos")
         .delete()
-        .eq('event_id', eventId);
+        .eq("event_id", eventId);
 
       if (videoDbError) {
-        console.error('Error deleting videos from database:', videoDbError);
-        throw new Error('Failed to delete videos from database');
+        console.error("Error deleting videos from database:", videoDbError);
+        throw new Error("Failed to delete videos from database");
       }
 
       videosDeleted = videos.length;
@@ -189,7 +189,7 @@ export async function deleteEventContent(eventId: string): Promise<{
 
     return { photosDeleted, videosDeleted, storageFreed };
   } catch (error) {
-    console.error('Error deleting event content:', error);
+    console.error("Error deleting event content:", error);
     throw error;
   }
 }
@@ -198,7 +198,7 @@ export async function deleteEventContent(eventId: string): Promise<{
  * Process expired events (mark as expired and optionally delete content)
  */
 export async function processExpiredEvents(
-  deleteContent: boolean = false
+  deleteContent: boolean = false,
 ): Promise<ExpirationStats> {
   const expiredEvents = await findExpiredEvents();
   const stats: ExpirationStats = {
@@ -237,7 +237,7 @@ export async function processExpiredEvents(
  */
 export function calculateExpirationDate(
   createdAt: string | Date,
-  subscriptionTier: string
+  subscriptionTier: string,
 ): Date {
   const created = new Date(createdAt);
   const limits = getSubscriptionLimits(subscriptionTier);
@@ -250,7 +250,7 @@ export function calculateExpirationDate(
  */
 export function isEventExpiringSoon(
   expiresAt: string | Date,
-  hoursThreshold: number = 24
+  hoursThreshold: number = 24,
 ): boolean {
   const expiration = new Date(expiresAt);
   const now = new Date();
@@ -264,14 +264,14 @@ export function isEventExpiringSoon(
  * Get events expiring soon
  */
 export async function getEventsExpiringSoon(
-  hoursThreshold: number = 24
+  hoursThreshold: number = 24,
 ): Promise<ExpiredEvent[]> {
   const supabase = createAdminClient();
   const now = new Date();
   const threshold = new Date(now.getTime() + hoursThreshold * 60 * 60 * 1000);
 
   const { data: events, error } = await supabase
-    .from('events')
+    .from("events")
     .select(
       `
       id,
@@ -283,15 +283,15 @@ export async function getEventsExpiringSoon(
       total_videos,
       created_at,
       expires_at
-    `
+    `,
     )
-    .eq('status', 'active')
-    .gte('expires_at', now.toISOString())
-    .lte('expires_at', threshold.toISOString());
+    .eq("status", "active")
+    .gte("expires_at", now.toISOString())
+    .lte("expires_at", threshold.toISOString());
 
   if (error) {
-    console.error('Error finding events expiring soon:', error);
-    throw new Error('Failed to find events expiring soon');
+    console.error("Error finding events expiring soon:", error);
+    throw new Error("Failed to find events expiring soon");
   }
 
   return (
@@ -314,26 +314,26 @@ export async function getEventsExpiringSoon(
  */
 export async function extendEventExpiration(
   eventId: string,
-  newSubscriptionTier: string
+  newSubscriptionTier: string,
 ): Promise<void> {
   const supabase = createAdminClient();
   const newExpirationDate = calculateExpirationDate(
     new Date().toISOString(),
-    newSubscriptionTier
+    newSubscriptionTier,
   );
 
   const { error } = await supabase
-    .from('events')
+    .from("events")
     .update({
       subscription_tier: newSubscriptionTier,
       expires_at: newExpirationDate.toISOString(),
       updated_at: new Date().toISOString(),
     })
-    .eq('id', eventId);
+    .eq("id", eventId);
 
   if (error) {
-    console.error('Error extending event expiration:', error);
-    throw new Error('Failed to extend event expiration');
+    console.error("Error extending event expiration:", error);
+    throw new Error("Failed to extend event expiration");
   }
 }
 
@@ -344,16 +344,16 @@ export async function archiveEvent(eventId: string): Promise<void> {
   const supabase = createAdminClient();
 
   const { error } = await supabase
-    .from('events')
+    .from("events")
     .update({
-      status: 'archived',
+      status: "archived",
       updated_at: new Date().toISOString(),
     })
-    .eq('id', eventId);
+    .eq("id", eventId);
 
   if (error) {
-    console.error('Error archiving event:', error);
-    throw new Error('Failed to archive event');
+    console.error("Error archiving event:", error);
+    throw new Error("Failed to archive event");
   }
 }
 
@@ -364,15 +364,15 @@ export async function restoreEvent(eventId: string): Promise<void> {
   const supabase = createAdminClient();
 
   const { error } = await supabase
-    .from('events')
+    .from("events")
     .update({
-      status: 'active',
+      status: "active",
       updated_at: new Date().toISOString(),
     })
-    .eq('id', eventId);
+    .eq("id", eventId);
 
   if (error) {
-    console.error('Error restoring event:', error);
-    throw new Error('Failed to restore event');
+    console.error("Error restoring event:", error);
+    throw new Error("Failed to restore event");
   }
 }

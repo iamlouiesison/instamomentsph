@@ -1,8 +1,8 @@
-import { createClient } from '@/lib/supabase/server';
-import { redirect } from 'next/navigation';
-import { Database } from '@/types/database';
+import { createClient } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
+import { Database } from "@/types/database";
 
-export type User = Database['public']['Tables']['profiles']['Row'];
+export type User = Database["public"]["Tables"]["profiles"]["Row"];
 
 /**
  * Require authentication for a route
@@ -17,19 +17,19 @@ export async function requireAuth(): Promise<User> {
   } = await supabase.auth.getUser();
 
   if (error || !user) {
-    redirect('/signin');
+    redirect("/signin");
   }
 
   // Get user profile
   const { data: profile, error: profileError } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('id', user.id)
+    .from("profiles")
+    .select("*")
+    .eq("id", user.id)
     .single();
 
   if (profileError || !profile) {
     // If profile doesn't exist, redirect to complete profile
-    redirect('/complete-profile');
+    redirect("/complete-profile");
   }
 
   return profile;
@@ -45,13 +45,13 @@ export async function requireEventOwnership(eventId: string): Promise<User> {
   const supabase = await createClient();
 
   const { data: event, error } = await supabase
-    .from('events')
-    .select('host_id')
-    .eq('id', eventId)
+    .from("events")
+    .select("host_id")
+    .eq("id", eventId)
     .single();
 
   if (error || !event || event.host_id !== user.id) {
-    redirect('/dashboard');
+    redirect("/dashboard");
   }
 
   return user;
@@ -74,9 +74,9 @@ export async function getCurrentUser(): Promise<User | null> {
   }
 
   const { data: profile, error: profileError } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('id', user.id)
+    .from("profiles")
+    .select("*")
+    .eq("id", user.id)
     .single();
 
   if (profileError || !profile) {
@@ -100,6 +100,6 @@ export async function isAuthenticated(): Promise<boolean> {
 export async function redirectIfAuthenticated(): Promise<void> {
   const user = await getCurrentUser();
   if (user) {
-    redirect('/dashboard');
+    redirect("/dashboard");
   }
 }

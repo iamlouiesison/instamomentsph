@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Badge } from '@/components/ui/badge';
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
 import {
   EventCard,
   PaymentSelector,
@@ -29,12 +29,12 @@ import {
   VoiceGuidance,
   LargeTouchTarget,
   AccessibleFormField,
-} from '@/components/instamoments';
+} from "@/components/instamoments";
 
 export default function DesignSystemPage() {
   const [selectedPayment, setSelectedPayment] = useState<string>();
-  const [galleryViewMode, setGalleryViewMode] = useState<'grid' | 'list'>(
-    'grid'
+  const [galleryViewMode, setGalleryViewMode] = useState<"grid" | "list">(
+    "grid",
   );
   const [, setAccessibilitySettings] = useState<{
     highContrast: boolean;
@@ -53,23 +53,23 @@ export default function DesignSystemPage() {
   // Mock data with simple data URIs to avoid network issues
   const mockPhotos = [
     {
-      id: '1',
+      id: "1",
       url: "data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300'%3E%3Crect width='100%25' height='100%25' fill='%23f3f4f6'/%3E%3Ctext x='50%25' y='50%25' font-family='Arial' font-size='18' fill='%23666' text-anchor='middle' dy='.3em'%3EMaria's Photo%3C/text%3E%3C/svg%3E",
       thumbnailUrl:
         "data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='150'%3E%3Crect width='100%25' height='100%25' fill='%23f3f4f6'/%3E%3Ctext x='50%25' y='50%25' font-family='Arial' font-size='14' fill='%23666' text-anchor='middle' dy='.3em'%3EMaria%3C/text%3E%3C/svg%3E",
-      uploadedBy: 'Maria Santos',
-      uploadedAt: '2024-01-15T10:30:00Z',
+      uploadedBy: "Maria Santos",
+      uploadedAt: "2024-01-15T10:30:00Z",
       likes: 12,
       comments: 3,
       isLiked: false,
     },
     {
-      id: '2',
+      id: "2",
       url: "data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300'%3E%3Crect width='100%25' height='100%25' fill='%23f3f4f6'/%3E%3Ctext x='50%25' y='50%25' font-family='Arial' font-size='18' fill='%23666' text-anchor='middle' dy='.3em'%3EJuan's Photo%3C/text%3E%3C/svg%3E",
       thumbnailUrl:
         "data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='150'%3E%3Crect width='100%25' height='100%25' fill='%23f3f4f6'/%3E%3Ctext x='50%25' y='50%25' font-family='Arial' font-size='14' fill='%23666' text-anchor='middle' dy='.3em'%3EJuan%3C/text%3E%3C/svg%3E",
-      uploadedBy: 'Juan Dela Cruz',
-      uploadedAt: '2024-01-15T11:15:00Z',
+      uploadedBy: "Juan Dela Cruz",
+      uploadedAt: "2024-01-15T11:15:00Z",
       likes: 8,
       comments: 1,
       isLiked: true,
@@ -336,27 +336,27 @@ export default function DesignSystemPage() {
                       </p>
                       <EventCard
                         event={{
-                          id: '1',
+                          id: "1",
                           name: "Maria's 18th Birthday Celebration",
-                          eventType: 'birthday',
-                          eventDate: '2024-01-20',
-                          location: 'Quezon City, Metro Manila',
-                          status: 'active',
-                          subscriptionTier: 'basic',
+                          eventType: "birthday",
+                          eventDate: "2024-01-20",
+                          location: "Quezon City, Metro Manila",
+                          status: "active",
+                          subscriptionTier: "basic",
                           totalContributors: 50,
                           totalPhotos: 127,
                           totalVideos: 5,
                           hasVideoAddon: true,
                           requiresModeration: false,
-                          createdAt: '2024-01-01T00:00:00Z',
+                          createdAt: "2024-01-01T00:00:00Z",
                           expiresAt: undefined,
-                          gallerySlug: 'maria-birthday',
-                          description: 'A wonderful 18th birthday celebration',
+                          gallerySlug: "maria-birthday",
+                          description: "A wonderful 18th birthday celebration",
                         }}
-                        onEdit={() => console.log('Edit clicked')}
-                        onView={() => console.log('View clicked')}
-                        onShare={() => console.log('Share clicked')}
-                        onSettings={() => console.log('Settings clicked')}
+                        onEdit={() => console.log("Edit clicked")}
+                        onView={() => console.log("View clicked")}
+                        onShare={() => console.log("Share clicked")}
+                        onSettings={() => console.log("Settings clicked")}
                       />
                     </div>
 
@@ -366,27 +366,27 @@ export default function DesignSystemPage() {
                       </p>
                       <EventCard
                         event={{
-                          id: '2',
+                          id: "2",
                           name: "Juan & Maria's Wedding",
-                          eventType: 'wedding',
-                          eventDate: '2024-02-14',
-                          location: 'Tagaytay, Cavite',
-                          status: 'active',
-                          subscriptionTier: 'premium',
+                          eventType: "wedding",
+                          eventDate: "2024-02-14",
+                          location: "Tagaytay, Cavite",
+                          status: "active",
+                          subscriptionTier: "premium",
                           totalContributors: 200,
                           totalPhotos: 450,
                           totalVideos: 25,
                           hasVideoAddon: true,
                           requiresModeration: false,
-                          createdAt: '2024-01-01T00:00:00Z',
+                          createdAt: "2024-01-01T00:00:00Z",
                           expiresAt: undefined,
-                          gallerySlug: 'juan-maria-wedding',
-                          description: 'A beautiful wedding celebration',
+                          gallerySlug: "juan-maria-wedding",
+                          description: "A beautiful wedding celebration",
                         }}
-                        onEdit={() => console.log('Edit clicked')}
-                        onView={() => console.log('View clicked')}
-                        onShare={() => console.log('Share clicked')}
-                        onSettings={() => console.log('Settings clicked')}
+                        onEdit={() => console.log("Edit clicked")}
+                        onView={() => console.log("View clicked")}
+                        onShare={() => console.log("Share clicked")}
+                        onSettings={() => console.log("Settings clicked")}
                       />
                     </div>
 
@@ -396,27 +396,27 @@ export default function DesignSystemPage() {
                       </p>
                       <EventCard
                         event={{
-                          id: '3',
-                          name: 'Graduation Ceremony',
-                          eventType: 'graduation',
-                          eventDate: '2024-03-15',
-                          location: 'University of the Philippines',
-                          status: 'active',
-                          subscriptionTier: 'standard',
+                          id: "3",
+                          name: "Graduation Ceremony",
+                          eventType: "graduation",
+                          eventDate: "2024-03-15",
+                          location: "University of the Philippines",
+                          status: "active",
+                          subscriptionTier: "standard",
                           totalContributors: 75,
                           totalPhotos: 200,
                           totalVideos: 10,
                           hasVideoAddon: true,
                           requiresModeration: false,
-                          createdAt: '2024-01-01T00:00:00Z',
+                          createdAt: "2024-01-01T00:00:00Z",
                           expiresAt: undefined,
-                          gallerySlug: 'graduation-ceremony',
-                          description: 'A memorable graduation ceremony',
+                          gallerySlug: "graduation-ceremony",
+                          description: "A memorable graduation ceremony",
                         }}
-                        onEdit={() => console.log('Edit clicked')}
-                        onView={() => console.log('View clicked')}
-                        onShare={() => console.log('Share clicked')}
-                        onSettings={() => console.log('Settings clicked')}
+                        onEdit={() => console.log("Edit clicked")}
+                        onView={() => console.log("View clicked")}
+                        onShare={() => console.log("Share clicked")}
+                        onSettings={() => console.log("Settings clicked")}
                       />
                     </div>
                   </div>
@@ -559,10 +559,10 @@ export default function DesignSystemPage() {
                     qrCodeUrl="data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Crect width='100%25' height='100%25' fill='%23fff'/%3E%3Crect x='20' y='20' width='40' height='40' fill='%23000'/%3E%3Crect x='140' y='20' width='40' height='40' fill='%23000'/%3E%3Crect x='20' y='140' width='40' height='40' fill='%23000'/%3E%3Ctext x='50%25' y='50%25' font-family='Arial' font-size='16' fill='%23666' text-anchor='middle' dy='.3em'%3EQR Code%3C/text%3E%3C/svg%3E"
                     eventName="Maria's Birthday"
                     eventCode="BDAY2024"
-                    onDownload={() => console.log('Download QR')}
-                    onShare={() => console.log('Share QR')}
-                    onCopy={() => console.log('Copy code')}
-                    onRefresh={() => console.log('Refresh QR')}
+                    onDownload={() => console.log("Download QR")}
+                    onShare={() => console.log("Share QR")}
+                    onCopy={() => console.log("Copy code")}
+                    onRefresh={() => console.log("Refresh QR")}
                   />
                 </div>
               </div>
@@ -615,12 +615,12 @@ export default function DesignSystemPage() {
                   photos={mockPhotos}
                   viewMode={galleryViewMode}
                   onViewModeChange={setGalleryViewMode}
-                  onPhotoClick={(photo) => console.log('Photo clicked', photo)}
-                  onLike={(photoId) => console.log('Like photo', photoId)}
+                  onPhotoClick={(photo) => console.log("Photo clicked", photo)}
+                  onLike={(photoId) => console.log("Like photo", photoId)}
                   onDownload={(photoId) =>
-                    console.log('Download photo', photoId)
+                    console.log("Download photo", photoId)
                   }
-                  onShare={(photoId) => console.log('Share photo', photoId)}
+                  onShare={(photoId) => console.log("Share photo", photoId)}
                 />
               </div>
 
@@ -679,15 +679,15 @@ export default function DesignSystemPage() {
               <h2 className="mobile-heading font-semibold">Empty States</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <EmptyEvents
-                  onCreateEvent={() => console.log('Create event')}
+                  onCreateEvent={() => console.log("Create event")}
                 />
                 <EmptyPhotos
-                  onUploadPhoto={() => console.log('Upload photo')}
-                  onScanQR={() => console.log('Scan QR')}
+                  onUploadPhoto={() => console.log("Upload photo")}
+                  onScanQR={() => console.log("Scan QR")}
                 />
                 <EmptyGallery
                   eventName="Birthday Party"
-                  onUploadPhoto={() => console.log('Upload photo')}
+                  onUploadPhoto={() => console.log("Upload photo")}
                 />
               </div>
             </div>
@@ -695,21 +695,21 @@ export default function DesignSystemPage() {
             <div className="space-y-6">
               <h2 className="mobile-heading font-semibold">Error States</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <NetworkError onRetry={() => console.log('Retry')} />
+                <NetworkError onRetry={() => console.log("Retry")} />
                 <UploadError
                   fileName="photo.jpg"
-                  onRetry={() => console.log('Retry upload')}
-                  onCancel={() => console.log('Cancel upload')}
+                  onRetry={() => console.log("Retry upload")}
+                  onCancel={() => console.log("Cancel upload")}
                 />
                 <CameraError
-                  onRetry={() => console.log('Retry camera')}
-                  onUseGallery={() => console.log('Use gallery')}
+                  onRetry={() => console.log("Retry camera")}
+                  onUseGallery={() => console.log("Use gallery")}
                 />
                 <PaymentError
                   errorMessage="Insufficient funds"
-                  onRetry={() => console.log('Retry payment')}
+                  onRetry={() => console.log("Retry payment")}
                   onTryDifferentMethod={() =>
-                    console.log('Try different method')
+                    console.log("Try different method")
                   }
                 />
               </div>
@@ -720,20 +720,20 @@ export default function DesignSystemPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <PhotoUploadSuccess
                   fileName="celebration_photo.jpg"
-                  onViewPhoto={() => console.log('View photo')}
-                  onUploadMore={() => console.log('Upload more')}
+                  onViewPhoto={() => console.log("View photo")}
+                  onUploadMore={() => console.log("Upload more")}
                 />
                 <PaymentSuccess
                   amount="299.00"
                   paymentMethod="GCash"
-                  onViewReceipt={() => console.log('View receipt')}
-                  onContinue={() => console.log('Continue')}
+                  onViewReceipt={() => console.log("View receipt")}
+                  onContinue={() => console.log("Continue")}
                 />
                 <EventCreatedSuccess
                   eventName="Family Reunion"
                   eventCode="REUNION2024"
-                  onShareEvent={() => console.log('Share event')}
-                  onViewEvent={() => console.log('View event')}
+                  onShareEvent={() => console.log("Share event")}
+                  onViewEvent={() => console.log("View event")}
                 />
               </div>
             </div>

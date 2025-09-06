@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { createContext, useContext, ReactNode } from 'react';
-import { useAuth, Profile } from '@/hooks/useAuth';
-import { User } from '@supabase/supabase-js';
+import { createContext, useContext, ReactNode } from "react";
+import { useAuth, Profile } from "@/hooks/useAuth";
+import { User } from "@supabase/supabase-js";
 
 interface AuthContextType {
   user: User | null;
@@ -13,15 +13,15 @@ interface AuthContextType {
   signUp: (
     email: string,
     password: string,
-    fullName: string
+    fullName: string,
   ) => Promise<{ data?: unknown; error: unknown }>;
   signOut: () => Promise<{ error: unknown }>;
   signInWithProvider: (
-    provider: 'google' | 'facebook'
+    provider: "google" | "facebook",
   ) => Promise<{ error: unknown }>;
   resetPassword: (email: string) => Promise<{ error: unknown }>;
   updateProfile: (
-    updates: Partial<Profile>
+    updates: Partial<Profile>,
   ) => Promise<{ data?: unknown; error: unknown }>;
 }
 
@@ -40,7 +40,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 export function useAuthContext() {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error('useAuthContext must be used within an AuthProvider');
+    throw new Error("useAuthContext must be used within an AuthProvider");
   }
   return context;
 }

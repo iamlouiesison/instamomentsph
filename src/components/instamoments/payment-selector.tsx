@@ -1,7 +1,7 @@
-import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Check } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Check } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface PaymentMethod {
   id: string;
@@ -20,46 +20,46 @@ interface PaymentSelectorProps {
 
 const paymentMethods: PaymentMethod[] = [
   {
-    id: 'gcash',
-    name: 'GCash',
-    icon: '💚',
-    description: 'Pay with GCash wallet',
+    id: "gcash",
+    name: "GCash",
+    icon: "💚",
+    description: "Pay with GCash wallet",
     isPopular: true,
     isAvailable: true,
   },
   {
-    id: 'paymaya',
-    name: 'PayMaya',
-    icon: '💙',
-    description: 'Pay with PayMaya wallet',
+    id: "paymaya",
+    name: "PayMaya",
+    icon: "💙",
+    description: "Pay with PayMaya wallet",
     isAvailable: true,
   },
   {
-    id: 'grabpay',
-    name: 'GrabPay',
-    icon: '🟢',
-    description: 'Pay with GrabPay wallet',
+    id: "grabpay",
+    name: "GrabPay",
+    icon: "🟢",
+    description: "Pay with GrabPay wallet",
     isAvailable: true,
   },
   {
-    id: 'bpi',
-    name: 'BPI',
-    icon: '🏦',
-    description: 'BPI Online Banking',
+    id: "bpi",
+    name: "BPI",
+    icon: "🏦",
+    description: "BPI Online Banking",
     isAvailable: true,
   },
   {
-    id: 'bdo',
-    name: 'BDO',
-    icon: '🏦',
-    description: 'BDO Online Banking',
+    id: "bdo",
+    name: "BDO",
+    icon: "🏦",
+    description: "BDO Online Banking",
     isAvailable: true,
   },
   {
-    id: 'credit_card',
-    name: 'Credit Card',
-    icon: '💳',
-    description: 'Visa, Mastercard, JCB',
+    id: "credit_card",
+    name: "Credit Card",
+    icon: "💳",
+    description: "Visa, Mastercard, JCB",
     isAvailable: true,
   },
 ];
@@ -70,7 +70,7 @@ export function PaymentSelector({
   className,
 }: PaymentSelectorProps) {
   return (
-    <div className={cn('space-y-3', className)}>
+    <div className={cn("space-y-3", className)}>
       <div className="text-center space-y-2">
         <h3 className="mobile-heading font-semibold">Choose Payment Method</h3>
         <p className="mobile-text text-muted-foreground">
@@ -83,12 +83,12 @@ export function PaymentSelector({
           <Card
             key={method.id}
             className={cn(
-              'cursor-pointer transition-all duration-200',
-              'border-2 hover:border-golden/30',
+              "cursor-pointer transition-all duration-200",
+              "border-2 hover:border-golden/30",
               selectedMethod === method.id
-                ? 'border-golden bg-golden/5 shadow-golden'
-                : 'border-border hover:shadow-md',
-              !method.isAvailable && 'opacity-50 cursor-not-allowed'
+                ? "border-golden bg-golden/5 shadow-golden"
+                : "border-border hover:shadow-md",
+              !method.isAvailable && "opacity-50 cursor-not-allowed",
             )}
             onClick={() => method.isAvailable && onSelect(method.id)}
           >
@@ -130,7 +130,7 @@ export function PaymentSelector({
           <div className="flex items-center gap-2">
             <Check className="h-5 w-5 text-golden" />
             <span className="font-medium">
-              {paymentMethods.find((m) => m.id === selectedMethod)?.name}{' '}
+              {paymentMethods.find((m) => m.id === selectedMethod)?.name}{" "}
               selected
             </span>
           </div>

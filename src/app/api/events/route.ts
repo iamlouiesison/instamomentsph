@@ -1,14 +1,14 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { NextRequest, NextResponse } from "next/server";
+import { createClient } from "@/lib/supabase/server";
 import {
   EventCreateSchema,
   generateGallerySlug,
-} from '@/lib/validations/event';
+} from "@/lib/validations/event";
 import {
   transformDatabaseEventsToFrontend,
   transformDatabaseEventToFrontend,
-} from '@/lib/utils/event-transformer';
-import { z } from 'zod';
+} from "@/lib/utils/event-transformer";
+import { z } from "zod";
 
 // GET /api/events - Get user's events
 export async function GET(request: NextRequest) {
@@ -23,25 +23,25 @@ export async function GET(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: { code: 'UNAUTHORIZED', message: 'Authentication required' },
+          error: { code: "UNAUTHORIZED", message: "Authentication required" },
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
     const { searchParams } = new URL(request.url);
-    const page = parseInt(searchParams.get('page') || '1');
-    const limit = parseInt(searchParams.get('limit') || '10');
-    const status = searchParams.get('status'); // 'active', 'expired', 'archived'
+    const page = parseInt(searchParams.get("page") || "1");
+    const limit = parseInt(searchParams.get("limit") || "10");
+    const status = searchParams.get("status"); // 'active', 'expired', 'archived'
 
     let query = supabase
-      .from('events')
-      .select('*')
-      .eq('host_id', user.id)
-      .order('created_at', { ascending: false });
+      .from("events")
+      .select("*")
+      .eq("host_id", user.id)
+      .order("created_at", { ascending: false });
 
     if (status) {
-      query = query.eq('status', status);
+      query = query.eq("status", status);
     }
 
     const {
@@ -51,13 +51,13 @@ export async function GET(request: NextRequest) {
     } = await query.range((page - 1) * limit, page * limit - 1);
 
     if (error) {
-      console.error('Error fetching events:', error);
+      console.error("Error fetching events:", error);
       return NextResponse.json(
         {
           success: false,
-          error: { code: 'DATABASE_ERROR', message: 'Failed to fetch events' },
+          error: { code: "DATABASE_ERROR", message: "Failed to fetch events" },
         },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -77,13 +77,13 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Unexpected error in GET /api/events:', error);
+    console.error("Unexpected error in GET /api/events:", error);
     return NextResponse.json(
       {
         success: false,
-        error: { code: 'INTERNAL_ERROR', message: 'Something went wrong' },
+        error: { code: "INTERNAL_ERROR", message: "Something went wrong" },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -101,9 +101,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: { code: 'UNAUTHORIZED', message: 'Authentication required' },
+          error: { code: "UNAUTHORIZED", message: "Authentication required" },
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -115,14 +115,14 @@ export async function POST(request: NextRequest) {
     // Generate unique gallery slug
     const gallerySlug = generateGallerySlug(
       validatedData.name,
-      validatedData.eventDate
+      validatedData.eventDate,
     );
 
     // Check if slug is unique
     const { data: existingEvent } = await supabase
-      .from('events')
-      .select('id')
-      .eq('gallery_slug', gallerySlug)
+      .from("events")
+      .select("id")
+      .eq("gallery_slug", gallerySlug)
       .single();
 
     if (existingEvent) {
@@ -135,7 +135,7 @@ export async function POST(request: NextRequest) {
         description: validatedData.description,
         event_type: validatedData.eventType,
         event_date: validatedData.eventDate
-          ? new Date(validatedData.eventDate).toISOString().split('T')[0]
+          ? new Date(validatedData.eventDate).toISOString().split("T")[0]
           : null,
         location: validatedData.location,
         host_id: user.id,
@@ -146,28 +146,28 @@ export async function POST(request: NextRequest) {
         allow_downloads: validatedData.allowDownloads,
         is_public: validatedData.isPublic,
         custom_message: validatedData.customMessage,
-        qr_code_url: '', // Will be generated after event creation
+        qr_code_url: "", // Will be generated after event creation
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       };
 
       const { data: event, error } = await supabase
-        .from('events')
+        .from("events")
         .insert(eventData)
         .select()
         .single();
 
       if (error) {
-        console.error('Error creating event:', error);
+        console.error("Error creating event:", error);
         return NextResponse.json(
           {
             success: false,
             error: {
-              code: 'DATABASE_ERROR',
-              message: 'Failed to create event',
+              code: "DATABASE_ERROR",
+              message: "Failed to create event",
             },
           },
-          { status: 500 }
+          { status: 500 },
         );
       }
 
@@ -186,7 +186,7 @@ export async function POST(request: NextRequest) {
       description: validatedData.description,
       event_type: validatedData.eventType,
       event_date: validatedData.eventDate
-        ? new Date(validatedData.eventDate).toISOString().split('T')[0]
+        ? new Date(validatedData.eventDate).toISOString().split("T")[0]
         : null,
       location: validatedData.location,
       host_id: user.id,
@@ -197,25 +197,25 @@ export async function POST(request: NextRequest) {
       allow_downloads: validatedData.allowDownloads,
       is_public: validatedData.isPublic,
       custom_message: validatedData.customMessage,
-      qr_code_url: '', // Will be generated after event creation
+      qr_code_url: "", // Will be generated after event creation
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     };
 
     const { data: event, error } = await supabase
-      .from('events')
+      .from("events")
       .insert(eventData)
       .select()
       .single();
 
     if (error) {
-      console.error('Error creating event:', error);
+      console.error("Error creating event:", error);
       return NextResponse.json(
         {
           success: false,
-          error: { code: 'DATABASE_ERROR', message: 'Failed to create event' },
+          error: { code: "DATABASE_ERROR", message: "Failed to create event" },
         },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -235,22 +235,22 @@ export async function POST(request: NextRequest) {
         {
           success: false,
           error: {
-            code: 'VALIDATION_ERROR',
-            message: 'Invalid input data',
+            code: "VALIDATION_ERROR",
+            message: "Invalid input data",
             details: error.issues,
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
-    console.error('Unexpected error in POST /api/events:', error);
+    console.error("Unexpected error in POST /api/events:", error);
     return NextResponse.json(
       {
         success: false,
-        error: { code: 'INTERNAL_ERROR', message: 'Something went wrong' },
+        error: { code: "INTERNAL_ERROR", message: "Something went wrong" },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

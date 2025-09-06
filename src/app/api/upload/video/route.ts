@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
-import { z } from 'zod';
+import { NextRequest, NextResponse } from "next/server";
+import { createClient } from "@/lib/supabase/server";
+import { z } from "zod";
 
 // Rate limiting storage (in-memory for simplicity)
 const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
@@ -47,9 +47,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: { code: 'UNAUTHORIZED', message: 'Authentication required' },
+          error: { code: "UNAUTHORIZED", message: "Authentication required" },
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -59,22 +59,22 @@ export async function POST(request: NextRequest) {
         {
           success: false,
           error: {
-            code: 'RATE_LIMIT_EXCEEDED',
+            code: "RATE_LIMIT_EXCEEDED",
             message:
-              'Too many video uploads. Please wait before uploading again.',
+              "Too many video uploads. Please wait before uploading again.",
           },
         },
-        { status: 429 }
+        { status: 429 },
       );
     }
 
     // 3. Parse form data
     const formData = await request.formData();
-    const videoFile = formData.get('video') as File;
-    const thumbnailFile = formData.get('thumbnail') as File;
-    const eventId = formData.get('eventId') as string;
-    const caption = formData.get('caption') as string;
-    const isGreeting = formData.get('isGreeting') === 'true';
+    const videoFile = formData.get("video") as File;
+    const thumbnailFile = formData.get("thumbnail") as File;
+    const eventId = formData.get("eventId") as string;
+    const caption = formData.get("caption") as string;
+    const isGreeting = formData.get("isGreeting") === "true";
 
     // 4. Validate input
     const validationResult = VideoUploadSchema.safeParse({
@@ -88,12 +88,12 @@ export async function POST(request: NextRequest) {
         {
           success: false,
           error: {
-            code: 'VALIDATION_ERROR',
-            message: 'Invalid input data',
+            code: "VALIDATION_ERROR",
+            message: "Invalid input data",
             details: validationResult.error.issues,
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -101,26 +101,26 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: { code: 'MISSING_FILE', message: 'Video file is required' },
+          error: { code: "MISSING_FILE", message: "Video file is required" },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     // 5. Validate video file
     const maxFileSize = 50 * 1024 * 1024; // 50MB
-    const allowedTypes = ['video/webm', 'video/mp4', 'video/quicktime'];
+    const allowedTypes = ["video/webm", "video/mp4", "video/quicktime"];
 
     if (videoFile.size > maxFileSize) {
       return NextResponse.json(
         {
           success: false,
           error: {
-            code: 'FILE_TOO_LARGE',
+            code: "FILE_TOO_LARGE",
             message: `File size ${(videoFile.size / 1024 / 1024).toFixed(1)}MB exceeds limit of ${(maxFileSize / 1024 / 1024).toFixed(1)}MB`,
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -129,28 +129,28 @@ export async function POST(request: NextRequest) {
         {
           success: false,
           error: {
-            code: 'INVALID_FILE_TYPE',
-            message: 'Unsupported video format. Please use MP4 or WebM',
+            code: "INVALID_FILE_TYPE",
+            message: "Unsupported video format. Please use MP4 or WebM",
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     // 6. Verify event exists and user has access
     const { data: event, error: eventError } = await supabase
-      .from('events')
-      .select('id, host_id, is_active, video_limit')
-      .eq('id', eventId)
+      .from("events")
+      .select("id, host_id, is_active, video_limit")
+      .eq("id", eventId)
       .single();
 
     if (eventError || !event) {
       return NextResponse.json(
         {
           success: false,
-          error: { code: 'EVENT_NOT_FOUND', message: 'Event not found' },
+          error: { code: "EVENT_NOT_FOUND", message: "Event not found" },
         },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -159,30 +159,30 @@ export async function POST(request: NextRequest) {
         {
           success: false,
           error: {
-            code: 'EVENT_INACTIVE',
-            message: 'Event is no longer active',
+            code: "EVENT_INACTIVE",
+            message: "Event is no longer active",
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     // 7. Check video limit for event
     const { count: videoCount } = await supabase
-      .from('videos')
-      .select('id', { count: 'exact' })
-      .eq('event_id', eventId);
+      .from("videos")
+      .select("id", { count: "exact" })
+      .eq("event_id", eventId);
 
     if (videoCount && videoCount >= event.video_limit) {
       return NextResponse.json(
         {
           success: false,
           error: {
-            code: 'VIDEO_LIMIT_EXCEEDED',
-            message: 'Event video limit reached',
+            code: "VIDEO_LIMIT_EXCEEDED",
+            message: "Event video limit reached",
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -193,20 +193,20 @@ export async function POST(request: NextRequest) {
 
     // 9. Upload video to Supabase Storage
     const { error: videoUploadError } = await supabase.storage
-      .from('event-media')
+      .from("event-media")
       .upload(videoFileName, videoFile, {
         contentType: videoFile.type,
-        cacheControl: '3600',
+        cacheControl: "3600",
       });
 
     if (videoUploadError) {
-      console.error('Video upload error:', videoUploadError);
+      console.error("Video upload error:", videoUploadError);
       return NextResponse.json(
         {
           success: false,
-          error: { code: 'UPLOAD_FAILED', message: 'Failed to upload video' },
+          error: { code: "UPLOAD_FAILED", message: "Failed to upload video" },
         },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -214,18 +214,18 @@ export async function POST(request: NextRequest) {
     let thumbnailUrl = null;
     if (thumbnailFile && thumbnailFile.size > 0) {
       const { error: thumbnailUploadError } = await supabase.storage
-        .from('event-media')
+        .from("event-media")
         .upload(thumbnailFileName, thumbnailFile, {
-          contentType: 'image/jpeg',
-          cacheControl: '3600',
+          contentType: "image/jpeg",
+          cacheControl: "3600",
         });
 
       if (thumbnailUploadError) {
-        console.error('Thumbnail upload error:', thumbnailUploadError);
+        console.error("Thumbnail upload error:", thumbnailUploadError);
         // Don't fail the entire upload if thumbnail fails
       } else {
         const { data: thumbnailData } = supabase.storage
-          .from('event-media')
+          .from("event-media")
           .getPublicUrl(thumbnailFileName);
         thumbnailUrl = thumbnailData.publicUrl;
       }
@@ -233,12 +233,12 @@ export async function POST(request: NextRequest) {
 
     // 11. Get video URL
     const { data: videoData } = supabase.storage
-      .from('event-media')
+      .from("event-media")
       .getPublicUrl(videoFileName);
 
     // 12. Save video record to database
     const { data: videoRecord, error: dbError } = await supabase
-      .from('videos')
+      .from("videos")
       .insert({
         event_id: eventId,
         uploaded_by: user.id,
@@ -249,29 +249,29 @@ export async function POST(request: NextRequest) {
         duration: 0, // Will be updated by processing
         caption: validationResult.data.caption,
         is_greeting: validationResult.data.isGreeting,
-        status: 'processing',
+        status: "processing",
         created_at: new Date().toISOString(),
       })
       .select()
       .single();
 
     if (dbError) {
-      console.error('Database error:', dbError);
+      console.error("Database error:", dbError);
       // Clean up uploaded file
-      await supabase.storage.from('event-media').remove([videoFileName]);
+      await supabase.storage.from("event-media").remove([videoFileName]);
       if (thumbnailUrl) {
-        await supabase.storage.from('event-media').remove([thumbnailFileName]);
+        await supabase.storage.from("event-media").remove([thumbnailFileName]);
       }
 
       return NextResponse.json(
         {
           success: false,
           error: {
-            code: 'DATABASE_ERROR',
-            message: 'Failed to save video record',
+            code: "DATABASE_ERROR",
+            message: "Failed to save video record",
           },
         },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -285,18 +285,18 @@ export async function POST(request: NextRequest) {
         id: videoRecord.id,
         url: videoData.publicUrl,
         thumbnailUrl,
-        status: 'processing',
-        message: 'Video uploaded successfully. Processing...',
+        status: "processing",
+        message: "Video uploaded successfully. Processing...",
       },
     });
   } catch (error) {
-    console.error('Video upload error:', error);
+    console.error("Video upload error:", error);
     return NextResponse.json(
       {
         success: false,
-        error: { code: 'INTERNAL_ERROR', message: 'Something went wrong' },
+        error: { code: "INTERNAL_ERROR", message: "Something went wrong" },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -314,24 +314,24 @@ async function processVideoInBackground(videoId: string) {
 
     // For now, just update status to completed
     await supabase
-      .from('videos')
+      .from("videos")
       .update({
-        status: 'completed',
+        status: "completed",
         duration: 20, // Placeholder - would extract from video
       })
-      .eq('id', videoId);
+      .eq("id", videoId);
   } catch (error) {
-    console.error('Background processing error:', error);
+    console.error("Background processing error:", error);
 
     // Update status to failed
     try {
       const supabase = await createClient();
       await supabase
-        .from('videos')
-        .update({ status: 'failed' })
-        .eq('id', videoId);
+        .from("videos")
+        .update({ status: "failed" })
+        .eq("id", videoId);
     } catch (updateError) {
-      console.error('Failed to update video status:', updateError);
+      console.error("Failed to update video status:", updateError);
     }
   }
 }
@@ -340,34 +340,34 @@ async function processVideoInBackground(videoId: string) {
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const videoId = searchParams.get('videoId');
+    const videoId = searchParams.get("videoId");
 
     if (!videoId) {
       return NextResponse.json(
         {
           success: false,
-          error: { code: 'MISSING_VIDEO_ID', message: 'Video ID is required' },
+          error: { code: "MISSING_VIDEO_ID", message: "Video ID is required" },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     const supabase = await createClient();
     const { data: video, error } = await supabase
-      .from('videos')
+      .from("videos")
       .select(
-        'id, status, file_url, thumbnail_url, duration, caption, is_greeting'
+        "id, status, file_url, thumbnail_url, duration, caption, is_greeting",
       )
-      .eq('id', videoId)
+      .eq("id", videoId)
       .single();
 
     if (error || !video) {
       return NextResponse.json(
         {
           success: false,
-          error: { code: 'VIDEO_NOT_FOUND', message: 'Video not found' },
+          error: { code: "VIDEO_NOT_FOUND", message: "Video not found" },
         },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -376,13 +376,13 @@ export async function GET(request: NextRequest) {
       data: video,
     });
   } catch (error) {
-    console.error('Video status check error:', error);
+    console.error("Video status check error:", error);
     return NextResponse.json(
       {
         success: false,
-        error: { code: 'INTERNAL_ERROR', message: 'Something went wrong' },
+        error: { code: "INTERNAL_ERROR", message: "Something went wrong" },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

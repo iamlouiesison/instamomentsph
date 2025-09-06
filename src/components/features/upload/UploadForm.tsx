@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import React, { useState, useCallback, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
+import React, { useState, useCallback, useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import {
   User,
   Mail,
@@ -15,23 +15,23 @@ import {
   AlertCircle,
   CheckCircle,
   Info,
-} from 'lucide-react';
+} from "lucide-react";
 
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Switch } from '@/components/ui/switch';
-import { Badge } from '@/components/ui/badge';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Switch } from "@/components/ui/switch";
+import { Badge } from "@/components/ui/badge";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 import {
   ContributorInfoSchema,
   validateContributorInfo,
   sanitizeFileName,
   containsInappropriateContent,
-} from '@/lib/validations/upload';
+} from "@/lib/validations/upload";
 
 type ContributorFormData = {
   name: string;
@@ -67,7 +67,7 @@ export const UploadForm: React.FC<UploadFormProps> = ({
   showAdvancedOptions = false,
 }) => {
   const [tags, setTags] = useState<string[]>(initialData?.tags || []);
-  const [newTag, setNewTag] = useState('');
+  const [newTag, setNewTag] = useState("");
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
   const [showValidation, setShowValidation] = useState(false);
 
@@ -76,21 +76,21 @@ export const UploadForm: React.FC<UploadFormProps> = ({
       ContributorInfoSchema.extend({
         caption: z
           .string()
-          .max(200, 'Caption must be less than 200 characters')
+          .max(200, "Caption must be less than 200 characters")
           .optional(),
         tags: z
           .array(z.string().max(20))
-          .max(5, 'Maximum 5 tags allowed')
+          .max(5, "Maximum 5 tags allowed")
           .optional(),
         isPrivate: z.boolean().default(false),
         allowDownload: z.boolean().default(true),
-      })
+      }),
     ),
     defaultValues: {
-      name: initialData?.name || '',
-      email: initialData?.email || '',
-      phone: initialData?.phone || '',
-      caption: initialData?.caption || '',
+      name: initialData?.name || "",
+      email: initialData?.email || "",
+      phone: initialData?.phone || "",
+      caption: initialData?.caption || "",
       tags: initialData?.tags || [],
       isPrivate: initialData?.isPrivate || false,
       allowDownload: initialData?.allowDownload ?? true,
@@ -114,12 +114,12 @@ export const UploadForm: React.FC<UploadFormProps> = ({
 
     // Validate caption content
     if (data.caption && containsInappropriateContent(data.caption)) {
-      errors.push('Caption contains inappropriate content');
+      errors.push("Caption contains inappropriate content");
     }
 
     // Validate tags
     if (data.tags && data.tags.length > 5) {
-      errors.push('Maximum 5 tags allowed');
+      errors.push("Maximum 5 tags allowed");
     }
 
     data.tags?.forEach((tag, index) => {
@@ -151,8 +151,8 @@ export const UploadForm: React.FC<UploadFormProps> = ({
       if (sanitizedTag && !containsInappropriateContent(sanitizedTag)) {
         const newTags = [...tags, sanitizedTag];
         setTags(newTags);
-        form.setValue('tags', newTags);
-        setNewTag('');
+        form.setValue("tags", newTags);
+        setNewTag("");
       }
     }
   }, [newTag, tags, form]);
@@ -162,20 +162,20 @@ export const UploadForm: React.FC<UploadFormProps> = ({
     (tagToRemove: string) => {
       const newTags = tags.filter((tag) => tag !== tagToRemove);
       setTags(newTags);
-      form.setValue('tags', newTags);
+      form.setValue("tags", newTags);
     },
-    [tags, form]
+    [tags, form],
   );
 
   // Handle tag input key press
   const handleTagKeyPress = useCallback(
     (e: React.KeyboardEvent) => {
-      if (e.key === 'Enter') {
+      if (e.key === "Enter") {
         e.preventDefault();
         addTag();
       }
     },
-    [addTag]
+    [addTag],
   );
 
   // Real-time validation
@@ -230,10 +230,10 @@ export const UploadForm: React.FC<UploadFormProps> = ({
                 </Label>
                 <Input
                   id="name"
-                  {...form.register('name')}
+                  {...form.register("name")}
                   placeholder="Enter your full name"
                   disabled={isSubmitting}
-                  className={form.formState.errors.name ? 'border-red-500' : ''}
+                  className={form.formState.errors.name ? "border-red-500" : ""}
                 />
                 {form.formState.errors.name && (
                   <p className="text-sm text-red-500">
@@ -250,11 +250,11 @@ export const UploadForm: React.FC<UploadFormProps> = ({
                 <Input
                   id="email"
                   type="email"
-                  {...form.register('email')}
+                  {...form.register("email")}
                   placeholder="your@email.com"
                   disabled={isSubmitting}
                   className={
-                    form.formState.errors.email ? 'border-red-500' : ''
+                    form.formState.errors.email ? "border-red-500" : ""
                   }
                 />
                 {form.formState.errors.email && (
@@ -276,10 +276,10 @@ export const UploadForm: React.FC<UploadFormProps> = ({
               <Input
                 id="phone"
                 type="tel"
-                {...form.register('phone')}
+                {...form.register("phone")}
                 placeholder="+63 912 345 6789"
                 disabled={isSubmitting}
-                className={form.formState.errors.phone ? 'border-red-500' : ''}
+                className={form.formState.errors.phone ? "border-red-500" : ""}
               />
               {form.formState.errors.phone && (
                 <p className="text-sm text-red-500">
@@ -300,12 +300,12 @@ export const UploadForm: React.FC<UploadFormProps> = ({
               </Label>
               <Textarea
                 id="caption"
-                {...form.register('caption')}
+                {...form.register("caption")}
                 placeholder="Add a caption for your photos..."
                 rows={3}
                 disabled={isSubmitting}
                 className={
-                  form.formState.errors.caption ? 'border-red-500' : ''
+                  form.formState.errors.caption ? "border-red-500" : ""
                 }
               />
               {form.formState.errors.caption && (
@@ -314,7 +314,7 @@ export const UploadForm: React.FC<UploadFormProps> = ({
                 </p>
               )}
               <p className="text-xs text-muted-foreground">
-                {form.watch('caption')?.length || 0}/200 characters
+                {form.watch("caption")?.length || 0}/200 characters
               </p>
             </div>
 
@@ -388,9 +388,9 @@ export const UploadForm: React.FC<UploadFormProps> = ({
                     </p>
                   </div>
                   <Switch
-                    checked={form.watch('isPrivate')}
+                    checked={form.watch("isPrivate")}
                     onCheckedChange={(checked) =>
-                      form.setValue('isPrivate', checked)
+                      form.setValue("isPrivate", checked)
                     }
                     disabled={isSubmitting}
                   />
@@ -407,9 +407,9 @@ export const UploadForm: React.FC<UploadFormProps> = ({
                     </p>
                   </div>
                   <Switch
-                    checked={form.watch('allowDownload')}
+                    checked={form.watch("allowDownload")}
                     onCheckedChange={(checked) =>
-                      form.setValue('allowDownload', checked)
+                      form.setValue("allowDownload", checked)
                     }
                     disabled={isSubmitting}
                   />

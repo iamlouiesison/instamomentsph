@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
-import { z } from 'zod';
+import { NextRequest, NextResponse } from "next/server";
+import { createClient } from "@/lib/supabase/server";
+import { z } from "zod";
 
 // Rate limiting storage (in production, use Redis or similar)
 const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
@@ -14,27 +14,27 @@ const RATE_LIMIT = {
 // File validation
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 const ALLOWED_MIME_TYPES = [
-  'image/jpeg',
-  'image/jpg',
-  'image/png',
-  'image/webp',
-  'image/heic',
-  'image/heif',
+  "image/jpeg",
+  "image/jpg",
+  "image/png",
+  "image/webp",
+  "image/heic",
+  "image/heif",
 ];
 
 // Validation schema for upload request
 const UploadRequestSchema = z.object({
-  eventId: z.string().uuid('Invalid event ID'),
+  eventId: z.string().uuid("Invalid event ID"),
   contributorName: z
     .string()
-    .min(1, 'Name is required')
-    .max(50, 'Name too long'),
+    .min(1, "Name is required")
+    .max(50, "Name too long"),
   contributorEmail: z
     .string()
-    .email('Invalid email')
+    .email("Invalid email")
     .optional()
-    .or(z.literal('')),
-  caption: z.string().max(200, 'Caption too long').optional(),
+    .or(z.literal("")),
+  caption: z.string().max(200, "Caption too long").optional(),
   exifData: z.string().optional(),
 });
 
@@ -84,42 +84,42 @@ function checkRateLimit(ip: string): RateLimitResult {
 }
 
 function getClientIP(request: NextRequest): string {
-  const forwarded = request.headers.get('x-forwarded-for');
-  const realIP = request.headers.get('x-real-ip');
+  const forwarded = request.headers.get("x-forwarded-for");
+  const realIP = request.headers.get("x-real-ip");
 
   if (forwarded) {
-    return forwarded.split(',')[0].trim();
+    return forwarded.split(",")[0].trim();
   }
 
   if (realIP) {
     return realIP;
   }
 
-  return 'unknown';
+  return "unknown";
 }
 
 async function validateEvent(
   eventId: string,
-  supabase: Awaited<ReturnType<typeof createClient>>
+  supabase: Awaited<ReturnType<typeof createClient>>,
 ) {
   const { data: event, error } = await supabase
-    .from('events')
+    .from("events")
     .select(
-      'id, name, status, max_photos, total_photos, max_photos_per_user, subscription_tier'
+      "id, name, status, max_photos, total_photos, max_photos_per_user, subscription_tier",
     )
-    .eq('id', eventId)
+    .eq("id", eventId)
     .single();
 
   if (error || !event) {
-    throw new Error('Event not found');
+    throw new Error("Event not found");
   }
 
-  if (event.status !== 'active') {
-    throw new Error('Event is not active');
+  if (event.status !== "active") {
+    throw new Error("Event is not active");
   }
 
   if (event.total_photos >= event.max_photos) {
-    throw new Error('Event has reached maximum photo limit');
+    throw new Error("Event has reached maximum photo limit");
   }
 
   return event;
@@ -129,22 +129,22 @@ async function checkUserPhotoLimit(
   eventId: string,
   contributorEmail: string,
   maxPhotosPerUser: number,
-  supabase: Awaited<ReturnType<typeof createClient>>
+  supabase: Awaited<ReturnType<typeof createClient>>,
 ) {
   if (!contributorEmail) return; // Skip check if no email provided
 
   try {
     const { data: contributor, error } = await supabase
-      .from('event_contributors')
-      .select('total_photos')
-      .eq('event_id', eventId)
-      .eq('contributor_email', contributorEmail)
+      .from("event_contributors")
+      .select("total_photos")
+      .eq("event_id", eventId)
+      .eq("contributor_email", contributorEmail)
       .single();
 
-    if (error && error.code !== 'PGRST116') {
+    if (error && error.code !== "PGRST116") {
       // PGRST116 = no rows returned
       console.warn(
-        'event_contributors table not found, skipping user photo limit check'
+        "event_contributors table not found, skipping user photo limit check",
       );
       return; // Skip check if table doesn't exist
     }
@@ -152,14 +152,14 @@ async function checkUserPhotoLimit(
     const currentCount = contributor?.total_photos || 0;
     if (currentCount >= maxPhotosPerUser) {
       throw new Error(
-        `You have reached the maximum of ${maxPhotosPerUser} photos per user`
+        `You have reached the maximum of ${maxPhotosPerUser} photos per user`,
       );
     }
   } catch (error) {
     // If table doesn't exist, skip the check
     console.warn(
-      'Skipping user photo limit check:',
-      error instanceof Error ? error.message : String(error)
+      "Skipping user photo limit check:",
+      error instanceof Error ? error.message : String(error),
     );
   }
 }
@@ -168,10 +168,10 @@ async function uploadToStorage(
   file: File,
   thumbnail: File,
   eventId: string,
-  supabase: Awaited<ReturnType<typeof createClient>>
+  supabase: Awaited<ReturnType<typeof createClient>>,
 ): Promise<{ fileUrl: string; thumbnailUrl: string | null }> {
   const timestamp = Date.now();
-  const fileExtension = file.name.split('.').pop() || 'jpg';
+  const fileExtension = file.name.split(".").pop() || "jpg";
   const fileName = `photo_${timestamp}.${fileExtension}`;
   const thumbnailName = `thumb_${timestamp}.${fileExtension}`;
 
@@ -180,9 +180,9 @@ async function uploadToStorage(
 
   // Upload main photo
   const { error: fileError } = await supabase.storage
-    .from('photos')
+    .from("photos")
     .upload(filePath, file, {
-      cacheControl: '3600',
+      cacheControl: "3600",
       upsert: false,
     });
 
@@ -192,25 +192,25 @@ async function uploadToStorage(
 
   // Upload thumbnail
   const { error: thumbnailError } = await supabase.storage
-    .from('thumbnails')
+    .from("thumbnails")
     .upload(thumbnailPath, thumbnail, {
-      cacheControl: '3600',
+      cacheControl: "3600",
       upsert: false,
     });
 
   if (thumbnailError) {
     // If thumbnail upload fails, we can still proceed with the main photo
-    console.warn('Thumbnail upload failed:', thumbnailError.message);
+    console.warn("Thumbnail upload failed:", thumbnailError.message);
   }
 
   // Get public URLs
   const {
     data: { publicUrl: fileUrl },
-  } = supabase.storage.from('photos').getPublicUrl(filePath);
+  } = supabase.storage.from("photos").getPublicUrl(filePath);
 
   const {
     data: { publicUrl: thumbnailUrl },
-  } = supabase.storage.from('thumbnails').getPublicUrl(thumbnailPath);
+  } = supabase.storage.from("thumbnails").getPublicUrl(thumbnailPath);
 
   return {
     fileUrl,
@@ -229,10 +229,10 @@ async function savePhotoRecord(
   fileSize: number,
   mimeType: string,
   exifData: Record<string, unknown>,
-  supabase: Awaited<ReturnType<typeof createClient>>
+  supabase: Awaited<ReturnType<typeof createClient>>,
 ) {
   const { data, error } = await supabase
-    .from('photos')
+    .from("photos")
     .insert({
       event_id: eventId,
       contributor_name: contributorName,
@@ -262,10 +262,10 @@ async function logAnalyticsEvent(
   properties: Record<string, unknown>,
   userAgent: string | null,
   ipAddress: string | null,
-  supabase: Awaited<ReturnType<typeof createClient>>
+  supabase: Awaited<ReturnType<typeof createClient>>,
 ) {
   try {
-    await supabase.from('analytics_events').insert({
+    await supabase.from("analytics_events").insert({
       event_id: eventId,
       event_type: eventType,
       properties,
@@ -274,7 +274,7 @@ async function logAnalyticsEvent(
     });
   } catch (error) {
     // Don't fail the upload if analytics logging fails
-    console.warn('Analytics logging failed:', error);
+    console.warn("Analytics logging failed:", error);
   }
 }
 
@@ -290,8 +290,8 @@ export async function POST(request: NextRequest) {
         {
           success: false,
           error: {
-            code: 'RATE_LIMIT_EXCEEDED',
-            message: 'Too many uploads. Please try again later.',
+            code: "RATE_LIMIT_EXCEEDED",
+            message: "Too many uploads. Please try again later.",
             details: {
               remaining: rateLimit.remaining,
               resetTime: rateLimit.resetTime,
@@ -301,24 +301,24 @@ export async function POST(request: NextRequest) {
         {
           status: 429,
           headers: {
-            'X-RateLimit-Limit': RATE_LIMIT.maxPhotos.toString(),
-            'X-RateLimit-Remaining': rateLimit.remaining.toString(),
-            'X-RateLimit-Reset': rateLimit.resetTime.toString(),
+            "X-RateLimit-Limit": RATE_LIMIT.maxPhotos.toString(),
+            "X-RateLimit-Remaining": rateLimit.remaining.toString(),
+            "X-RateLimit-Reset": rateLimit.resetTime.toString(),
           },
-        }
+        },
       );
     }
 
     // Parse form data
     const formData = await request.formData();
 
-    const file = formData.get('file') as File;
-    const thumbnail = formData.get('thumbnail') as File;
-    const eventId = formData.get('eventId') as string;
-    const contributorName = formData.get('contributorName') as string;
-    const contributorEmail = formData.get('contributorEmail') as string;
-    const caption = formData.get('caption') as string;
-    const exifDataString = formData.get('exifData') as string;
+    const file = formData.get("file") as File;
+    const thumbnail = formData.get("thumbnail") as File;
+    const eventId = formData.get("eventId") as string;
+    const contributorName = formData.get("contributorName") as string;
+    const contributorEmail = formData.get("contributorEmail") as string;
+    const caption = formData.get("caption") as string;
+    const exifDataString = formData.get("exifData") as string;
 
     // Validate required fields
     if (!file || !thumbnail || !eventId || !contributorName) {
@@ -326,12 +326,12 @@ export async function POST(request: NextRequest) {
         {
           success: false,
           error: {
-            code: 'MISSING_REQUIRED_FIELDS',
+            code: "MISSING_REQUIRED_FIELDS",
             message:
-              'Missing required fields: file, thumbnail, eventId, or contributorName',
+              "Missing required fields: file, thumbnail, eventId, or contributorName",
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -341,11 +341,11 @@ export async function POST(request: NextRequest) {
         {
           success: false,
           error: {
-            code: 'INVALID_FILE_TYPE',
-            message: `Invalid file type. Allowed types: ${ALLOWED_MIME_TYPES.join(', ')}`,
+            code: "INVALID_FILE_TYPE",
+            message: `Invalid file type. Allowed types: ${ALLOWED_MIME_TYPES.join(", ")}`,
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -354,11 +354,11 @@ export async function POST(request: NextRequest) {
         {
           success: false,
           error: {
-            code: 'FILE_TOO_LARGE',
+            code: "FILE_TOO_LARGE",
             message: `File size exceeds ${MAX_FILE_SIZE / (1024 * 1024)}MB limit`,
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -377,7 +377,7 @@ export async function POST(request: NextRequest) {
       try {
         exifData = JSON.parse(exifDataString);
       } catch (error) {
-        console.warn('Failed to parse EXIF data:', error);
+        console.warn("Failed to parse EXIF data:", error);
       }
     }
 
@@ -390,9 +390,9 @@ export async function POST(request: NextRequest) {
     // Check user photo limit
     await checkUserPhotoLimit(
       validatedData.eventId,
-      validatedData.contributorEmail || '',
+      validatedData.contributorEmail || "",
       event.max_photos_per_user,
-      supabase
+      supabase,
     );
 
     // Upload files to storage
@@ -400,7 +400,7 @@ export async function POST(request: NextRequest) {
       file,
       thumbnail,
       validatedData.eventId,
-      supabase
+      supabase,
     );
 
     // Save photo record to database
@@ -415,13 +415,13 @@ export async function POST(request: NextRequest) {
       file.size,
       file.type,
       exifData,
-      supabase
+      supabase,
     );
 
     // Log analytics event
     await logAnalyticsEvent(
       validatedData.eventId,
-      'photo_upload',
+      "photo_upload",
       {
         photoId: photoRecord.id,
         contributorName: validatedData.contributorName,
@@ -430,9 +430,9 @@ export async function POST(request: NextRequest) {
         hasCaption: !!validatedData.caption,
         hasExifData: !!exifData,
       },
-      request.headers.get('user-agent'),
+      request.headers.get("user-agent"),
       clientIP,
-      supabase
+      supabase,
     );
 
     return NextResponse.json({
@@ -441,7 +441,7 @@ export async function POST(request: NextRequest) {
         photoId: photoRecord.id,
         fileUrl,
         thumbnailUrl,
-        message: 'Photo uploaded successfully',
+        message: "Photo uploaded successfully",
       },
       meta: {
         rateLimit: {
@@ -451,73 +451,73 @@ export async function POST(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Photo upload error:', error);
+    console.error("Photo upload error:", error);
 
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {
           success: false,
           error: {
-            code: 'VALIDATION_ERROR',
-            message: 'Invalid request data',
+            code: "VALIDATION_ERROR",
+            message: "Invalid request data",
             details: error.issues,
           },
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     if (error instanceof Error) {
       // Handle specific error cases
-      if (error.message.includes('Event not found')) {
+      if (error.message.includes("Event not found")) {
         return NextResponse.json(
           {
             success: false,
             error: {
-              code: 'EVENT_NOT_FOUND',
+              code: "EVENT_NOT_FOUND",
               message: error.message,
             },
           },
-          { status: 404 }
+          { status: 404 },
         );
       }
 
-      if (error.message.includes('not active')) {
+      if (error.message.includes("not active")) {
         return NextResponse.json(
           {
             success: false,
             error: {
-              code: 'EVENT_INACTIVE',
+              code: "EVENT_INACTIVE",
               message: error.message,
             },
           },
-          { status: 400 }
+          { status: 400 },
         );
       }
 
-      if (error.message.includes('maximum photo limit')) {
+      if (error.message.includes("maximum photo limit")) {
         return NextResponse.json(
           {
             success: false,
             error: {
-              code: 'EVENT_PHOTO_LIMIT_REACHED',
+              code: "EVENT_PHOTO_LIMIT_REACHED",
               message: error.message,
             },
           },
-          { status: 400 }
+          { status: 400 },
         );
       }
 
-      if (error.message.includes('maximum of')) {
+      if (error.message.includes("maximum of")) {
         return NextResponse.json(
           {
             success: false,
             error: {
-              code: 'USER_PHOTO_LIMIT_REACHED',
+              code: "USER_PHOTO_LIMIT_REACHED",
               message: error.message,
             },
           },
-          { status: 400 }
+          { status: 400 },
         );
       }
 
@@ -525,11 +525,11 @@ export async function POST(request: NextRequest) {
         {
           success: false,
           error: {
-            code: 'UPLOAD_ERROR',
+            code: "UPLOAD_ERROR",
             message: error.message,
           },
         },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -537,11 +537,11 @@ export async function POST(request: NextRequest) {
       {
         success: false,
         error: {
-          code: 'INTERNAL_ERROR',
-          message: 'An unexpected error occurred',
+          code: "INTERNAL_ERROR",
+          message: "An unexpected error occurred",
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -551,9 +551,9 @@ export async function OPTIONS() {
   return new NextResponse(null, {
     status: 200,
     headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "POST, OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type, Authorization",
     },
   });
 }

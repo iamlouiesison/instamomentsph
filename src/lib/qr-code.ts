@@ -1,5 +1,5 @@
-import QRCode from 'qrcode';
-import { Event } from '@/types/database';
+import QRCode from "qrcode";
+import { Event } from "@/types/database";
 
 // QR Code generation options
 export interface QRCodeOptions {
@@ -9,8 +9,8 @@ export interface QRCodeOptions {
     dark?: string;
     light?: string;
   };
-  errorCorrectionLevel?: 'L' | 'M' | 'Q' | 'H';
-  type?: 'image/png' | 'image/jpeg' | 'image/webp';
+  errorCorrectionLevel?: "L" | "M" | "Q" | "H";
+  type?: "image/png" | "image/jpeg" | "image/webp";
   quality?: number;
 }
 
@@ -19,11 +19,11 @@ export const DEFAULT_QR_OPTIONS: QRCodeOptions = {
   size: 512,
   margin: 2,
   color: {
-    dark: '#000000',
-    light: '#FFFFFF',
+    dark: "#000000",
+    light: "#FFFFFF",
   },
-  errorCorrectionLevel: 'M', // Medium error correction for reliability
-  type: 'image/png',
+  errorCorrectionLevel: "M", // Medium error correction for reliability
+  type: "image/png",
   quality: 0.92,
 };
 
@@ -32,25 +32,25 @@ export const PRINT_QR_OPTIONS: QRCodeOptions = {
   size: 512,
   margin: 4,
   color: {
-    dark: '#000000',
-    light: '#FFFFFF',
+    dark: "#000000",
+    light: "#FFFFFF",
   },
-  errorCorrectionLevel: 'H', // High error correction for print reliability
-  type: 'image/png',
+  errorCorrectionLevel: "H", // High error correction for print reliability
+  type: "image/png",
   quality: 1.0,
 };
 
 // Generate gallery URL for an event
 export function generateGalleryUrl(event: Event, baseUrl?: string): string {
   const appUrl =
-    baseUrl || process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+    baseUrl || process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
   return `${appUrl}/gallery/${event.gallery_slug}`;
 }
 
 // Generate QR code as data URL (for immediate display)
 export async function generateQRCodeDataUrl(
   text: string,
-  options: QRCodeOptions = DEFAULT_QR_OPTIONS
+  options: QRCodeOptions = DEFAULT_QR_OPTIONS,
 ): Promise<string> {
   try {
     const qrOptions = {
@@ -65,15 +65,15 @@ export async function generateQRCodeDataUrl(
 
     return await QRCode.toDataURL(text, qrOptions);
   } catch (error) {
-    console.error('Error generating QR code:', error);
-    throw new Error('Failed to generate QR code');
+    console.error("Error generating QR code:", error);
+    throw new Error("Failed to generate QR code");
   }
 }
 
 // Generate QR code as SVG string
 export async function generateQRCodeSVG(
   text: string,
-  options: QRCodeOptions = DEFAULT_QR_OPTIONS
+  options: QRCodeOptions = DEFAULT_QR_OPTIONS,
 ): Promise<string> {
   try {
     const qrOptions = {
@@ -87,17 +87,17 @@ export async function generateQRCodeSVG(
         options.errorCorrectionLevel || DEFAULT_QR_OPTIONS.errorCorrectionLevel,
     };
 
-    return await QRCode.toString(text, { type: 'svg', ...qrOptions });
+    return await QRCode.toString(text, { type: "svg", ...qrOptions });
   } catch (error) {
-    console.error('Error generating QR code SVG:', error);
-    throw new Error('Failed to generate QR code SVG');
+    console.error("Error generating QR code SVG:", error);
+    throw new Error("Failed to generate QR code SVG");
   }
 }
 
 // Generate QR code as Buffer (for file operations)
 export async function generateQRCodeBuffer(
   text: string,
-  options: QRCodeOptions = DEFAULT_QR_OPTIONS
+  options: QRCodeOptions = DEFAULT_QR_OPTIONS,
 ): Promise<Buffer> {
   try {
     const qrOptions = {
@@ -106,16 +106,16 @@ export async function generateQRCodeBuffer(
       color: options.color || DEFAULT_QR_OPTIONS.color,
       errorCorrectionLevel:
         options.errorCorrectionLevel || DEFAULT_QR_OPTIONS.errorCorrectionLevel,
-      type: (options.type || DEFAULT_QR_OPTIONS.type)?.replace('image/', '') as
-        | 'png'
+      type: (options.type || DEFAULT_QR_OPTIONS.type)?.replace("image/", "") as
+        | "png"
         | undefined,
       quality: options.quality || DEFAULT_QR_OPTIONS.quality,
     };
 
     return await QRCode.toBuffer(text, qrOptions);
   } catch (error) {
-    console.error('Error generating QR code buffer:', error);
-    throw new Error('Failed to generate QR code buffer');
+    console.error("Error generating QR code buffer:", error);
+    throw new Error("Failed to generate QR code buffer");
   }
 }
 
@@ -123,7 +123,7 @@ export async function generateQRCodeBuffer(
 export async function generateEventQRCode(
   event: Event,
   options: QRCodeOptions = DEFAULT_QR_OPTIONS,
-  baseUrl?: string
+  baseUrl?: string,
 ): Promise<string> {
   const galleryUrl = generateGalleryUrl(event, baseUrl);
   return generateQRCodeDataUrl(galleryUrl, options);
@@ -132,7 +132,7 @@ export async function generateEventQRCode(
 // Generate print-ready QR code for an event
 export async function generateEventQRCodePrint(
   event: Event,
-  baseUrl?: string
+  baseUrl?: string,
 ): Promise<string> {
   const galleryUrl = generateGalleryUrl(event, baseUrl);
   return generateQRCodeDataUrl(galleryUrl, PRINT_QR_OPTIONS);
@@ -146,15 +146,15 @@ export function validateQRCodeContent(content: string): boolean {
 
     // Must be from our domain or localhost for development
     const allowedDomains = [
-      process.env.NEXT_PUBLIC_APP_URL?.replace(/^https?:\/\//, ''),
-      'localhost:3000',
-      'instamoments.ph',
-      'www.instamoments.ph',
+      process.env.NEXT_PUBLIC_APP_URL?.replace(/^https?:\/\//, ""),
+      "localhost:3000",
+      "instamoments.ph",
+      "www.instamoments.ph",
     ].filter(Boolean);
 
     const hostname = url.hostname;
     const isAllowedDomain = allowedDomains.some(
-      (domain) => hostname === domain || hostname.endsWith(`.${domain}`)
+      (domain) => hostname === domain || hostname.endsWith(`.${domain}`),
     );
 
     if (!isAllowedDomain) {
@@ -162,7 +162,7 @@ export function validateQRCodeContent(content: string): boolean {
     }
 
     // Must be a gallery URL
-    return url.pathname.startsWith('/gallery/');
+    return url.pathname.startsWith("/gallery/");
   } catch {
     return false;
   }
@@ -172,9 +172,9 @@ export function validateQRCodeContent(content: string): boolean {
 export function extractEventSlugFromQR(content: string): string | null {
   try {
     const url = new URL(content);
-    const pathParts = url.pathname.split('/');
+    const pathParts = url.pathname.split("/");
 
-    if (pathParts[1] === 'gallery' && pathParts[2]) {
+    if (pathParts[1] === "gallery" && pathParts[2]) {
       return pathParts[2];
     }
 
@@ -194,16 +194,16 @@ export interface QRCodeAnalytics {
 
 // Generate QR code with custom styling for different event types
 export function getEventTypeQRColors(
-  eventType: Event['event_type']
-): QRCodeOptions['color'] {
+  eventType: Event["event_type"],
+): QRCodeOptions["color"] {
   const eventColors = {
-    wedding: { dark: '#8B5A3C', light: '#FFF8F0' }, // Warm brown
-    birthday: { dark: '#E91E63', light: '#FCE4EC' }, // Pink
-    debut: { dark: '#9C27B0', light: '#F3E5F5' }, // Purple
-    graduation: { dark: '#4CAF50', light: '#E8F5E8' }, // Green
-    anniversary: { dark: '#FF5722', light: '#FBE9E7' }, // Orange-red
-    corporate: { dark: '#607D8B', light: '#ECEFF1' }, // Blue-grey
-    other: { dark: '#2196F3', light: '#E3F2FD' }, // Blue
+    wedding: { dark: "#8B5A3C", light: "#FFF8F0" }, // Warm brown
+    birthday: { dark: "#E91E63", light: "#FCE4EC" }, // Pink
+    debut: { dark: "#9C27B0", light: "#F3E5F5" }, // Purple
+    graduation: { dark: "#4CAF50", light: "#E8F5E8" }, // Green
+    anniversary: { dark: "#FF5722", light: "#FBE9E7" }, // Orange-red
+    corporate: { dark: "#607D8B", light: "#ECEFF1" }, // Blue-grey
+    other: { dark: "#2196F3", light: "#E3F2FD" }, // Blue
   };
 
   return eventColors[eventType] || eventColors.other;
@@ -213,7 +213,7 @@ export function getEventTypeQRColors(
 export async function generateBrandedEventQRCode(
   event: Event,
   options: QRCodeOptions = DEFAULT_QR_OPTIONS,
-  baseUrl?: string
+  baseUrl?: string,
 ): Promise<string> {
   const brandedOptions = {
     ...options,

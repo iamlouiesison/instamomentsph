@@ -1,25 +1,25 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { PhotoUpload } from '@/components/features/upload/PhotoUpload';
-import { PhotoUploadResponse } from '@/hooks/usePhotoUpload';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { CheckCircle, XCircle, Upload } from 'lucide-react';
-import { TestQueryProvider } from '@/components/providers/TestQueryProvider';
+import React, { useState } from "react";
+import { PhotoUpload } from "@/components/features/upload/PhotoUpload";
+import { PhotoUploadResponse } from "@/hooks/usePhotoUpload";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { CheckCircle, XCircle, Upload } from "lucide-react";
+import { TestQueryProvider } from "@/components/providers/TestQueryProvider";
 
 export default function TestPhotoUploadPage() {
   const [uploadResults, setUploadResults] = useState<PhotoUploadResponse[]>([]);
   const [uploadErrors, setUploadErrors] = useState<string[]>([]);
-  const [testEventId] = useState('test-event-123'); // Mock event ID for testing
+  const [testEventId] = useState("test-event-123"); // Mock event ID for testing
 
   const handleUploadComplete = (uploadedPhotos: PhotoUploadResponse[]) => {
-    console.log('Upload completed:', uploadedPhotos);
+    console.log("Upload completed:", uploadedPhotos);
     setUploadResults((prev) => [...prev, ...uploadedPhotos]);
   };
 
   const handleUploadError = (error: string) => {
-    console.error('Upload error:', error);
+    console.error("Upload error:", error);
     setUploadErrors((prev) => [...prev, error]);
   };
 
@@ -140,22 +140,22 @@ export default function TestPhotoUploadPage() {
                         </div>
                         <div className="space-y-1 text-sm">
                           <p>
-                            <strong>Status:</strong>{' '}
-                            {photo.success ? 'Success' : 'Failed'}
+                            <strong>Status:</strong>{" "}
+                            {photo.success ? "Success" : "Failed"}
                           </p>
                           <p>
-                            <strong>Photo ID:</strong>{' '}
-                            {photo.data?.photoId || 'N/A'}
+                            <strong>Photo ID:</strong>{" "}
+                            {photo.data?.photoId || "N/A"}
                           </p>
                           <p>
-                            <strong>File URL:</strong>{' '}
-                            {photo.data?.fileUrl || 'N/A'}
+                            <strong>File URL:</strong>{" "}
+                            {photo.data?.fileUrl || "N/A"}
                           </p>
                           <p>
-                            <strong>Message:</strong>{' '}
+                            <strong>Message:</strong>{" "}
                             {photo.data?.message ||
                               photo.error?.message ||
-                              'N/A'}
+                              "N/A"}
                           </p>
                         </div>
                       </div>

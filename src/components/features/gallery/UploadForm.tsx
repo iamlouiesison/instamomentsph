@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import React, { useState, useCallback } from 'react';
-import { useDropzone } from 'react-dropzone';
-import Image from 'next/image';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import React, { useState, useCallback } from "react";
+import { useDropzone } from "react-dropzone";
+import Image from "next/image";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 // import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Progress } from '@/components/ui/progress';
+import { Textarea } from "@/components/ui/textarea";
+import { Progress } from "@/components/ui/progress";
 // import { Alert, AlertDescription } from '@/components/ui/alert';
 import {
   Upload,
@@ -19,10 +19,10 @@ import {
   AlertCircle,
   Camera,
   VideoIcon,
-} from 'lucide-react';
-import { toast } from 'sonner';
-import { compressImage } from '@/lib/image-processing';
-import { uploadPhoto, uploadVideo } from '@/lib/upload-utils';
+} from "lucide-react";
+import { toast } from "sonner";
+import { compressImage } from "@/lib/image-processing";
+import { uploadPhoto, uploadVideo } from "@/lib/upload-utils";
 
 interface UploadFormProps {
   eventId: string;
@@ -38,7 +38,7 @@ interface UploadFormProps {
 interface UploadFile {
   file: File;
   preview: string;
-  type: 'photo' | 'video';
+  type: "photo" | "video";
   caption?: string;
   uploading: boolean;
   progress: number;
@@ -64,16 +64,16 @@ export function UploadForm({
     (acceptedFiles: File[]) => {
       const newFiles: UploadFile[] = acceptedFiles
         .map((file) => {
-          const isVideo = file.type.startsWith('video/');
-          const isImage = file.type.startsWith('image/');
+          const isVideo = file.type.startsWith("video/");
+          const isImage = file.type.startsWith("image/");
 
           if (!isVideo && !isImage) {
-            toast.error('Please upload only images or videos');
+            toast.error("Please upload only images or videos");
             return null;
           }
 
           if (isVideo && !allowVideos) {
-            toast.error('Video uploads are not allowed for this event');
+            toast.error("Video uploads are not allowed for this event");
             return null;
           }
 
@@ -90,7 +90,7 @@ export function UploadForm({
           return {
             file,
             preview: URL.createObjectURL(file),
-            type: isVideo ? 'video' : 'photo',
+            type: isVideo ? "video" : "photo",
             uploading: false,
             progress: 0,
           };
@@ -99,14 +99,14 @@ export function UploadForm({
 
       setFiles((prev) => [...prev, ...newFiles]);
     },
-    [allowVideos, maxFileSize, maxPhotosPerUser, files.length]
+    [allowVideos, maxFileSize, maxPhotosPerUser, files.length],
   );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: {
-      'image/*': ['.jpeg', '.jpg', '.png', '.webp'],
-      'video/*': ['.mp4', '.webm', '.mov'],
+      "image/*": [".jpeg", ".jpg", ".png", ".webp"],
+      "video/*": [".mp4", ".webm", ".mov"],
     },
     multiple: true,
   });
@@ -122,13 +122,13 @@ export function UploadForm({
 
   const updateCaption = (index: number, caption: string) => {
     setFiles((prev) =>
-      prev.map((file, i) => (i === index ? { ...file, caption } : file))
+      prev.map((file, i) => (i === index ? { ...file, caption } : file)),
     );
   };
 
   const uploadFiles = async () => {
     if (files.length === 0) {
-      toast.error('Please select files to upload');
+      toast.error("Please select files to upload");
       return;
     }
 
@@ -144,14 +144,14 @@ export function UploadForm({
         // Update file status to uploading
         setFiles((prev) =>
           prev.map((file, index) =>
-            index === i ? { ...file, uploading: true, progress: 0 } : file
-          )
+            index === i ? { ...file, uploading: true, progress: 0 } : file,
+          ),
         );
 
         try {
           // let uploadResult;
 
-          if (fileData.type === 'photo') {
+          if (fileData.type === "photo") {
             // Compress image before upload
             const compressedFile = await compressImage(fileData.file, {
               maxSizeMB: 2,
@@ -181,15 +181,15 @@ export function UploadForm({
             prev.map((file, index) =>
               index === i
                 ? { ...file, uploading: false, uploaded: true, progress: 100 }
-                : file
-            )
+                : file,
+            ),
           );
 
           completedUploads++;
           setUploadProgress((completedUploads / files.length) * 100);
 
           toast.success(
-            `${fileData.type === 'photo' ? 'Photo' : 'Video'} uploaded successfully!`
+            `${fileData.type === "photo" ? "Photo" : "Video"} uploaded successfully!`,
           );
         } catch (error) {
           console.error(`Upload error for file ${i}:`, error);
@@ -201,14 +201,14 @@ export function UploadForm({
                     ...file,
                     uploading: false,
                     error:
-                      error instanceof Error ? error.message : 'Upload failed',
+                      error instanceof Error ? error.message : "Upload failed",
                   }
-                : file
-            )
+                : file,
+            ),
           );
 
           toast.error(
-            `Failed to upload ${fileData.type}: ${error instanceof Error ? error.message : 'Unknown error'}`
+            `Failed to upload ${fileData.type}: ${error instanceof Error ? error.message : "Unknown error"}`,
           );
         }
       }
@@ -218,19 +218,19 @@ export function UploadForm({
         onUploadComplete();
       }, 1000);
     } catch (error) {
-      console.error('Upload process error:', error);
-      toast.error('Upload process failed');
+      console.error("Upload process error:", error);
+      toast.error("Upload process failed");
     } finally {
       setIsUploading(false);
     }
   };
 
   const formatFileSize = (bytes: number) => {
-    if (bytes === 0) return '0 Bytes';
+    if (bytes === 0) return "0 Bytes";
     const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const sizes = ["Bytes", "KB", "MB", "GB"];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
   };
 
   return (
@@ -240,7 +240,7 @@ export function UploadForm({
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Upload className="h-5 w-5" />
-            Upload Photos {allowVideos && '& Videos'}
+            Upload Photos {allowVideos && "& Videos"}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -248,9 +248,9 @@ export function UploadForm({
             {...getRootProps()}
             className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors ${
               isDragActive
-                ? 'border-primary bg-primary/5'
-                : 'border-muted-foreground/25 hover:border-primary/50'
-            } ${isUploading ? 'pointer-events-none opacity-50' : ''}`}
+                ? "border-primary bg-primary/5"
+                : "border-muted-foreground/25 hover:border-primary/50"
+            } ${isUploading ? "pointer-events-none opacity-50" : ""}`}
           >
             <input {...getInputProps()} />
             <div className="space-y-4">
@@ -264,13 +264,13 @@ export function UploadForm({
               <div>
                 <p className="text-lg font-medium">
                   {isDragActive
-                    ? 'Drop files here...'
-                    : 'Drag & drop files here, or click to select'}
+                    ? "Drop files here..."
+                    : "Drag & drop files here, or click to select"}
                 </p>
                 <p className="text-sm text-muted-foreground">
                   {allowVideos
-                    ? 'Images and videos up to 10MB each'
-                    : 'Images up to 10MB each'}
+                    ? "Images and videos up to 10MB each"
+                    : "Images up to 10MB each"}
                 </p>
                 <p className="text-xs text-muted-foreground">
                   Maximum {maxPhotosPerUser} files per person
@@ -299,7 +299,7 @@ export function UploadForm({
                 >
                   {/* Preview */}
                   <div className="w-16 h-16 bg-muted rounded-lg overflow-hidden flex-shrink-0">
-                    {fileData.type === 'photo' ? (
+                    {fileData.type === "photo" ? (
                       <Image
                         src={fileData.preview}
                         alt={`Preview of ${fileData.file.name}`}
@@ -317,7 +317,7 @@ export function UploadForm({
                   {/* File Info */}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-2">
-                      {fileData.type === 'photo' ? (
+                      {fileData.type === "photo" ? (
                         <ImageIcon className="h-4 w-4 text-blue-500" />
                       ) : (
                         <Video className="h-4 w-4 text-purple-500" />
@@ -332,8 +332,8 @@ export function UploadForm({
 
                     {/* Caption Input */}
                     <Textarea
-                      placeholder={`Add a ${fileData.type === 'photo' ? 'caption' : 'message'}...`}
-                      value={fileData.caption || ''}
+                      placeholder={`Add a ${fileData.type === "photo" ? "caption" : "message"}...`}
+                      value={fileData.caption || ""}
                       onChange={(e) => updateCaption(index, e.target.value)}
                       className="mb-2"
                       rows={2}
@@ -408,8 +408,8 @@ export function UploadForm({
         >
           <Upload className="h-4 w-4 mr-2" />
           {isUploading
-            ? 'Uploading...'
-            : `Upload ${files.length} file${files.length !== 1 ? 's' : ''}`}
+            ? "Uploading..."
+            : `Upload ${files.length} file${files.length !== 1 ? "s" : ""}`}
         </Button>
         <Button variant="outline" onClick={onCancel} disabled={isUploading}>
           Cancel

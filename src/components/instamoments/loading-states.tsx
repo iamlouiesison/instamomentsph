@@ -1,26 +1,26 @@
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { Skeleton } from '@/components/ui/skeleton';
-import { cn } from '@/lib/utils';
-import { Loader2, Camera, Upload } from 'lucide-react';
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
+import { cn } from "@/lib/utils";
+import { Loader2, Camera, Upload } from "lucide-react";
 
 interface LoadingSpinnerProps {
-  size?: 'sm' | 'md' | 'lg';
+  size?: "sm" | "md" | "lg";
   className?: string;
 }
 
 export function LoadingSpinner({
-  size = 'md',
+  size = "md",
   className,
 }: LoadingSpinnerProps) {
   const sizeClasses = {
-    sm: 'h-4 w-4',
-    md: 'h-6 w-6',
-    lg: 'h-8 w-8',
+    sm: "h-4 w-4",
+    md: "h-6 w-6",
+    lg: "h-8 w-8",
   };
 
   return (
     <Loader2
-      className={cn('animate-spin text-golden', sizeClasses[size], className)}
+      className={cn("animate-spin text-golden", sizeClasses[size], className)}
     />
   );
 }
@@ -37,7 +37,7 @@ export function PhotoUploadLoading({
   className,
 }: PhotoUploadLoadingProps) {
   return (
-    <Card className={cn('w-full max-w-md mx-auto', className)}>
+    <Card className={cn("w-full max-w-md mx-auto", className)}>
       <CardContent className="p-6 space-y-4">
         <div className="text-center space-y-2">
           <div className="mx-auto w-12 h-12 bg-golden/20 rounded-full flex items-center justify-center">
@@ -77,7 +77,7 @@ interface GalleryLoadingProps {
 
 export function GalleryLoading({ count = 6, className }: GalleryLoadingProps) {
   return (
-    <div className={cn('space-y-4', className)}>
+    <div className={cn("space-y-4", className)}>
       <div className="flex items-center justify-between">
         <Skeleton className="h-6 w-32" />
         <div className="flex gap-2">
@@ -113,7 +113,7 @@ export function EventCardLoading({
   className,
 }: EventCardLoadingProps) {
   return (
-    <div className={cn('space-y-4', className)}>
+    <div className={cn("space-y-4", className)}>
       {Array.from({ length: count }).map((_, i) => (
         <Card key={i}>
           <CardContent className="p-6 space-y-4">
@@ -157,7 +157,7 @@ interface PaymentLoadingProps {
 
 export function PaymentLoading({ className }: PaymentLoadingProps) {
   return (
-    <Card className={cn('w-full max-w-md mx-auto', className)}>
+    <Card className={cn("w-full max-w-md mx-auto", className)}>
       <CardContent className="p-6 space-y-4">
         <div className="text-center space-y-2">
           <div className="mx-auto w-12 h-12 bg-golden/20 rounded-full flex items-center justify-center">
@@ -196,8 +196,8 @@ export function CameraLoading({ className }: CameraLoadingProps) {
   return (
     <div
       className={cn(
-        'flex flex-col items-center justify-center space-y-4 p-8',
-        className
+        "flex flex-col items-center justify-center space-y-4 p-8",
+        className,
       )}
     >
       <div className="relative">
@@ -223,7 +223,7 @@ interface GalleryPageLoadingProps {
 
 export function GalleryPageLoading({ className }: GalleryPageLoadingProps) {
   return (
-    <div className={cn('min-h-screen bg-background', className)}>
+    <div className={cn("min-h-screen bg-background", className)}>
       <div className="max-w-6xl mx-auto px-4 py-8">
         <div className="space-y-8">
           {/* Header Skeleton */}

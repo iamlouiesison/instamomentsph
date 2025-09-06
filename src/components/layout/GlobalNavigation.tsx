@@ -1,17 +1,17 @@
-'use client';
+"use client";
 
-import React, { useState, useMemo } from 'react';
-import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
-import { useAuthContext } from '@/components/providers/AuthProvider';
-import { Button } from '@/components/ui/button';
+import React, { useState, useMemo } from "react";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import { useAuthContext } from "@/components/providers/AuthProvider";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from "@/components/ui/dropdown-menu";
 import {
   Camera,
   LogOut,
@@ -21,8 +21,8 @@ import {
   X,
   Home,
   BarChart3,
-} from 'lucide-react';
-import { cn } from '@/lib/utils';
+} from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface GlobalNavigationProps {
   className?: string;
@@ -46,7 +46,7 @@ export function GlobalNavigation({ className }: GlobalNavigationProps) {
     const { error } = await signOut();
     if (!error) {
       // Redirect to sign-in page after successful logout
-      router.push('/signin');
+      router.push("/signin");
     }
     setIsMobileMenuOpen(false);
   };
@@ -54,57 +54,57 @@ export function GlobalNavigation({ className }: GlobalNavigationProps) {
   // Determine if we're on a public page (landing, auth pages) - memoized for performance
   const isPublicPage = useMemo(
     () =>
-      pathname === '/' ||
-      pathname.startsWith('/signin') ||
-      pathname.startsWith('/signup') ||
-      pathname.startsWith('/reset-password'),
-    [pathname]
+      pathname === "/" ||
+      pathname.startsWith("/signin") ||
+      pathname.startsWith("/signup") ||
+      pathname.startsWith("/reset-password"),
+    [pathname],
   );
 
   // Navigation items for authenticated users
   const authenticatedNavItems = [
     {
-      name: 'Dashboard',
-      href: '/dashboard',
+      name: "Dashboard",
+      href: "/dashboard",
       icon: Home,
-      current: pathname === '/dashboard',
+      current: pathname === "/dashboard",
     },
     {
-      name: 'Create Event',
-      href: '/create-event',
+      name: "Create Event",
+      href: "/create-event",
       icon: Plus,
-      current: pathname === '/create-event',
+      current: pathname === "/create-event",
     },
     {
-      name: 'Profile',
-      href: '/profile',
+      name: "Profile",
+      href: "/profile",
       icon: User,
-      current: pathname === '/profile',
+      current: pathname === "/profile",
     },
   ];
 
   // Public navigation items (for landing page)
   const publicNavItems = [
     {
-      name: 'Features',
-      href: '#features',
+      name: "Features",
+      href: "#features",
       current: false,
     },
     {
-      name: 'How It Works',
-      href: '#how-it-works',
+      name: "How It Works",
+      href: "#how-it-works",
       current: false,
     },
     {
-      name: 'Pricing',
-      href: '#pricing',
+      name: "Pricing",
+      href: "#pricing",
       current: false,
     },
   ];
 
   const isActiveRoute = (href: string) => {
-    if (href === '/dashboard') {
-      return pathname === '/dashboard';
+    if (href === "/dashboard") {
+      return pathname === "/dashboard";
     }
     return pathname.startsWith(href);
   };
@@ -114,8 +114,8 @@ export function GlobalNavigation({ className }: GlobalNavigationProps) {
     return (
       <nav
         className={cn(
-          'border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50',
-          className
+          "border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50",
+          className,
         )}
       >
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -145,15 +145,15 @@ export function GlobalNavigation({ className }: GlobalNavigationProps) {
   return (
     <nav
       className={cn(
-        'border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50',
-        className
+        "border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50",
+        className,
       )}
     >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link
-            href={user ? '/dashboard' : '/'}
+            href={user ? "/dashboard" : "/"}
             className="flex items-center space-x-2 group"
           >
             <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform">
@@ -171,13 +171,13 @@ export function GlobalNavigation({ className }: GlobalNavigationProps) {
                   return (
                     <Link key={item.name} href={item.href}>
                       <Button
-                        variant={isActiveRoute(item.href) ? 'default' : 'ghost'}
+                        variant={isActiveRoute(item.href) ? "default" : "ghost"}
                         size="sm"
                         className={cn(
-                          'flex items-center space-x-2 transition-all',
+                          "flex items-center space-x-2 transition-all",
                           isActiveRoute(item.href)
-                            ? 'bg-primary text-primary-foreground shadow-sm'
-                            : 'hover:bg-accent hover:text-accent-foreground'
+                            ? "bg-primary text-primary-foreground shadow-sm"
+                            : "hover:bg-accent hover:text-accent-foreground",
                         )}
                       >
                         <Icon className="w-4 h-4" />
@@ -209,10 +209,10 @@ export function GlobalNavigation({ className }: GlobalNavigationProps) {
                 {/* User Info - Desktop */}
                 <div className="hidden sm:block">
                   <span className="text-sm text-muted-foreground">
-                    Hello,{' '}
+                    Hello,{" "}
                     {profile?.full_name ||
                       user?.user_metadata?.full_name ||
-                      user?.email?.split('@')[0]}
+                      user?.email?.split("@")[0]}
                     !
                   </span>
                 </div>
@@ -234,7 +234,7 @@ export function GlobalNavigation({ className }: GlobalNavigationProps) {
                       <p className="text-sm font-medium">
                         {profile?.full_name ||
                           user?.user_metadata?.full_name ||
-                          'User'}
+                          "User"}
                       </p>
                       <p className="text-xs text-muted-foreground">
                         {user?.email}
@@ -319,14 +319,14 @@ export function GlobalNavigation({ className }: GlobalNavigationProps) {
                       >
                         <Button
                           variant={
-                            isActiveRoute(item.href) ? 'default' : 'ghost'
+                            isActiveRoute(item.href) ? "default" : "ghost"
                           }
                           size="sm"
                           className={cn(
-                            'w-full justify-start flex items-center space-x-3',
+                            "w-full justify-start flex items-center space-x-3",
                             isActiveRoute(item.href)
-                              ? 'bg-primary text-primary-foreground'
-                              : 'hover:bg-accent hover:text-accent-foreground'
+                              ? "bg-primary text-primary-foreground"
+                              : "hover:bg-accent hover:text-accent-foreground",
                           )}
                         >
                           <Icon className="w-4 h-4" />
@@ -340,7 +340,7 @@ export function GlobalNavigation({ className }: GlobalNavigationProps) {
                     <p className="text-sm font-medium">
                       {profile?.full_name ||
                         user?.user_metadata?.full_name ||
-                        'User'}
+                        "User"}
                     </p>
                     <p className="text-xs text-muted-foreground">
                       {user?.email}

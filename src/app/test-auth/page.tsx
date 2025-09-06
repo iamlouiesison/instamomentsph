@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useAuthContext } from '@/components/providers/AuthProvider';
-import { useEffect, useState } from 'react';
+import { useAuthContext } from "@/components/providers/AuthProvider";
+import { useEffect, useState } from "react";
 
 export default function TestAuthPage() {
   const { user, profile, loading, error } = useAuthContext();
@@ -13,12 +13,12 @@ export default function TestAuthPage() {
   };
 
   useEffect(() => {
-    addLog('Component mounted');
+    addLog("Component mounted");
     addLog(`Loading: ${loading}`);
     addLog(`Has user: ${!!user}`);
-    addLog(`User ID: ${user?.id || 'none'}`);
+    addLog(`User ID: ${user?.id || "none"}`);
     addLog(`Has profile: ${!!profile}`);
-    addLog(`Error: ${error || 'none'}`);
+    addLog(`Error: ${error || "none"}`);
   }, [user, profile, loading, error]);
 
   return (
@@ -31,25 +31,25 @@ export default function TestAuthPage() {
             <h2 className="text-lg font-semibold">Current State</h2>
             <div className="bg-gray-100 p-4 rounded-lg">
               <p>
-                <strong>Loading:</strong> {loading ? 'Yes' : 'No'}
+                <strong>Loading:</strong> {loading ? "Yes" : "No"}
               </p>
               <p>
-                <strong>Has User:</strong> {user ? 'Yes' : 'No'}
+                <strong>Has User:</strong> {user ? "Yes" : "No"}
               </p>
               <p>
-                <strong>User ID:</strong> {user?.id || 'None'}
+                <strong>User ID:</strong> {user?.id || "None"}
               </p>
               <p>
-                <strong>User Email:</strong> {user?.email || 'None'}
+                <strong>User Email:</strong> {user?.email || "None"}
               </p>
               <p>
-                <strong>Has Profile:</strong> {profile ? 'Yes' : 'No'}
+                <strong>Has Profile:</strong> {profile ? "Yes" : "No"}
               </p>
               <p>
-                <strong>Profile ID:</strong> {profile?.id || 'None'}
+                <strong>Profile ID:</strong> {profile?.id || "None"}
               </p>
               <p>
-                <strong>Error:</strong> {error || 'None'}
+                <strong>Error:</strong> {error || "None"}
               </p>
             </div>
           </div>
@@ -70,12 +70,12 @@ export default function TestAuthPage() {
           <h2 className="text-lg font-semibold mb-4">Test API Call</h2>
           <button
             onClick={async () => {
-              addLog('Testing API call...');
+              addLog("Testing API call...");
               try {
-                const response = await fetch('/api/events');
+                const response = await fetch("/api/events");
                 const result = await response.json();
                 addLog(
-                  `API Response: ${response.status} - ${JSON.stringify(result)}`
+                  `API Response: ${response.status} - ${JSON.stringify(result)}`,
                 );
               } catch (error) {
                 addLog(`API Error: ${error}`);

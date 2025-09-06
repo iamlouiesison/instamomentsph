@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import React, { useState, useRef, useEffect, useCallback } from "react";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import {
   Play,
   Pause,
@@ -15,8 +15,8 @@ import {
   Clock,
   User,
   MessageCircle,
-} from 'lucide-react';
-import { cn } from '@/lib/utils';
+} from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface VideoPlayerProps {
   videoUrl: string;
@@ -76,7 +76,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = Math.floor(seconds % 60);
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
+    return `${mins}:${secs.toString().padStart(2, "0")}`;
   };
 
   // Handle play/pause
@@ -111,7 +111,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
       videoRef.current.currentTime = newTime;
       setState((prev) => ({ ...prev, currentTime: newTime }));
     },
-    [state.duration]
+    [state.duration],
   );
 
   // Handle fullscreen toggle
@@ -183,9 +183,9 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
       }));
     };
 
-    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
     return () =>
-      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+      document.removeEventListener("fullscreenchange", handleFullscreenChange);
   }, []);
 
   const progressPercentage =
@@ -193,7 +193,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
 
   if (state.hasError) {
     return (
-      <Card className={cn('p-6 text-center', className)}>
+      <Card className={cn("p-6 text-center", className)}>
         <div className="space-y-4">
           <div className="text-red-500 text-6xl">⚠️</div>
           <h3 className="text-lg font-semibold">Video Error</h3>
@@ -207,12 +207,12 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
   }
 
   return (
-    <Card className={cn('overflow-hidden', className)}>
+    <Card className={cn("overflow-hidden", className)}>
       <div
         ref={containerRef}
         className={cn(
-          'relative bg-black group',
-          state.isFullscreen ? 'fixed inset-0 z-50' : 'rounded-lg'
+          "relative bg-black group",
+          state.isFullscreen ? "fixed inset-0 z-50" : "rounded-lg",
         )}
       >
         {/* Video Element */}
@@ -302,7 +302,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
                 <div className="flex items-center space-x-2 text-white text-sm">
                   <Clock className="w-4 h-4" />
                   <span>
-                    {formatTime(state.currentTime)} /{' '}
+                    {formatTime(state.currentTime)} /{" "}
                     {formatTime(state.duration)}
                   </span>
                 </div>

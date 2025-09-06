@@ -1,10 +1,10 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Download, Share2, Copy, RefreshCw } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { useState } from 'react';
-import Image from 'next/image';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Download, Share2, Copy, RefreshCw } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { useState } from "react";
+import Image from "next/image";
 
 interface QRDisplayProps {
   qrCodeUrl: string;
@@ -45,12 +45,12 @@ export function QRDisplay({
       await navigator.clipboard.writeText(eventCode);
       onCopy?.();
     } catch (error) {
-      console.error('Failed to copy:', error);
+      console.error("Failed to copy:", error);
     }
   };
 
   return (
-    <Card className={cn('w-full max-w-md mx-auto', className)}>
+    <Card className={cn("w-full max-w-md mx-auto", className)}>
       <CardHeader className="text-center pb-4">
         <CardTitle className="mobile-heading">Event QR Code</CardTitle>
         <p className="mobile-text text-muted-foreground">
@@ -129,7 +129,7 @@ export function QRDisplay({
             className="mobile-button"
           >
             <RefreshCw
-              className={cn('h-4 w-4 mr-2', isLoading && 'animate-spin')}
+              className={cn("h-4 w-4 mr-2", isLoading && "animate-spin")}
             />
             Refresh
           </Button>

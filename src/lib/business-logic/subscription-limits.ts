@@ -82,7 +82,7 @@ export function getSubscriptionLimits(tier: string): SubscriptionLimits {
  */
 export function canUploadPhoto(
   subscriptionTier: string,
-  currentPhotos: number
+  currentPhotos: number,
 ): { allowed: boolean; reason?: string } {
   const limits = getSubscriptionLimits(subscriptionTier);
 
@@ -102,14 +102,14 @@ export function canUploadPhoto(
 export function canUploadVideo(
   subscriptionTier: string,
   currentVideos: number,
-  hasVideoAddon: boolean = false
+  hasVideoAddon: boolean = false,
 ): { allowed: boolean; reason?: string } {
   const limits = getSubscriptionLimits(subscriptionTier);
 
   if (!hasVideoAddon) {
     return {
       allowed: false,
-      reason: 'Video addon not enabled. Upgrade to add video support.',
+      reason: "Video addon not enabled. Upgrade to add video support.",
     };
   }
 
@@ -128,7 +128,7 @@ export function canUploadVideo(
  */
 export function canUserUploadPhoto(
   subscriptionTier: string,
-  userPhotoCount: number
+  userPhotoCount: number,
 ): { allowed: boolean; reason?: string } {
   const limits = getSubscriptionLimits(subscriptionTier);
 
@@ -148,7 +148,7 @@ export function canUserUploadPhoto(
 export function calculateEventExpiration(
   createdAt: string | Date,
   subscriptionTier: string,
-  customExpiresAt?: string | Date
+  customExpiresAt?: string | Date,
 ): EventLimits {
   const created = new Date(createdAt);
   const now = new Date();
@@ -161,7 +161,7 @@ export function calculateEventExpiration(
 
   const daysRemaining = Math.max(
     0,
-    Math.ceil((expiresAt.getTime() - now.getTime()) / (1000 * 60 * 60 * 24))
+    Math.ceil((expiresAt.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)),
   );
   const isExpired = expiresAt < now;
   const isExpiringSoon = !isExpired && daysRemaining <= 1;
@@ -182,12 +182,12 @@ export function calculateEventExpiration(
 export function isEventActive(
   createdAt: string | Date,
   subscriptionTier: string,
-  customExpiresAt?: string | Date
+  customExpiresAt?: string | Date,
 ): boolean {
   const expiration = calculateEventExpiration(
     createdAt,
     subscriptionTier,
-    customExpiresAt
+    customExpiresAt,
   );
   return !expiration.isExpired;
 }
@@ -199,7 +199,7 @@ export function getUpgradeRecommendations(
   subscriptionTier: string,
   currentPhotos: number,
   currentVideos: number,
-  daysRemaining: number
+  daysRemaining: number,
 ): Array<{ tier: string; reason: string; price: number }> {
   const recommendations: Array<{
     tier: string;
@@ -258,7 +258,7 @@ export function getUpgradeRecommendations(
  * Get the next subscription tier
  */
 function getNextTier(currentTier: string): string | null {
-  const tiers = ['free', 'basic', 'standard', 'premium', 'pro'];
+  const tiers = ["free", "basic", "standard", "premium", "pro"];
   const currentIndex = tiers.indexOf(currentTier);
   return currentIndex < tiers.length - 1 ? tiers[currentIndex + 1] : null;
 }
@@ -268,7 +268,7 @@ function getNextTier(currentTier: string): string | null {
  */
 export function calculateTotalPrice(
   subscriptionTier: string,
-  hasVideoAddon: boolean = false
+  hasVideoAddon: boolean = false,
 ): number {
   const limits = getSubscriptionLimits(subscriptionTier);
   let total = limits.price;
@@ -285,7 +285,7 @@ export function calculateTotalPrice(
  */
 export function formatPrice(priceInCentavos: number): string {
   const pesos = priceInCentavos / 100;
-  return `₱${pesos.toLocaleString('en-PH', { minimumFractionDigits: 0 })}`;
+  return `₱${pesos.toLocaleString("en-PH", { minimumFractionDigits: 0 })}`;
 }
 
 /**
@@ -293,13 +293,13 @@ export function formatPrice(priceInCentavos: number): string {
  */
 export function getTierDisplayName(tier: string): string {
   const names: Record<string, string> = {
-    free: 'Free',
-    basic: 'Basic',
-    standard: 'Standard',
-    premium: 'Premium',
-    pro: 'Pro',
+    free: "Free",
+    basic: "Basic",
+    standard: "Standard",
+    premium: "Premium",
+    pro: "Pro",
   };
-  return names[tier] || 'Unknown';
+  return names[tier] || "Unknown";
 }
 
 /**

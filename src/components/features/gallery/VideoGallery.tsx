@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import React, { useState, useCallback } from 'react';
-import Image from 'next/image';
-import { VideoPlayer } from '../video/VideoPlayer';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import React, { useState, useCallback } from "react";
+import Image from "next/image";
+import { VideoPlayer } from "../video/VideoPlayer";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import {
   Play,
   Pause,
@@ -15,8 +15,8 @@ import {
   User,
   Grid,
   List,
-} from 'lucide-react';
-import { cn } from '@/lib/utils';
+} from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface Video {
   id: string;
@@ -27,7 +27,7 @@ interface Video {
   duration: number;
   isGreeting: boolean;
   createdAt: string;
-  status: 'processing' | 'completed' | 'failed';
+  status: "processing" | "completed" | "failed";
 }
 
 interface VideoGalleryProps {
@@ -38,7 +38,7 @@ interface VideoGalleryProps {
   className?: string;
 }
 
-type ViewMode = 'grid' | 'list';
+type ViewMode = "grid" | "list";
 
 export const VideoGallery: React.FC<VideoGalleryProps> = ({
   videos,
@@ -47,7 +47,7 @@ export const VideoGallery: React.FC<VideoGalleryProps> = ({
   showGreetingsOnly = false,
   className,
 }) => {
-  const [viewMode, setViewMode] = useState<ViewMode>('grid');
+  const [viewMode, setViewMode] = useState<ViewMode>("grid");
   const [playingVideoId, setPlayingVideoId] = useState<string | null>(null);
   const [selectedVideo, setSelectedVideo] = useState<Video | null>(null);
 
@@ -71,19 +71,19 @@ export const VideoGallery: React.FC<VideoGalleryProps> = ({
         setPlayingVideoId(videoId);
       }
     },
-    [playingVideoId]
+    [playingVideoId],
   );
 
   if (filteredVideos.length === 0) {
     return (
-      <Card className={cn('p-8 text-center', className)}>
+      <Card className={cn("p-8 text-center", className)}>
         <div className="space-y-4">
           <div className="text-6xl">🎥</div>
           <h3 className="text-lg font-semibold">No Videos Yet</h3>
           <p className="text-muted-foreground">
             {showGreetingsOnly
-              ? 'No greeting videos have been uploaded yet.'
-              : 'No videos have been uploaded to this event yet.'}
+              ? "No greeting videos have been uploaded yet."
+              : "No videos have been uploaded to this event yet."}
           </p>
         </div>
       </Card>
@@ -91,7 +91,7 @@ export const VideoGallery: React.FC<VideoGalleryProps> = ({
   }
 
   return (
-    <div className={cn('space-y-4', className)}>
+    <div className={cn("space-y-4", className)}>
       {/* Header Controls */}
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-2">
@@ -110,16 +110,16 @@ export const VideoGallery: React.FC<VideoGalleryProps> = ({
 
         <div className="flex items-center space-x-2">
           <Button
-            variant={viewMode === 'grid' ? 'default' : 'outline'}
+            variant={viewMode === "grid" ? "default" : "outline"}
             size="sm"
-            onClick={() => setViewMode('grid')}
+            onClick={() => setViewMode("grid")}
           >
             <Grid className="w-4 h-4" />
           </Button>
           <Button
-            variant={viewMode === 'list' ? 'default' : 'outline'}
+            variant={viewMode === "list" ? "default" : "outline"}
             size="sm"
-            onClick={() => setViewMode('list')}
+            onClick={() => setViewMode("list")}
           >
             <List className="w-4 h-4" />
           </Button>
@@ -129,10 +129,10 @@ export const VideoGallery: React.FC<VideoGalleryProps> = ({
       {/* Video Grid/List */}
       <div
         className={cn(
-          'gap-4',
-          viewMode === 'grid'
-            ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'
-            : 'space-y-4'
+          "gap-4",
+          viewMode === "grid"
+            ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+            : "space-y-4",
         )}
       >
         {filteredVideos.map((video) => (
@@ -205,19 +205,19 @@ const VideoCard: React.FC<VideoCardProps> = ({
   const formatDuration = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = Math.floor(seconds % 60);
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
+    return `${mins}:${secs.toString().padStart(2, "0")}`;
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
+    return new Date(dateString).toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   };
 
-  if (viewMode === 'list') {
+  if (viewMode === "list") {
     return (
       <Card className="p-4">
         <div className="flex items-center space-x-4">
@@ -266,7 +266,7 @@ const VideoCard: React.FC<VideoCardProps> = ({
           <div className="flex-1 min-w-0">
             <div className="flex items-center space-x-2 mb-1">
               <h4 className="font-medium truncate">
-                {video.caption || 'Untitled Video'}
+                {video.caption || "Untitled Video"}
               </h4>
               {video.isGreeting && (
                 <Badge
@@ -276,7 +276,7 @@ const VideoCard: React.FC<VideoCardProps> = ({
                   Greeting
                 </Badge>
               )}
-              {video.status === 'processing' && (
+              {video.status === "processing" && (
                 <Badge
                   variant="secondary"
                   className="bg-blue-500/20 text-blue-700 text-xs"
@@ -370,7 +370,7 @@ const VideoCard: React.FC<VideoCardProps> = ({
         )}
 
         {/* Processing Badge */}
-        {video.status === 'processing' && (
+        {video.status === "processing" && (
           <div className="absolute top-2 right-2">
             <Badge
               variant="secondary"
@@ -385,7 +385,7 @@ const VideoCard: React.FC<VideoCardProps> = ({
       {/* Video Info */}
       <div className="p-3">
         <h4 className="font-medium text-sm mb-1 truncate">
-          {video.caption || 'Untitled Video'}
+          {video.caption || "Untitled Video"}
         </h4>
 
         <div className="flex items-center justify-between text-xs text-muted-foreground">

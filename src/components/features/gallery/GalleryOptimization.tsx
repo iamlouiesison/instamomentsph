@@ -1,16 +1,16 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect, useCallback } from 'react';
-import { Button } from '@/components/ui/button';
+import React, { useState, useEffect, useCallback } from "react";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
 import {
   Wifi,
   WifiOff,
@@ -21,8 +21,8 @@ import {
   RefreshCw,
   CheckCircle,
   AlertCircle,
-} from 'lucide-react';
-import { toast } from 'sonner';
+} from "lucide-react";
+import { toast } from "sonner";
 
 interface GalleryOptimizationProps {
   eventId: string;
@@ -53,27 +53,27 @@ export function GalleryOptimization({
   useEffect(() => {
     const handleOnline = () => {
       setCacheStats((prev) => ({ ...prev, isOnline: true }));
-      toast.success('Connection restored');
+      toast.success("Connection restored");
     };
 
     const handleOffline = () => {
       setCacheStats((prev) => ({ ...prev, isOnline: false }));
-      toast.warning('You are now offline. Cached content is available.');
+      toast.warning("You are now offline. Cached content is available.");
     };
 
-    window.addEventListener('online', handleOnline);
-    window.addEventListener('offline', handleOffline);
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
 
     return () => {
-      window.removeEventListener('online', handleOnline);
-      window.removeEventListener('offline', handleOffline);
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
     };
   }, []);
 
   // Load cache statistics
   const loadCacheStats = useCallback(async () => {
     try {
-      if ('caches' in window) {
+      if ("caches" in window) {
         const cache = await caches.open(`gallery-${eventId}`);
         const keys = await cache.keys();
 
@@ -94,7 +94,7 @@ export function GalleryOptimization({
         }));
       }
     } catch (error) {
-      console.error('Failed to load cache stats:', error);
+      console.error("Failed to load cache stats:", error);
     }
   }, [eventId]);
 
@@ -104,8 +104,8 @@ export function GalleryOptimization({
 
   // Optimize gallery for offline viewing
   const handleOptimize = async () => {
-    if (!('caches' in window)) {
-      toast.error('Browser does not support caching');
+    if (!("caches" in window)) {
+      toast.error("Browser does not support caching");
       return;
     }
 
@@ -117,7 +117,7 @@ export function GalleryOptimization({
 
       // Fetch gallery data
       const response = await fetch(`/api/gallery/${eventId}/photos?limit=50`);
-      if (!response.ok) throw new Error('Failed to fetch gallery data');
+      if (!response.ok) throw new Error("Failed to fetch gallery data");
 
       const data = await response.json();
       const items = data.data?.items || [];
@@ -141,8 +141,8 @@ export function GalleryOptimization({
           await cache.put(
             metadataUrl,
             new Response(JSON.stringify(item), {
-              headers: { 'Content-Type': 'application/json' },
-            })
+              headers: { "Content-Type": "application/json" },
+            }),
           );
 
           cached++;
@@ -158,8 +158,8 @@ export function GalleryOptimization({
       toast.success(`Optimized! Cached ${cached} items for offline viewing`);
       onOptimize?.();
     } catch (error) {
-      console.error('Optimization failed:', error);
-      toast.error('Failed to optimize gallery for offline viewing');
+      console.error("Optimization failed:", error);
+      toast.error("Failed to optimize gallery for offline viewing");
     } finally {
       setIsOptimizing(false);
       setOptimizationProgress(0);
@@ -169,24 +169,24 @@ export function GalleryOptimization({
   // Clear cache
   const handleClearCache = async () => {
     try {
-      if ('caches' in window) {
+      if ("caches" in window) {
         await caches.delete(`gallery-${eventId}`);
         await loadCacheStats();
-        toast.success('Cache cleared');
+        toast.success("Cache cleared");
       }
     } catch (error) {
-      console.error('Failed to clear cache:', error);
-      toast.error('Failed to clear cache');
+      console.error("Failed to clear cache:", error);
+      toast.error("Failed to clear cache");
     }
   };
 
   // Format file size
   const formatFileSize = (bytes: number) => {
-    if (bytes === 0) return '0 B';
+    if (bytes === 0) return "0 B";
     const k = 1024;
-    const sizes = ['B', 'KB', 'MB', 'GB'];
+    const sizes = ["B", "KB", "MB", "GB"];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
   };
 
   return (
@@ -217,8 +217,8 @@ export function GalleryOptimization({
             )}
             <span className="text-sm text-muted-foreground">
               {cacheStats.isOnline
-                ? 'Real-time updates available'
-                : 'Offline mode active'}
+                ? "Real-time updates available"
+                : "Offline mode active"}
             </span>
           </div>
         </div>

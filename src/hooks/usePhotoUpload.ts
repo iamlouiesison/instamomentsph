@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { ProcessedImage } from '@/lib/image-processing';
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { ProcessedImage } from "@/lib/image-processing";
 
 export interface PhotoUploadData {
   eventId: string;
@@ -61,14 +61,14 @@ export interface UsePhotoUploadReturn {
  * React Query hook for photo uploads with progress tracking
  */
 export function usePhotoUpload(
-  options: UsePhotoUploadOptions = {}
+  options: UsePhotoUploadOptions = {},
 ): UsePhotoUploadReturn {
   const queryClient = useQueryClient();
   const { onSuccess, onError, onProgress } = options;
 
   const mutation = useMutation<PhotoUploadResult, string, PhotoUploadData>({
     mutationFn: async (
-      uploadData: PhotoUploadData
+      uploadData: PhotoUploadData,
     ): Promise<PhotoUploadResult> => {
       const { eventId, files, contributorName, contributorEmail, caption } =
         uploadData;
@@ -84,24 +84,24 @@ export function usePhotoUpload(
 
           // Create form data for this photo
           const formData = new FormData();
-          formData.append('file', photo.file);
-          formData.append('thumbnail', photo.thumbnail);
-          formData.append('eventId', eventId);
-          formData.append('contributorName', contributorName);
-          formData.append('contributorEmail', contributorEmail || '');
-          formData.append('caption', caption || '');
-          formData.append('exifData', JSON.stringify(photo.exifData || {}));
+          formData.append("file", photo.file);
+          formData.append("thumbnail", photo.thumbnail);
+          formData.append("eventId", eventId);
+          formData.append("contributorName", contributorName);
+          formData.append("contributorEmail", contributorEmail || "");
+          formData.append("caption", caption || "");
+          formData.append("exifData", JSON.stringify(photo.exifData || {}));
 
           // Upload photo
-          const response = await fetch('/api/upload/photo', {
-            method: 'POST',
+          const response = await fetch("/api/upload/photo", {
+            method: "POST",
             body: formData,
           });
 
           const result: PhotoUploadResponse = await response.json();
 
           if (!response.ok || !result.success) {
-            throw new Error(result.error?.message || 'Upload failed');
+            throw new Error(result.error?.message || "Upload failed");
           }
 
           results.push(result);
@@ -112,8 +112,8 @@ export function usePhotoUpload(
           results.push({
             success: false,
             error: {
-              code: 'UPLOAD_ERROR',
-              message: error instanceof Error ? error.message : 'Upload failed',
+              code: "UPLOAD_ERROR",
+              message: error instanceof Error ? error.message : "Upload failed",
             },
           });
         }
@@ -134,11 +134,11 @@ export function usePhotoUpload(
       if (successfulUploads.length > 0) {
         // Invalidate gallery queries to refresh the UI
         queryClient.invalidateQueries({
-          queryKey: ['gallery', variables.eventId],
+          queryKey: ["gallery", variables.eventId],
         });
 
         queryClient.invalidateQueries({
-          queryKey: ['events'],
+          queryKey: ["events"],
         });
 
         // Call success callback with successfully uploaded photos
@@ -151,7 +151,7 @@ export function usePhotoUpload(
       }
     },
     onError: (error) => {
-      console.error('Photo upload mutation failed:', error);
+      console.error("Photo upload mutation failed:", error);
       onError?.(String(error));
     },
   });
@@ -179,7 +179,7 @@ export function useBatchPhotoUpload(options: UsePhotoUploadOptions = {}) {
 
   const mutation = useMutation({
     mutationFn: async (
-      uploadData: PhotoUploadData
+      uploadData: PhotoUploadData,
     ): Promise<{
       results: PhotoUploadResponse[];
       successfulPhotos: ProcessedImage[];
@@ -197,24 +197,24 @@ export function useBatchPhotoUpload(options: UsePhotoUploadOptions = {}) {
         try {
           // Create form data for this photo
           const formData = new FormData();
-          formData.append('file', photo.file);
-          formData.append('thumbnail', photo.thumbnail);
-          formData.append('eventId', eventId);
-          formData.append('contributorName', contributorName);
-          formData.append('contributorEmail', contributorEmail || '');
-          formData.append('caption', caption || '');
-          formData.append('exifData', JSON.stringify(photo.exifData || {}));
+          formData.append("file", photo.file);
+          formData.append("thumbnail", photo.thumbnail);
+          formData.append("eventId", eventId);
+          formData.append("contributorName", contributorName);
+          formData.append("contributorEmail", contributorEmail || "");
+          formData.append("caption", caption || "");
+          formData.append("exifData", JSON.stringify(photo.exifData || {}));
 
           // Upload photo
-          const response = await fetch('/api/upload/photo', {
-            method: 'POST',
+          const response = await fetch("/api/upload/photo", {
+            method: "POST",
             body: formData,
           });
 
           const result: PhotoUploadResponse = await response.json();
 
           if (!response.ok || !result.success) {
-            throw new Error(result.error?.message || 'Upload failed');
+            throw new Error(result.error?.message || "Upload failed");
           }
 
           return { result, photo, success: true };
@@ -224,9 +224,9 @@ export function useBatchPhotoUpload(options: UsePhotoUploadOptions = {}) {
             result: {
               success: false,
               error: {
-                code: 'UPLOAD_ERROR',
+                code: "UPLOAD_ERROR",
                 message:
-                  error instanceof Error ? error.message : 'Upload failed',
+                  error instanceof Error ? error.message : "Upload failed",
               },
             },
             photo,
@@ -263,11 +263,11 @@ export function useBatchPhotoUpload(options: UsePhotoUploadOptions = {}) {
       if (successfulPhotos.length > 0) {
         // Invalidate gallery queries to refresh the UI
         queryClient.invalidateQueries({
-          queryKey: ['gallery', variables.eventId],
+          queryKey: ["gallery", variables.eventId],
         });
 
         queryClient.invalidateQueries({
-          queryKey: ['events'],
+          queryKey: ["events"],
         });
 
         onSuccess?.(data.results);
@@ -279,7 +279,7 @@ export function useBatchPhotoUpload(options: UsePhotoUploadOptions = {}) {
       }
     },
     onError: (error) => {
-      console.error('Batch photo upload mutation failed:', error);
+      console.error("Batch photo upload mutation failed:", error);
       onError?.(String(error));
     },
   });
@@ -321,24 +321,24 @@ export function useSinglePhotoUpload(options: UsePhotoUploadOptions = {}) {
 
       // Create form data
       const formData = new FormData();
-      formData.append('file', photo.file);
-      formData.append('thumbnail', photo.thumbnail);
-      formData.append('eventId', eventId);
-      formData.append('contributorName', contributorName);
-      formData.append('contributorEmail', contributorEmail || '');
-      formData.append('caption', caption || '');
-      formData.append('exifData', JSON.stringify(photo.exifData || {}));
+      formData.append("file", photo.file);
+      formData.append("thumbnail", photo.thumbnail);
+      formData.append("eventId", eventId);
+      formData.append("contributorName", contributorName);
+      formData.append("contributorEmail", contributorEmail || "");
+      formData.append("caption", caption || "");
+      formData.append("exifData", JSON.stringify(photo.exifData || {}));
 
       // Upload photo
-      const response = await fetch('/api/upload/photo', {
-        method: 'POST',
+      const response = await fetch("/api/upload/photo", {
+        method: "POST",
         body: formData,
       });
 
       const result: PhotoUploadResponse = await response.json();
 
       if (!response.ok || !result.success) {
-        throw new Error(result.error?.message || 'Upload failed');
+        throw new Error(result.error?.message || "Upload failed");
       }
 
       // Update progress
@@ -349,26 +349,26 @@ export function useSinglePhotoUpload(options: UsePhotoUploadOptions = {}) {
     onSuccess: (result, variables) => {
       // Invalidate gallery queries to refresh the UI
       queryClient.invalidateQueries({
-        queryKey: ['gallery', variables.eventId],
+        queryKey: ["gallery", variables.eventId],
       });
 
       queryClient.invalidateQueries({
-        queryKey: ['events'],
+        queryKey: ["events"],
       });
 
       onSuccess?.([
         {
           success: true,
           data: {
-            photoId: 'retry-success',
+            photoId: "retry-success",
             fileUrl: variables.photo.file.name,
-            message: 'Photo uploaded successfully',
+            message: "Photo uploaded successfully",
           },
         },
       ]);
     },
     onError: (error) => {
-      console.error('Single photo upload mutation failed:', error);
+      console.error("Single photo upload mutation failed:", error);
       onError?.(String(error));
     },
   });
@@ -392,13 +392,13 @@ export function usePhotoUploadWithRetry(
   options: UsePhotoUploadOptions & {
     maxRetries?: number;
     retryDelay?: number;
-  } = {}
+  } = {},
 ) {
   const { maxRetries = 3, retryDelay = 1000, ...uploadOptions } = options;
 
   const mutation = useMutation<PhotoUploadResult, string, PhotoUploadData>({
     mutationFn: async (
-      uploadData: PhotoUploadData
+      uploadData: PhotoUploadData,
     ): Promise<PhotoUploadResult> => {
       const { eventId, files, contributorName, contributorEmail, caption } =
         uploadData;
@@ -414,24 +414,24 @@ export function usePhotoUploadWithRetry(
           try {
             // Create form data for this photo
             const formData = new FormData();
-            formData.append('file', photo.file);
-            formData.append('thumbnail', photo.thumbnail);
-            formData.append('eventId', eventId);
-            formData.append('contributorName', contributorName);
-            formData.append('contributorEmail', contributorEmail || '');
-            formData.append('caption', caption || '');
-            formData.append('exifData', JSON.stringify(photo.exifData || {}));
+            formData.append("file", photo.file);
+            formData.append("thumbnail", photo.thumbnail);
+            formData.append("eventId", eventId);
+            formData.append("contributorName", contributorName);
+            formData.append("contributorEmail", contributorEmail || "");
+            formData.append("caption", caption || "");
+            formData.append("exifData", JSON.stringify(photo.exifData || {}));
 
             // Upload photo
-            const response = await fetch('/api/upload/photo', {
-              method: 'POST',
+            const response = await fetch("/api/upload/photo", {
+              method: "POST",
               body: formData,
             });
 
             const result: PhotoUploadResponse = await response.json();
 
             if (!response.ok || !result.success) {
-              throw new Error(result.error?.message || 'Upload failed');
+              throw new Error(result.error?.message || "Upload failed");
             }
 
             results.push(result);
@@ -439,13 +439,13 @@ export function usePhotoUploadWithRetry(
             retryCount = 0; // Reset retry count for next photo
           } catch (error) {
             lastError =
-              error instanceof Error ? error : new Error('Unknown error');
+              error instanceof Error ? error : new Error("Unknown error");
             retryCount++;
 
             if (retryCount < maxRetries) {
               // Wait before retry
               await new Promise((resolve) =>
-                setTimeout(resolve, retryDelay * retryCount)
+                setTimeout(resolve, retryDelay * retryCount),
               );
             }
           }
@@ -454,13 +454,13 @@ export function usePhotoUploadWithRetry(
         if (!success && lastError) {
           console.error(
             `Upload failed for photo ${index + 1} after ${maxRetries} retries:`,
-            lastError
+            lastError,
           );
 
           results.push({
             success: false,
             error: {
-              code: 'UPLOAD_ERROR',
+              code: "UPLOAD_ERROR",
               message: lastError.message,
             },
           });
@@ -470,10 +470,10 @@ export function usePhotoUploadWithRetry(
       return {
         results,
         successfulPhotos: uploadData.files.filter(
-          (_, index) => results[index]?.success
+          (_, index) => results[index]?.success,
         ),
         failedPhotos: uploadData.files.filter(
-          (_, index) => !results[index]?.success
+          (_, index) => !results[index]?.success,
         ),
       };
     },

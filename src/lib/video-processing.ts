@@ -38,7 +38,7 @@ const DEFAULT_OPTIONS: VideoProcessingOptions = {
  */
 export async function validateVideo(
   file: File | Blob,
-  options: Partial<VideoProcessingOptions> = {}
+  options: Partial<VideoProcessingOptions> = {},
 ): Promise<VideoValidationResult> {
   const opts = { ...DEFAULT_OPTIONS, ...options };
   const errors: string[] = [];
@@ -46,14 +46,14 @@ export async function validateVideo(
   // Check file size
   if (file.size > opts.maxFileSize) {
     errors.push(
-      `File size ${(file.size / 1024 / 1024).toFixed(1)}MB exceeds limit of ${(opts.maxFileSize / 1024 / 1024).toFixed(1)}MB`
+      `File size ${(file.size / 1024 / 1024).toFixed(1)}MB exceeds limit of ${(opts.maxFileSize / 1024 / 1024).toFixed(1)}MB`,
     );
   }
 
   // Check file type
-  const supportedTypes = ['video/webm', 'video/mp4', 'video/quicktime'];
+  const supportedTypes = ["video/webm", "video/mp4", "video/quicktime"];
   if (!supportedTypes.some((type) => file.type.includes(type))) {
-    errors.push('Unsupported video format. Please use MP4 or WebM');
+    errors.push("Unsupported video format. Please use MP4 or WebM");
   }
 
   // Get video metadata
@@ -61,7 +61,7 @@ export async function validateVideo(
 
   if (metadata.duration > opts.maxDuration) {
     errors.push(
-      `Video duration ${metadata.duration.toFixed(1)}s exceeds limit of ${opts.maxDuration}s`
+      `Video duration ${metadata.duration.toFixed(1)}s exceeds limit of ${opts.maxDuration}s`,
     );
   }
 
@@ -82,7 +82,7 @@ export async function getVideoMetadata(file: File | Blob): Promise<{
   dimensions: { width: number; height: number };
 }> {
   return new Promise((resolve, reject) => {
-    const video = document.createElement('video');
+    const video = document.createElement("video");
     const url = URL.createObjectURL(file);
 
     video.onloadedmetadata = () => {
@@ -99,7 +99,7 @@ export async function getVideoMetadata(file: File | Blob): Promise<{
 
     video.onerror = () => {
       URL.revokeObjectURL(url);
-      reject(new Error('Failed to load video metadata'));
+      reject(new Error("Failed to load video metadata"));
     };
 
     video.src = url;
@@ -111,17 +111,17 @@ export async function getVideoMetadata(file: File | Blob): Promise<{
  */
 export async function compressVideo(
   videoBlob: Blob,
-  options: Partial<VideoProcessingOptions> = {}
+  options: Partial<VideoProcessingOptions> = {},
 ): Promise<Blob> {
   const opts = { ...DEFAULT_OPTIONS, ...options };
 
   return new Promise((resolve, reject) => {
-    const video = document.createElement('video');
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
+    const video = document.createElement("video");
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
 
     if (!ctx) {
-      reject(new Error('Canvas context not available'));
+      reject(new Error("Canvas context not available"));
       return;
     }
 
@@ -141,7 +141,7 @@ export async function compressVideo(
       canvas.height = newHeight;
 
       // Create new video element for recording
-      const compressedVideo = document.createElement('video');
+      const compressedVideo = document.createElement("video");
       compressedVideo.width = newWidth;
       compressedVideo.height = newHeight;
       compressedVideo.src = video.src;
@@ -149,7 +149,7 @@ export async function compressVideo(
       // Use MediaRecorder to re-encode with compression
       const stream = canvas.captureStream(30); // 30fps
       const mediaRecorder = new MediaRecorder(stream, {
-        mimeType: 'video/webm;codecs=vp9',
+        mimeType: "video/webm;codecs=vp9",
         videoBitsPerSecond: 1000000, // 1Mbps
       });
 
@@ -162,7 +162,7 @@ export async function compressVideo(
       };
 
       mediaRecorder.onstop = () => {
-        const compressedBlob = new Blob(chunks, { type: 'video/webm' });
+        const compressedBlob = new Blob(chunks, { type: "video/webm" });
         URL.revokeObjectURL(video.src);
         resolve(compressedBlob);
       };
@@ -192,7 +192,7 @@ export async function compressVideo(
 
     video.onerror = () => {
       URL.revokeObjectURL(video.src);
-      reject(new Error('Failed to load video for compression'));
+      reject(new Error("Failed to load video for compression"));
     };
 
     video.src = URL.createObjectURL(videoBlob);
@@ -204,7 +204,7 @@ export async function compressVideo(
  */
 export async function generateVideoThumbnail(
   videoBlob: Blob,
-  options: Partial<ThumbnailOptions> = {}
+  options: Partial<ThumbnailOptions> = {},
 ): Promise<Blob> {
   const opts: ThumbnailOptions = {
     width: 320,
@@ -215,12 +215,12 @@ export async function generateVideoThumbnail(
   };
 
   return new Promise((resolve, reject) => {
-    const video = document.createElement('video');
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
+    const video = document.createElement("video");
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
 
     if (!ctx) {
-      reject(new Error('Canvas context not available'));
+      reject(new Error("Canvas context not available"));
       return;
     }
 
@@ -248,7 +248,7 @@ export async function generateVideoThumbnail(
       const x = (opts.width - drawWidth) / 2;
       const y = (opts.height - drawHeight) / 2;
 
-      ctx.fillStyle = '#000000';
+      ctx.fillStyle = "#000000";
       ctx.fillRect(0, 0, opts.width, opts.height);
       ctx.drawImage(video, x, y, drawWidth, drawHeight);
 
@@ -259,17 +259,17 @@ export async function generateVideoThumbnail(
           if (blob) {
             resolve(blob);
           } else {
-            reject(new Error('Failed to generate thumbnail'));
+            reject(new Error("Failed to generate thumbnail"));
           }
         },
-        'image/jpeg',
-        opts.quality
+        "image/jpeg",
+        opts.quality,
       );
     };
 
     video.onerror = () => {
       URL.revokeObjectURL(video.src);
-      reject(new Error('Failed to load video for thumbnail generation'));
+      reject(new Error("Failed to load video for thumbnail generation"));
     };
 
     video.src = URL.createObjectURL(videoBlob);
@@ -281,7 +281,7 @@ export async function generateVideoThumbnail(
  */
 export async function getVideoDuration(videoBlob: Blob): Promise<number> {
   return new Promise((resolve, reject) => {
-    const video = document.createElement('video');
+    const video = document.createElement("video");
 
     video.onloadedmetadata = () => {
       const duration = video.duration;
@@ -291,7 +291,7 @@ export async function getVideoDuration(videoBlob: Blob): Promise<number> {
 
     video.onerror = () => {
       URL.revokeObjectURL(video.src);
-      reject(new Error('Failed to load video'));
+      reject(new Error("Failed to load video"));
     };
 
     video.src = URL.createObjectURL(videoBlob);
@@ -303,10 +303,10 @@ export async function getVideoDuration(videoBlob: Blob): Promise<number> {
  */
 export function isVideoRecordingSupported(): boolean {
   return !!(
-    typeof window !== 'undefined' &&
+    typeof window !== "undefined" &&
     navigator.mediaDevices &&
-    typeof navigator.mediaDevices.getUserMedia === 'function' &&
-    typeof MediaRecorder !== 'undefined'
+    typeof navigator.mediaDevices.getUserMedia === "function" &&
+    typeof MediaRecorder !== "undefined"
   );
 }
 
@@ -315,11 +315,11 @@ export function isVideoRecordingSupported(): boolean {
  */
 export function getSupportedVideoMimeTypes(): string[] {
   const types = [
-    'video/webm;codecs=vp9,opus',
-    'video/webm;codecs=vp8,opus',
-    'video/webm',
-    'video/mp4;codecs=h264,aac',
-    'video/mp4',
+    "video/webm;codecs=vp9,opus",
+    "video/webm;codecs=vp8,opus",
+    "video/webm",
+    "video/mp4;codecs=h264,aac",
+    "video/mp4",
   ];
 
   return types.filter((type) => MediaRecorder.isTypeSupported(type));
@@ -329,13 +329,13 @@ export function getSupportedVideoMimeTypes(): string[] {
  * Format file size for display
  */
 export function formatFileSize(bytes: number): string {
-  if (bytes === 0) return '0 Bytes';
+  if (bytes === 0) return "0 Bytes";
 
   const k = 1024;
-  const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+  const sizes = ["Bytes", "KB", "MB", "GB"];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
 
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
 }
 
 /**
@@ -344,5 +344,5 @@ export function formatFileSize(bytes: number): string {
 export function formatDuration(seconds: number): string {
   const mins = Math.floor(seconds / 60);
   const secs = Math.floor(seconds % 60);
-  return `${mins}:${secs.toString().padStart(2, '0')}`;
+  return `${mins}:${secs.toString().padStart(2, "0")}`;
 }

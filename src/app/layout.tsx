@@ -1,91 +1,91 @@
-import type { Metadata } from 'next';
-import { ABeeZee, Lora, Fira_Code } from 'next/font/google';
-import './globals.css';
-import { AuthProvider } from '@/components/providers/AuthProvider';
-import { AuthStateInitializer } from '@/components/providers/AuthStateInitializer';
-import { GlobalNavigation } from '@/components/layout';
-import { Toaster } from '@/components/ui/sonner';
+import type { Metadata } from "next";
+import { ABeeZee, Lora, Fira_Code } from "next/font/google";
+import "./globals.css";
+import { AuthProvider } from "@/components/providers/AuthProvider";
+import { AuthStateInitializer } from "@/components/providers/AuthStateInitializer";
+import { GlobalNavigation } from "@/components/layout";
+import { Toaster } from "@/components/ui/sonner";
 
 const abeeZee = ABeeZee({
-  variable: '--font-sans',
-  subsets: ['latin'],
-  weight: '400',
-  display: 'swap',
+  variable: "--font-sans",
+  subsets: ["latin"],
+  weight: "400",
+  display: "swap",
   preload: true,
 });
 
 const lora = Lora({
-  variable: '--font-serif',
-  subsets: ['latin'],
-  display: 'swap',
+  variable: "--font-serif",
+  subsets: ["latin"],
+  display: "swap",
   preload: true,
 });
 
 const firaCode = Fira_Code({
-  variable: '--font-mono',
-  subsets: ['latin'],
-  display: 'swap',
+  variable: "--font-mono",
+  subsets: ["latin"],
+  display: "swap",
   preload: true,
 });
 
 export const metadata: Metadata = {
   title:
-    'InstaMoments - QR Code Photo Sharing for Celebrations | Weddings, Birthdays, Debuts',
+    "InstaMoments - QR Code Photo Sharing for Celebrations | Weddings, Birthdays, Debuts",
   description:
-    'Create instant photo galleries for celebrations. No app downloads needed! Guests scan QR code and share photos instantly. Perfect for weddings, birthdays, debuts, graduations. Multiple payment options accepted.',
+    "Create instant photo galleries for celebrations. No app downloads needed! Guests scan QR code and share photos instantly. Perfect for weddings, birthdays, debuts, graduations. Multiple payment options accepted.",
   keywords: [
-    'celebrations',
-    'wedding photos',
-    'birthday party',
-    'debut photos',
-    'graduation ceremony',
-    'QR code sharing',
-    'photo gallery',
-    'Philippines events',
-    'GCash payment',
-    'family celebrations',
-    'event photography',
-    'real-time sharing',
-    'video greetings',
-    'Metro Manila',
-    'Cebu events',
-    'Davao celebrations',
+    "celebrations",
+    "wedding photos",
+    "birthday party",
+    "debut photos",
+    "graduation ceremony",
+    "QR code sharing",
+    "photo gallery",
+    "Philippines events",
+    "GCash payment",
+    "family celebrations",
+    "event photography",
+    "real-time sharing",
+    "video greetings",
+    "Metro Manila",
+    "Cebu events",
+    "Davao celebrations",
   ],
-  authors: [{ name: 'InstaMoments Team' }],
-  creator: 'InstaMoments',
-  publisher: 'InstaMoments',
+  authors: [{ name: "InstaMoments Team" }],
+  creator: "InstaMoments",
+  publisher: "InstaMoments",
   formatDetection: {
     email: false,
     address: false,
     telephone: false,
   },
-  metadataBase: new URL('https://instamoments.ph'),
+  metadataBase: new URL("https://instamoments.ph"),
   alternates: {
-    canonical: '/',
+    canonical: "/",
   },
   openGraph: {
-    title: 'InstaMoments - QR Code Photo Sharing for Celebrations',
+    title: "InstaMoments - QR Code Photo Sharing for Celebrations",
     description:
-      'Create instant photo galleries for celebrations. No app downloads needed! Perfect for weddings, birthdays, debuts, graduations.',
-    url: 'https://instamoments.ph',
-    siteName: 'InstaMoments',
+      "Create instant photo galleries for celebrations. No app downloads needed! Perfect for weddings, birthdays, debuts, graduations.",
+    url: "https://instamoments.ph",
+    siteName: "InstaMoments",
     images: [
       {
-        url: '/og-image.jpg',
+        url: "/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: 'InstaMoments - Filipino Celebration Photo Sharing',
+        alt: "InstaMoments - Filipino Celebration Photo Sharing",
       },
     ],
-    locale: 'en_PH',
-    type: 'website',
+    locale: "en_PH",
+    type: "website",
   },
   twitter: {
-    card: 'summary_large_image',
-    title: 'InstaMoments - QR Code Photo Sharing for Celebrations',
+    card: "summary_large_image",
+    title: "InstaMoments - QR Code Photo Sharing for Celebrations",
     description:
-      'Create instant photo galleries for celebrations. No app downloads needed!',
-    images: ['/og-image.jpg'],
+      "Create instant photo galleries for celebrations. No app downloads needed!",
+    images: ["/og-image.jpg"],
   },
   robots: {
     index: true,
@@ -93,13 +93,13 @@ export const metadata: Metadata = {
     googleBot: {
       index: true,
       follow: true,
-      'max-video-preview': -1,
-      'max-image-preview': 'large',
-      'max-snippet': -1,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
     },
   },
   verification: {
-    google: 'your-google-verification-code',
+    google: "your-google-verification-code",
   },
 };
 
