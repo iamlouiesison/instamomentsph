@@ -932,14 +932,11 @@ export default function EventManagementPage() {
               <Card>
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <Copy className="w-5 h-5 text-gray-600" />
-                      <div>
-                        <h3 className="font-medium">Duplicate Event</h3>
-                        <p className="text-sm text-gray-600">
-                          Create a copy with same settings
-                        </p>
-                      </div>
+                    <div>
+                      <h3 className="font-medium">Duplicate Event</h3>
+                      <p className="text-sm text-gray-600">
+                        Create a copy with same settings
+                      </p>
                     </div>
                     <Button
                       onClick={handleDuplicate}
@@ -956,14 +953,11 @@ export default function EventManagementPage() {
               <Card>
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <DownloadIcon className="w-5 h-5 text-gray-600" />
-                      <div>
-                        <h3 className="font-medium">Export Data</h3>
-                        <p className="text-sm text-gray-600">
-                          Download photos and videos
-                        </p>
-                      </div>
+                    <div>
+                      <h3 className="font-medium">Export Data</h3>
+                      <p className="text-sm text-gray-600">
+                        Download photos and videos
+                      </p>
                     </div>
                     <Button onClick={handleExport} variant="outline" size="sm">
                       <DownloadIcon className="w-4 h-4 mr-2" />
@@ -976,14 +970,11 @@ export default function EventManagementPage() {
               <Card>
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <Archive className="w-5 h-5 text-gray-600" />
-                      <div>
-                        <h3 className="font-medium">Archive Event</h3>
-                        <p className="text-sm text-gray-600">
-                          Hide from dashboard
-                        </p>
-                      </div>
+                    <div>
+                      <h3 className="font-medium">Archive Event</h3>
+                      <p className="text-sm text-gray-600">
+                        Hide from dashboard
+                      </p>
                     </div>
                     <Button onClick={handleArchive} variant="outline" size="sm">
                       <Archive className="w-4 h-4 mr-2" />
@@ -996,22 +987,19 @@ export default function EventManagementPage() {
               <Card className="border-red-200">
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <AlertTriangle className="w-5 h-5 text-red-600" />
-                      <div>
-                        <h3 className="font-medium text-red-600">
-                          Delete Event
-                        </h3>
-                        <p className="text-sm text-gray-600">
-                          Permanently delete this event and all its data
-                          {event.total_photos > 0 || event.total_videos > 0 ? (
-                            <span className="block text-red-600 mt-1">
-                              Cannot delete with {event.total_photos} photos and{' '}
-                              {event.total_videos} videos
-                            </span>
-                          ) : null}
-                        </p>
-                      </div>
+                    <div>
+                      <h3 className="font-medium text-red-600">
+                        Delete Event
+                      </h3>
+                      <p className="text-sm text-gray-600">
+                        Permanently delete this event and all its data
+                        {event.total_photos > 0 || event.total_videos > 0 ? (
+                          <span className="block text-red-600 mt-1">
+                            Cannot delete with {event.total_photos} photos and{' '}
+                            {event.total_videos} videos
+                          </span>
+                        ) : null}
+                      </p>
                     </div>
                     <Button
                       variant="destructive"
