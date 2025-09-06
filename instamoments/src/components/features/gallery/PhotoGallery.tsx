@@ -53,7 +53,7 @@ interface PhotoGalleryProps {
   eventId: string;
   allowDownloads?: boolean;
   maxPhotos?: number;
-  currentUser?: any;
+  currentUser?: User | null;
   isAuthenticated?: boolean;
 }
 

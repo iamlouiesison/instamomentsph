@@ -126,23 +126,25 @@ export function useGalleryRealtime(
           const { items, pagination } = result.data;
 
           // Map API response to MediaItem format
-          const mediaItems: MediaItem[] = items.map((item: any) => ({
-            id: item.id,
-            event_id: eventId,
-            contributor_name: item.uploaded_by || 'Unknown',
-            contributor_email: '',
-            file_name: item.url.split('/').pop() || '',
-            file_url: item.url,
-            thumbnail_url: item.thumbnail_url,
-            file_size: item.file_size || 0,
-            mime_type: 'image/jpeg', // Default for now
-            caption: item.caption || '',
-            uploaded_at: item.created_at,
-            is_approved: true,
-            exif_data: null,
-            type: item.type,
-            message: item.type === 'video' ? item.caption : undefined,
-          }));
+          const mediaItems: MediaItem[] = items.map(
+            (item: Record<string, unknown>) => ({
+              id: item.id,
+              event_id: eventId,
+              contributor_name: item.uploaded_by || 'Unknown',
+              contributor_email: '',
+              file_name: item.url.split('/').pop() || '',
+              file_url: item.url,
+              thumbnail_url: item.thumbnail_url,
+              file_size: item.file_size || 0,
+              mime_type: 'image/jpeg', // Default for now
+              caption: item.caption || '',
+              uploaded_at: item.created_at,
+              is_approved: true,
+              exif_data: null,
+              type: item.type,
+              message: item.type === 'video' ? item.caption : undefined,
+            })
+          );
 
           if (reset) {
             setItems(mediaItems);
