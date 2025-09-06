@@ -988,9 +988,7 @@ export default function EventManagementPage() {
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <h3 className="font-medium text-red-600">
-                        Delete Event
-                      </h3>
+                      <h3 className="font-medium text-red-600">Delete Event</h3>
                       <p className="text-sm text-gray-600">
                         Permanently delete this event and all its data
                         {event.total_photos > 0 || event.total_videos > 0 ? (

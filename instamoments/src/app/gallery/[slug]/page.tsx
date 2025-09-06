@@ -1,5 +1,4 @@
 import { Suspense } from 'react';
-import { notFound } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { Event } from '@/types/database';
 // import { GalleryPage } from '@/components/features/gallery/GalleryPage';
@@ -57,24 +56,31 @@ export async function generateMetadata({
   };
 }
 
-
 // Check if event exists (for private gallery detection)
-async function checkEventExists(slug: string): Promise<{ exists: boolean; isPrivate?: boolean; eventName?: string; hostName?: string }> {
+async function checkEventExists(slug: string): Promise<{
+  exists: boolean;
+  isPrivate?: boolean;
+  eventName?: string;
+  hostName?: string;
+}> {
   try {
     // Use our special API endpoint that can check event existence without RLS restrictions
-    const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/gallery/${slug}/check`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/gallery/${slug}/check`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    );
 
     if (!response.ok) {
       return { exists: false };
     }
 
     const result = await response.json();
-    
+
     if (!result.success) {
       return { exists: false };
     }
@@ -139,7 +145,7 @@ export default async function GalleryPageRoute({ params }: GalleryPageProps) {
   if (!eventCheck.exists) {
     // Event doesn't exist at all
     return (
-      <PrivateGalleryNotification 
+      <PrivateGalleryNotification
         isPrivate={false} // This will show the "Gallery Not Found" message
       />
     );
@@ -148,7 +154,7 @@ export default async function GalleryPageRoute({ params }: GalleryPageProps) {
   if (eventCheck.isPrivate) {
     // Event exists but is private
     return (
-      <PrivateGalleryNotification 
+      <PrivateGalleryNotification
         isPrivate={true}
         eventName={eventCheck.eventName}
         hostName={eventCheck.hostName}
@@ -162,7 +168,7 @@ export default async function GalleryPageRoute({ params }: GalleryPageProps) {
   if (!event) {
     // This shouldn't happen if checkEventExists returned exists: true and isPrivate: false
     return (
-      <PrivateGalleryNotification 
+      <PrivateGalleryNotification
         isPrivate={false} // This will show the "Gallery Not Found" message
       />
     );

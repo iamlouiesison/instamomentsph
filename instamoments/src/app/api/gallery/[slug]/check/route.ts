@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
 
 export async function GET(
   request: NextRequest,
@@ -7,7 +6,6 @@ export async function GET(
 ) {
   try {
     const { slug } = await params;
-    const supabase = await createClient();
 
     // Use service role key to bypass RLS for existence check
     const { createAdminClient } = await import('@/lib/supabase/admin');
@@ -26,8 +24,8 @@ export async function GET(
         success: true,
         data: {
           exists: false,
-          isPrivate: false
-        }
+          isPrivate: false,
+        },
       });
     }
 
@@ -38,14 +36,16 @@ export async function GET(
         exists: true,
         isPrivate: !event.is_public,
         eventName: event.name,
-        hostName: 'Event Host' // We can't get host name due to RLS
-      }
+        hostName: 'Event Host', // We can't get host name due to RLS
+      },
     });
-
   } catch (error) {
     console.error('Error checking event existence:', error);
     return NextResponse.json(
-      { success: false, error: { code: 'INTERNAL_ERROR', message: 'Failed to check event' } },
+      {
+        success: false,
+        error: { code: 'INTERNAL_ERROR', message: 'Failed to check event' },
+      },
       { status: 500 }
     );
   }

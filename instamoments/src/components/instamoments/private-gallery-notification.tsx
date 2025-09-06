@@ -12,10 +12,10 @@ interface PrivateGalleryNotificationProps {
   hostName?: string;
 }
 
-export function PrivateGalleryNotification({ 
-  isPrivate = false, 
+export function PrivateGalleryNotification({
+  isPrivate = false,
   eventName,
-  hostName 
+  hostName,
 }: PrivateGalleryNotificationProps) {
   const router = useRouter();
 
@@ -34,7 +34,8 @@ export function PrivateGalleryNotification({
               <p className="text-muted-foreground">
                 {eventName ? (
                   <>
-                    The gallery for <strong>{eventName}</strong> is in private mode.
+                    The gallery for <strong>{eventName}</strong> is in private
+                    mode.
                   </>
                 ) : (
                   'This gallery is in private mode.'
@@ -50,27 +51,25 @@ export function PrivateGalleryNotification({
                 </div>
               )}
             </div>
-            
+
             <div className="space-y-2">
-              <Button 
-                onClick={() => router.push('/')} 
-                className="w-full"
-              >
+              <Button onClick={() => router.push('/')} className="w-full">
                 <Home className="h-4 w-4 mr-2" />
                 Go to Homepage
               </Button>
-              <Button 
-                variant="outline" 
-                onClick={() => router.push('/signin')} 
+              <Button
+                variant="outline"
+                onClick={() => router.push('/signin')}
                 className="w-full"
               >
                 Sign In
               </Button>
             </div>
-            
+
             <div className="text-center">
               <p className="text-xs text-muted-foreground">
-                If you're the event host, sign in to manage your gallery settings.
+                If you&apos;re the event host, sign in to manage your gallery
+                settings.
               </p>
             </div>
           </CardContent>
@@ -92,24 +91,23 @@ export function PrivateGalleryNotification({
         <CardContent className="space-y-4">
           <div className="text-center space-y-2">
             <p className="text-muted-foreground">
-              The gallery you're looking for doesn't exist or may have been removed.
+              The gallery you&apos;re looking for doesn&apos;t exist or may have
+              been removed.
             </p>
             <p className="text-sm text-muted-foreground">
-              Please check the URL or contact the event host for the correct link.
+              Please check the URL or contact the event host for the correct
+              link.
             </p>
           </div>
-          
+
           <div className="space-y-2">
-            <Button 
-              onClick={() => router.push('/')} 
-              className="w-full"
-            >
+            <Button onClick={() => router.push('/')} className="w-full">
               <Home className="h-4 w-4 mr-2" />
               Go to Homepage
             </Button>
-            <Button 
-              variant="outline" 
-              onClick={() => router.back()} 
+            <Button
+              variant="outline"
+              onClick={() => router.back()}
               className="w-full"
             >
               Go Back
