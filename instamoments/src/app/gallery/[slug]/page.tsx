@@ -60,35 +60,30 @@ export async function generateMetadata({
 
 // Check if event exists (for private gallery detection)
 async function checkEventExists(slug: string): Promise<{ exists: boolean; isPrivate?: boolean; eventName?: string; hostName?: string }> {
-  const supabase = await createClient();
+  try {
+    // Use our special API endpoint that can check event existence without RLS restrictions
+    const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/gallery/${slug}/check`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
 
-  // First, try to get the event with a query that bypasses RLS for existence check
-  // We'll use a simple count query that should work even for private events
-  const { data: countData, error: countError } = await supabase
-    .from('events')
-    .select('id, name, is_public, host_id', { count: 'exact' })
-    .eq('gallery_slug', slug)
-    .eq('status', 'active');
+    if (!response.ok) {
+      return { exists: false };
+    }
 
-  if (countError || !countData || countData.length === 0) {
+    const result = await response.json();
+    
+    if (!result.success) {
+      return { exists: false };
+    }
+
+    return result.data;
+  } catch (error) {
+    console.error('Error checking event existence:', error);
     return { exists: false };
   }
-
-  const event = countData[0];
-  
-  // If we can see the event, it means it's public
-  if (event.is_public) {
-    return { exists: true, isPrivate: false };
-  }
-
-  // If we can't see the full event data but the count query worked,
-  // it means the event exists but is private
-  return { 
-    exists: true, 
-    isPrivate: true,
-    eventName: event.name,
-    hostName: 'Event Host' // We can't get host name due to RLS
-  };
 }
 
 // Fetch event data
