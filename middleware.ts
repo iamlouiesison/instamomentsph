@@ -1,30 +1,8 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-export async function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
-
-  // Create a response object
-  const response = NextResponse.next({
-    request: {
-      headers: request.headers,
-    },
-  });
-
-  // Skip middleware for static files, API routes, and gallery routes
-  if (
-    pathname.startsWith('/_next/') ||
-    pathname.startsWith('/api/') ||
-    pathname.startsWith('/favicon.ico') ||
-    pathname.startsWith('/gallery/') ||
-    pathname.match(/\.(svg|png|jpg|jpeg|gif|webp|ico)$/)
-  ) {
-    return response;
-  }
-
-  // For all other routes, continue
-  // Authentication will be handled client-side
-  return response;
+export function middleware(request: NextRequest) {
+  return NextResponse.next();
 }
 
 export const config = {
