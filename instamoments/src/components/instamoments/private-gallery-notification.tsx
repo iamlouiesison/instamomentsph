@@ -41,7 +41,7 @@ export function PrivateGalleryNotification({
                 )}
               </p>
               <p className="text-sm text-muted-foreground">
-                Only the event host and invited guests can view this gallery.
+                Only the event host can view this gallery.
               </p>
               {hostName && (
                 <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
