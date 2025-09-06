@@ -111,7 +111,9 @@ export const FileValidationSchema = z.object({
     .string()
     .refine(
       (type): type is string =>
-        UPLOAD_CONSTRAINTS.PHOTO.ALLOWED_TYPES.includes(type as any),
+        (UPLOAD_CONSTRAINTS.PHOTO.ALLOWED_TYPES as readonly string[]).includes(
+          type
+        ),
       `File type must be one of: ${UPLOAD_CONSTRAINTS.PHOTO.ALLOWED_TYPES.join(', ')}`
     ),
   lastModified: z.number().optional(),
@@ -130,7 +132,9 @@ export const VideoFileValidationSchema = z.object({
     .string()
     .refine(
       (type): type is string =>
-        UPLOAD_CONSTRAINTS.VIDEO.ALLOWED_TYPES.includes(type as any),
+        (UPLOAD_CONSTRAINTS.VIDEO.ALLOWED_TYPES as readonly string[]).includes(
+          type
+        ),
       `File type must be one of: ${UPLOAD_CONSTRAINTS.VIDEO.ALLOWED_TYPES.join(', ')}`
     ),
   lastModified: z.number().optional(),

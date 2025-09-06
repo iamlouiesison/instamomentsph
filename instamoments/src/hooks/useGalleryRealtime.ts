@@ -397,7 +397,7 @@ export function useGalleryRealtime(
         fetchTimeoutRef.current = null;
       }
     };
-  }, [eventId, sortBy, supabase]);
+  }, [eventId, sortBy, supabase, fetchData]);
 
   // Handle connection status changes
   useEffect(() => {
@@ -428,7 +428,7 @@ export function useGalleryRealtime(
         fetchTimeoutRef.current = null;
       }
     };
-  }, [eventId, sortBy]); // Remove fetchData dependency to prevent loops
+  }, [eventId, sortBy, fetchData]); // Include fetchData dependency
 
   return {
     items,

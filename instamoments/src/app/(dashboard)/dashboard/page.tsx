@@ -173,14 +173,14 @@ export default function DashboardPage() {
       console.log('Dashboard - No user and not loading, redirecting to signin');
       router.push('/signin');
     }
-  }, [user, loading, router, profile?.id]); // Removed fetchEvents and statusFilter from dependencies
+  }, [user, loading, router, profile?.id, fetchEvents]); // Include fetchEvents in dependencies
 
   // Separate effect for status filter changes
   useEffect(() => {
     if (user) {
       fetchEvents();
     }
-  }, [statusFilter]); // Only depend on statusFilter, not user or fetchEvents
+  }, [statusFilter, user, fetchEvents]); // Include user and fetchEvents in dependencies
 
   const handleEventEdit = (eventId: string) => {
     router.push(`/dashboard/events/${eventId}/edit`);
