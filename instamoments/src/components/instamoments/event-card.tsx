@@ -25,6 +25,8 @@ interface EventCardProps {
   event: Event;
   onEdit?: (eventId: string) => void;
   onView?: (eventId: string) => void;
+  onShare?: (eventId: string) => void;
+  onSettings?: (eventId: string) => void;
   showActions?: boolean;
   showQRCode?: boolean;
   className?: string;

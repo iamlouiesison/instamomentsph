@@ -28,7 +28,7 @@ async function debugGalleryData() {
       gallery_slug: event.gallery_slug,
       status: event.status,
       total_photos: event.total_photos,
-      total_contributors: event.total_contributors
+      total_contributors: event.total_contributors,
     });
 
     // Check photos
@@ -44,7 +44,9 @@ async function debugGalleryData() {
     } else {
       console.log(`✅ Found ${photos.length} photos:`);
       photos.slice(0, 3).forEach((photo, i) => {
-        console.log(`  ${i + 1}. ${photo.caption} by ${photo.contributor_name}`);
+        console.log(
+          `  ${i + 1}. ${photo.caption} by ${photo.contributor_name}`
+        );
         console.log(`     URL: ${photo.file_url}`);
         console.log(`     Uploaded: ${photo.uploaded_at}`);
       });
@@ -61,14 +63,14 @@ async function debugGalleryData() {
     } else {
       console.log(`✅ Found ${contributors.length} contributors:`);
       contributors.slice(0, 3).forEach((contributor, i) => {
-        console.log(`  ${i + 1}. ${contributor.contributor_name} (${contributor.photos_count} photos)`);
+        console.log(
+          `  ${i + 1}. ${contributor.contributor_name} (${contributor.photos_count} photos)`
+        );
       });
     }
-
   } catch (error) {
     console.error('❌ Error debugging gallery:', error);
   }
 }
 
 debugGalleryData();
-

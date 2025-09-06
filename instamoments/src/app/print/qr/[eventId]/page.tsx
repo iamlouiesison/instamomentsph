@@ -165,7 +165,7 @@ export default function PrintQRPage({
             <div className="text-sm text-gray-600 space-y-2">
               <p className="font-semibold">How to use the QR Code:</p>
               <ol className="text-left space-y-1">
-                <li>1. Open your phone's camera</li>
+                <li>1. Open your phone&apos;s camera</li>
                 <li>2. Point the camera at this QR code</li>
                 <li>3. Tap the link that appears on screen</li>
                 <li>4. Upload photos and videos for the event!</li>

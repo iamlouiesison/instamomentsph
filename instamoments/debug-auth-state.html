@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auth State Debug</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .debug-section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; border-radius: 5px; }
+        .status { padding: 5px 10px; border-radius: 3px; margin: 5px 0; }
+        .success { background-color: #d4edda; color: #155724; }
+        .error { background-color: #f8d7da; color: #721c24; }
+        .info { background-color: #d1ecf1; color: #0c5460; }
+        button { padding: 10px 15px; margin: 5px; cursor: pointer; }
+        pre { background-color: #f8f9fa; padding: 10px; border-radius: 3px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>InstaMoments Auth State Debug</h1>
+    
+    <div class="debug-section">
+        <h2>Current Auth State</h2>
+        <div id="auth-status">Loading...</div>
+        <button onclick="checkAuthState()">Refresh Auth State</button>
+        <button onclick="clearAuthState()">Clear Auth State</button>
+    </div>
+
+    <div class="debug-section">
+        <h2>LocalStorage Contents</h2>
+        <div id="localStorage-content">Loading...</div>
+        <button onclick="refreshLocalStorage()">Refresh LocalStorage</button>
+        <button onclick="clearLocalStorage()">Clear LocalStorage</button>
+    </div>
+
+    <div class="debug-section">
+        <h2>Supabase Session</h2>
+        <div id="supabase-session">Loading...</div>
+        <button onclick="checkSupabaseSession()">Check Supabase Session</button>
+    </div>
+
+    <div class="debug-section">
+        <h2>Test Gallery Page</h2>
+        <p>Open these links in new tabs to test cross-tab authentication:</p>
+        <a href="http://localhost:3000/gallery/asdfasdfasd-2025-7lzyvr" target="_blank" style="display: block; margin: 10px 0; padding: 10px; background-color: #007bff; color: white; text-decoration: none; border-radius: 3px;">Open Gallery in New Tab</a>
+        <a href="http://localhost:3000/dashboard" target="_blank" style="display: block; margin: 10px 0; padding: 10px; background-color: #28a745; color: white; text-decoration: none; border-radius: 3px;">Open Dashboard in New Tab</a>
+    </div>
+
+    <script>
+        // Load Supabase client
+        const supabaseUrl = 'https://your-project.supabase.co'; // Replace with actual URL
+        const supabaseKey = 'your-anon-key'; // Replace with actual key
+        
+        // For this debug page, we'll just check localStorage and basic auth state
+        function checkAuthState() {
+            const authUser = localStorage.getItem('instamoments_auth_user');
+            const supabaseToken = localStorage.getItem('supabase.auth.token');
+            
+            let status = '';
+            
+            if (authUser) {
+                try {
+                    const user = JSON.parse(authUser);
+                    status += `<div class="status success">✅ Auth User Found: ${user.email || user.id}</div>`;
+                    status += `<div class="status info">Last Updated: ${new Date(user.timestamp).toLocaleString()}</div>`;
+                } catch (e) {
+                    status += `<div class="status error">❌ Invalid Auth User Data</div>`;
+                }
+            } else {
+                status += `<div class="status error">❌ No Auth User in localStorage</div>`;
+            }
+            
+            if (supabaseToken) {
+                status += `<div class="status success">✅ Supabase Token Found</div>`;
+            } else {
+                status += `<div class="status error">❌ No Supabase Token</div>`;
+            }
+            
+            document.getElementById('auth-status').innerHTML = status;
+        }
+        
+        function clearAuthState() {
+            localStorage.removeItem('instamoments_auth_user');
+            localStorage.removeItem('supabase.auth.token');
+            checkAuthState();
+            refreshLocalStorage();
+        }
+        
+        function refreshLocalStorage() {
+            let content = '<pre>';
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                const value = localStorage.getItem(key);
+                content += `${key}: ${value}\n`;
+            }
+            content += '</pre>';
+            document.getElementById('localStorage-content').innerHTML = content;
+        }
+        
+        function clearLocalStorage() {
+            localStorage.clear();
+            refreshLocalStorage();
+            checkAuthState();
+        }
+        
+        function checkSupabaseSession() {
+            // This would require the actual Supabase client
+            document.getElementById('supabase-session').innerHTML = 
+                '<div class="status info">ℹ️ Supabase session check requires actual client integration</div>';
+        }
+        
+        // Initialize on page load
+        checkAuthState();
+        refreshLocalStorage();
+        
+        // Listen for storage changes
+        window.addEventListener('storage', function(e) {
+            console.log('Storage changed:', e.key, e.newValue);
+            checkAuthState();
+            refreshLocalStorage();
+        });
+        
+        // Listen for focus to refresh state
+        window.addEventListener('focus', function() {
+            console.log('Window focused, refreshing state');
+            checkAuthState();
+            refreshLocalStorage();
+        });
+    </script>
+</body>
+</html>

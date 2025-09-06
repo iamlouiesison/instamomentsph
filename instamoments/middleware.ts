@@ -12,6 +12,17 @@ export async function middleware(request: NextRequest) {
     },
   });
 
+  // Skip middleware for static files, API routes, and gallery routes
+  if (
+    pathname.startsWith('/_next/') ||
+    pathname.startsWith('/api/') ||
+    pathname.startsWith('/favicon.ico') ||
+    pathname.startsWith('/gallery/') ||
+    pathname.match(/\.(svg|png|jpg|jpeg|gif|webp|ico)$/)
+  ) {
+    return response;
+  }
+
   // Only check authentication for protected routes to avoid interfering with client-side auth
   const protectedRoutes = [
     '/dashboard',
@@ -25,7 +36,7 @@ export async function middleware(request: NextRequest) {
     pathname.startsWith(route)
   );
 
-  // Skip auth check for non-protected routes
+  // Skip auth check for non-protected routes (including gallery routes)
   if (!isProtectedRoute) {
     return response;
   }
@@ -67,12 +78,6 @@ export async function middleware(request: NextRequest) {
 
     // Redirect to dashboard if already authenticated
     return NextResponse.redirect(new URL('/dashboard', request.url));
-  }
-
-  // Handle gallery routes (public but may need special handling)
-  if (pathname.startsWith('/gallery/')) {
-    // Gallery routes are public, no authentication required
-    return response;
   }
 
   // Handle API routes

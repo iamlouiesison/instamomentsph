@@ -31,14 +31,16 @@ async function debugGallery() {
     console.log('\n2. Testing event query with host join...');
     const { data: eventWithHost, error: hostError } = await supabase
       .from('events')
-      .select(`
+      .select(
+        `
         *,
         host:profiles!events_host_id_fkey(
           id,
           full_name,
           avatar_url
         )
-      `)
+      `
+      )
       .eq('gallery_slug', slug)
       .eq('status', 'active')
       .single();
@@ -81,11 +83,9 @@ async function debugGallery() {
         console.log('✅ Host profile found:', hostProfile);
       }
     }
-
   } catch (error) {
     console.error('❌ Unexpected error:', error);
   }
 }
 
 debugGallery();
-

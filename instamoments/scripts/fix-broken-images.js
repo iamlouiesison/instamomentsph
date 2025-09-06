@@ -22,7 +22,7 @@ const workingImages = [
   'https://images.unsplash.com/photo-1606800052052-a08af7148866?w=1000&h=600&fit=crop&crop=faces',
   'https://images.unsplash.com/photo-1519741497674-611481863552?w=800&h=1000&fit=crop&crop=faces',
   'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=800&h=1000&fit=crop&crop=faces',
-  'https://images.unsplash.com/photo-1606800052052-a08af7148866?w=800&h=1000&fit=crop&crop=faces'
+  'https://images.unsplash.com/photo-1606800052052-a08af7148866?w=800&h=1000&fit=crop&crop=faces',
 ];
 
 async function fixBrokenImages() {
@@ -59,24 +59,25 @@ async function fixBrokenImages() {
     for (let i = 0; i < photos.length; i++) {
       const photo = photos[i];
       const newUrl = workingImages[i % workingImages.length];
-      
+
       const { error: updateError } = await supabase
         .from('photos')
         .update({
           file_url: newUrl,
-          thumbnail_url: newUrl
+          thumbnail_url: newUrl,
         })
         .eq('id', photo.id);
 
       if (updateError) {
         console.error(`❌ Error updating photo ${photo.id}:`, updateError);
       } else {
-        console.log(`✅ Updated photo ${i + 1}: ${photo.contributor_name} -> ${newUrl}`);
+        console.log(
+          `✅ Updated photo ${i + 1}: ${photo.contributor_name} -> ${newUrl}`
+        );
       }
     }
 
     console.log('🎉 All images have been updated with working URLs!');
-
   } catch (error) {
     console.error('❌ Error fixing images:', error);
   }

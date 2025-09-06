@@ -21,7 +21,11 @@ import {
   type EventType,
   type SubscriptionTier,
 } from '@/lib/validations/event';
-import { getSubscriptionLimits, formatPrice, calculateTotalPrice } from '@/lib/business-logic/subscription-limits';
+import {
+  getSubscriptionLimits,
+  formatPrice,
+  calculateTotalPrice,
+} from '@/lib/business-logic/subscription-limits';
 import {
   ArrowLeft,
   ArrowRight,
@@ -78,7 +82,7 @@ export default function CreateEventPage() {
   });
 
   const {
-    handleSubmit,
+    // handleSubmit,
     watch,
     setValue,
     formState: { errors },
@@ -87,7 +91,7 @@ export default function CreateEventPage() {
 
   const nextStep = () => {
     console.log('nextStep called, current step:', currentStep);
-    
+
     // Validate current step before proceeding
     if (currentStep === 1 && !watchedValues.name) {
       toast.error('Please enter an event name');
@@ -101,7 +105,7 @@ export default function CreateEventPage() {
       toast.error('Please select a package');
       return;
     }
-    
+
     if (currentStep < STEPS.length) {
       console.log('Moving to step:', currentStep + 1);
       setCurrentStep(currentStep + 1);
@@ -120,6 +124,7 @@ export default function CreateEventPage() {
 
     try {
       const response = await fetch('/api/events', {
+        credentials: 'include',
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -223,9 +228,11 @@ export default function CreateEventPage() {
                   </div>
                 </div>
                 {index < STEPS.length - 1 && (
-                  <div className={`w-16 h-1 mx-6 hidden sm:block rounded-full transition-colors duration-200 ${
-                    currentStep > step.id ? 'bg-primary' : 'bg-muted'
-                  }`} />
+                  <div
+                    className={`w-16 h-1 mx-6 hidden sm:block rounded-full transition-colors duration-200 ${
+                      currentStep > step.id ? 'bg-primary' : 'bg-muted'
+                    }`}
+                  />
                 )}
               </div>
             ))}
@@ -266,7 +273,10 @@ export default function CreateEventPage() {
                   {/* Event Name and Date Row */}
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     <div className="space-y-3">
-                      <Label htmlFor="name" className="text-sm font-semibold text-foreground">
+                      <Label
+                        htmlFor="name"
+                        className="text-sm font-semibold text-foreground"
+                      >
                         Event Name *
                       </Label>
                       <Input
@@ -283,16 +293,26 @@ export default function CreateEventPage() {
                     </div>
 
                     <div className="space-y-3">
-                      <Label htmlFor="eventDate" className="text-sm font-semibold text-foreground">
+                      <Label
+                        htmlFor="eventDate"
+                        className="text-sm font-semibold text-foreground"
+                      >
                         Event Date *
                       </Label>
                       <DatePicker
                         id="eventDate"
                         placeholder="Select event date"
-                        value={watchedValues.eventDate ? new Date(watchedValues.eventDate) : undefined}
+                        value={
+                          watchedValues.eventDate
+                            ? new Date(watchedValues.eventDate)
+                            : undefined
+                        }
                         onChange={(date) => {
                           if (date) {
-                            setValue('eventDate', date.toISOString().split('T')[0]);
+                            setValue(
+                              'eventDate',
+                              date.toISOString().split('T')[0]
+                            );
                           }
                         }}
                         className="w-full"
@@ -307,7 +327,10 @@ export default function CreateEventPage() {
 
                   {/* Location Row */}
                   <div className="space-y-3">
-                    <Label htmlFor="location" className="text-sm font-semibold text-foreground">
+                    <Label
+                      htmlFor="location"
+                      className="text-sm font-semibold text-foreground"
+                    >
                       Location
                     </Label>
                     <Input
@@ -325,7 +348,10 @@ export default function CreateEventPage() {
 
                   {/* Description Row */}
                   <div className="space-y-3">
-                    <Label htmlFor="description" className="text-sm font-semibold text-foreground">
+                    <Label
+                      htmlFor="description"
+                      className="text-sm font-semibold text-foreground"
+                    >
                       Description
                     </Label>
                     <Textarea
@@ -374,7 +400,6 @@ export default function CreateEventPage() {
               {/* Step 4: Review & Create */}
               {currentStep === 4 && (
                 <div className="space-y-6">
-
                   <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-8 border border-blue-200">
                     <h4 className="font-bold text-xl mb-6 text-gray-900 flex items-center gap-2">
                       <FileText className="w-6 h-6 text-blue-600" />
@@ -382,11 +407,17 @@ export default function CreateEventPage() {
                     </h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div className="space-y-1">
-                        <p className="text-sm font-medium text-gray-600">Event Name</p>
-                        <p className="text-lg font-semibold text-gray-900">{watchedValues.name}</p>
+                        <p className="text-sm font-medium text-gray-600">
+                          Event Name
+                        </p>
+                        <p className="text-lg font-semibold text-gray-900">
+                          {watchedValues.name}
+                        </p>
                       </div>
                       <div className="space-y-1">
-                        <p className="text-sm font-medium text-gray-600">Event Type</p>
+                        <p className="text-sm font-medium text-gray-600">
+                          Event Type
+                        </p>
                         <p className="text-lg font-semibold text-gray-900 flex items-center gap-2">
                           {selectedEventType && (
                             <>
@@ -399,7 +430,9 @@ export default function CreateEventPage() {
                       </div>
                       {watchedValues.eventDate && (
                         <div className="space-y-1">
-                          <p className="text-sm font-medium text-gray-600">Event Date</p>
+                          <p className="text-sm font-medium text-gray-600">
+                            Event Date
+                          </p>
                           <p className="text-lg font-semibold text-gray-900">
                             {new Date(
                               watchedValues.eventDate
@@ -407,14 +440,16 @@ export default function CreateEventPage() {
                               weekday: 'long',
                               year: 'numeric',
                               month: 'long',
-                              day: 'numeric'
+                              day: 'numeric',
                             })}
                           </p>
                         </div>
                       )}
                       {watchedValues.location && (
                         <div className="space-y-1">
-                          <p className="text-sm font-medium text-gray-600">Location</p>
+                          <p className="text-sm font-medium text-gray-600">
+                            Location
+                          </p>
                           <p className="text-lg font-semibold text-gray-900">
                             {watchedValues.location}
                           </p>
@@ -423,8 +458,12 @@ export default function CreateEventPage() {
                     </div>
                     {watchedValues.description && (
                       <div className="mt-6 space-y-1">
-                        <p className="text-sm font-medium text-gray-600">Description</p>
-                        <p className="text-gray-900">{watchedValues.description}</p>
+                        <p className="text-sm font-medium text-gray-600">
+                          Description
+                        </p>
+                        <p className="text-gray-900">
+                          {watchedValues.description}
+                        </p>
                       </div>
                     )}
                   </div>
@@ -434,21 +473,29 @@ export default function CreateEventPage() {
                       <Gem className="w-6 h-6 text-purple-600" />
                       Package & Features
                     </h4>
-                    
+
                     {/* Package Overview */}
                     <div className="bg-white rounded-lg p-6 mb-6 border border-purple-100">
                       <div className="flex items-center justify-between mb-4">
                         <div>
                           <h5 className="text-lg font-bold text-gray-900">
-                            {selectedTier.charAt(0).toUpperCase() + selectedTier.slice(1)} Package
+                            {selectedTier.charAt(0).toUpperCase() +
+                              selectedTier.slice(1)}{' '}
+                            Package
                           </h5>
-                          <p className="text-sm text-gray-600">Perfect for your {selectedEventType} celebration</p>
+                          <p className="text-sm text-gray-600">
+                            Perfect for your {selectedEventType} celebration
+                          </p>
                         </div>
                         <div className="text-right">
                           <p className="text-2xl font-bold text-purple-600">
-                            {formatPrice(calculateTotalPrice(selectedTier, hasVideoAddon))}
+                            {formatPrice(
+                              calculateTotalPrice(selectedTier, hasVideoAddon)
+                            )}
                           </p>
-                          <p className="text-sm text-gray-500">One-time payment</p>
+                          <p className="text-sm text-gray-500">
+                            One-time payment
+                          </p>
                         </div>
                       </div>
                     </div>
@@ -459,17 +506,27 @@ export default function CreateEventPage() {
                       <div className="bg-white rounded-lg p-4 border border-purple-100">
                         <div className="flex items-center gap-2 mb-2">
                           <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                            <span className="text-blue-600 text-sm font-bold">📸</span>
+                            <span className="text-blue-600 text-sm font-bold">
+                              📸
+                            </span>
                           </div>
-                          <h6 className="font-semibold text-gray-900">Photos</h6>
+                          <h6 className="font-semibold text-gray-900">
+                            Photos
+                          </h6>
                         </div>
                         <div className="space-y-1">
                           <p className="text-2xl font-bold text-gray-900">
                             {getSubscriptionLimits(selectedTier).maxPhotos}
                           </p>
-                          <p className="text-sm text-gray-600">Maximum photos</p>
+                          <p className="text-sm text-gray-600">
+                            Maximum photos
+                          </p>
                           <p className="text-xs text-gray-500">
-                            {getSubscriptionLimits(selectedTier).maxPhotosPerUser} per person
+                            {
+                              getSubscriptionLimits(selectedTier)
+                                .maxPhotosPerUser
+                            }{' '}
+                            per person
                           </p>
                         </div>
                       </div>
@@ -478,19 +535,27 @@ export default function CreateEventPage() {
                       <div className="bg-white rounded-lg p-4 border border-purple-100">
                         <div className="flex items-center gap-2 mb-2">
                           <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                            <span className="text-green-600 text-sm font-bold">🎥</span>
+                            <span className="text-green-600 text-sm font-bold">
+                              🎥
+                            </span>
                           </div>
-                          <h6 className="font-semibold text-gray-900">Videos</h6>
+                          <h6 className="font-semibold text-gray-900">
+                            Videos
+                          </h6>
                         </div>
                         <div className="space-y-1">
                           <p className="text-2xl font-bold text-gray-900">
-                            {hasVideoAddon ? getSubscriptionLimits(selectedTier).maxVideos : 0}
+                            {hasVideoAddon
+                              ? getSubscriptionLimits(selectedTier).maxVideos
+                              : 0}
                           </p>
                           <p className="text-sm text-gray-600">
                             {hasVideoAddon ? 'Maximum videos' : 'Not included'}
                           </p>
                           {hasVideoAddon && (
-                            <p className="text-xs text-green-600 font-medium">✓ Video addon enabled</p>
+                            <p className="text-xs text-green-600 font-medium">
+                              ✓ Video addon enabled
+                            </p>
                           )}
                         </div>
                       </div>
@@ -499,16 +564,22 @@ export default function CreateEventPage() {
                       <div className="bg-white rounded-lg p-4 border border-purple-100">
                         <div className="flex items-center gap-2 mb-2">
                           <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center">
-                            <span className="text-orange-600 text-sm font-bold">⏰</span>
+                            <span className="text-orange-600 text-sm font-bold">
+                              ⏰
+                            </span>
                           </div>
-                          <h6 className="font-semibold text-gray-900">Storage</h6>
+                          <h6 className="font-semibold text-gray-900">
+                            Storage
+                          </h6>
                         </div>
                         <div className="space-y-1">
                           <p className="text-2xl font-bold text-gray-900">
                             {getSubscriptionLimits(selectedTier).storageDays}
                           </p>
                           <p className="text-sm text-gray-600">Days storage</p>
-                          <p className="text-xs text-gray-500">Auto-delete after expiry</p>
+                          <p className="text-xs text-gray-500">
+                            Auto-delete after expiry
+                          </p>
                         </div>
                       </div>
                     </div>
@@ -517,7 +588,7 @@ export default function CreateEventPage() {
                     <div className="mt-6 bg-white rounded-lg p-4 border border-purple-100">
                       <h6 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
                         <CheckCircle className="w-4 h-4 text-green-600" />
-                        What's Included
+                        What&apos;s Included
                       </h6>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                         <div className="flex items-center gap-2 text-sm text-gray-700">
@@ -553,14 +624,17 @@ export default function CreateEventPage() {
                   <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
                     <div className="flex items-start gap-3">
                       <div className="w-6 h-6 bg-yellow-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                        <span className="text-yellow-600 text-sm font-bold">!</span>
+                        <span className="text-yellow-600 text-sm font-bold">
+                          !
+                        </span>
                       </div>
                       <div>
                         <p className="text-sm font-medium text-yellow-800">
                           Ready to create your event?
                         </p>
                         <p className="text-sm text-yellow-700 mt-1">
-                          Once created, you'll receive a QR code to share with your guests for easy photo and video uploads.
+                          Once created, you&apos;ll receive a QR code to share
+                          with your guests for easy photo and video uploads.
                         </p>
                       </div>
                     </div>
@@ -598,7 +672,7 @@ export default function CreateEventPage() {
                     <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>
                 ) : (
-                  <Button 
+                  <Button
                     type="button"
                     size="lg"
                     onClick={handleCreateEvent}

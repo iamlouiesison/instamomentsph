@@ -3,7 +3,7 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+// import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import {
   Dialog,
@@ -24,32 +24,37 @@ import {
   Download,
   Share2,
   Search,
-  Filter,
+  // Filter,
   X,
   ChevronLeft,
   ChevronRight,
   ZoomIn,
   ZoomOut,
   RotateCw,
-  Wifi,
+  // Wifi,
   WifiOff,
   Play,
   Camera,
   Video,
-  Heart,
-  MoreHorizontal,
+  // Heart,
+  // MoreHorizontal,
 } from 'lucide-react';
 import { CalendarIcon } from '@/components/ui/calendar-icon';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
 import { useGalleryRealtime } from '@/hooks/useGalleryRealtime';
 import { Photo, Video as VideoType } from '@/types/database';
-import { LoadingSpinner, GalleryLoading } from '@/components/instamoments/loading-states';
+import {
+  LoadingSpinner,
+  GalleryLoading,
+} from '@/components/instamoments/loading-states';
 
 interface PhotoGalleryProps {
   eventId: string;
   allowDownloads?: boolean;
   maxPhotos?: number;
+  currentUser?: any;
+  isAuthenticated?: boolean;
 }
 
 interface MediaItem extends Photo {
@@ -65,6 +70,8 @@ type GalleryItem = MediaItem | VideoItem;
 export function PhotoGallery({
   eventId,
   allowDownloads = true,
+  // currentUser,
+  // isAuthenticated = false,
 }: PhotoGalleryProps) {
   const [selectedItem, setSelectedItem] = useState<GalleryItem | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -213,7 +220,7 @@ export function PhotoGallery({
     try {
       const fileUrl = item.type === 'photo' ? item.file_url : item.file_url;
       const fileName = item.type === 'photo' ? item.file_name : item.file_name;
-      
+
       const response = await fetch(fileUrl);
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
@@ -236,7 +243,7 @@ export function PhotoGallery({
     try {
       const caption = item.type === 'photo' ? item.caption : item.message;
       const fileUrl = item.type === 'photo' ? item.file_url : item.file_url;
-      
+
       const shareData = {
         title: `${item.type === 'photo' ? 'Photo' : 'Video'} from ${item.contributor_name}`,
         text: caption || `Check out this ${item.type}!`,
@@ -358,8 +365,8 @@ export function PhotoGallery({
           </Select>
 
           {(searchQuery || contributorFilter !== 'all') && (
-            <Button 
-              variant="ghost" 
+            <Button
+              variant="ghost"
               size="sm"
               onClick={clearFilters}
               className="text-muted-foreground hover:text-foreground"
@@ -424,7 +431,6 @@ export function PhotoGallery({
                   {/* Hover Overlay */}
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors" />
 
-
                   {/* Type Indicator */}
                   <div className="absolute top-2 left-2">
                     <div className="flex items-center justify-center w-6 h-6 bg-black/60 rounded-md">
@@ -482,13 +488,13 @@ export function PhotoGallery({
         <DialogContent className="max-w-7xl w-full h-[90vh] p-0">
           <DialogHeader className="p-6 pb-0">
             <DialogTitle className="sr-only">
-              Photo Gallery - {selectedItem?.type === 'photo' ? 'Photo' : 'Video'} Viewer
+              Photo Gallery -{' '}
+              {selectedItem?.type === 'photo' ? 'Photo' : 'Video'} Viewer
             </DialogTitle>
             <DialogDescription className="sr-only">
-              {selectedItem?.type === 'photo' 
+              {selectedItem?.type === 'photo'
                 ? `Viewing photo: ${selectedItem.caption || 'Untitled photo'}`
-                : `Viewing video: ${(selectedItem as VideoItem)?.message || 'Untitled video'}`
-              }
+                : `Viewing video: ${(selectedItem as VideoItem)?.message || 'Untitled video'}`}
             </DialogDescription>
             <div className="flex items-center justify-center">
               <div className="flex items-center gap-3">

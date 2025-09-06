@@ -199,7 +199,7 @@ export function QRCodeDisplay({
                    class="qr-code" />
               <div class="instructions">
                 <h3>How to use the QR Code:</h3>
-                <p>1. Open your phone's camera</p>
+                <p>1. Open your phone&apos;s camera</p>
                 <p>2. Point the camera at this QR code</p>
                 <p>3. Tap the link that appears on screen</p>
                 <p>4. Upload photos and videos for the event!</p>
@@ -349,7 +349,7 @@ export function QRCodeDisplay({
                 <span className="bg-primary text-primary-foreground rounded-full w-5 h-5 flex items-center justify-center text-xs font-semibold">
                   1
                 </span>
-                Open your phone's camera
+                Open your phone&apos;s camera
               </li>
               <li className="flex items-start gap-2">
                 <span className="bg-primary text-primary-foreground rounded-full w-5 h-5 flex items-center justify-center text-xs font-semibold">

@@ -133,22 +133,33 @@ async function checkUserPhotoLimit(
 ) {
   if (!contributorEmail) return; // Skip check if no email provided
 
-  const { data: contributor, error } = await supabase
-    .from('event_contributors')
-    .select('photos_count')
-    .eq('event_id', eventId)
-    .eq('contributor_email', contributorEmail)
-    .single();
+  try {
+    const { data: contributor, error } = await supabase
+      .from('event_contributors')
+      .select('total_photos')
+      .eq('event_id', eventId)
+      .eq('contributor_email', contributorEmail)
+      .single();
 
-  if (error && error.code !== 'PGRST116') {
-    // PGRST116 = no rows returned
-    throw new Error('Failed to check user photo limit');
-  }
+    if (error && error.code !== 'PGRST116') {
+      // PGRST116 = no rows returned
+      console.warn(
+        'event_contributors table not found, skipping user photo limit check'
+      );
+      return; // Skip check if table doesn't exist
+    }
 
-  const currentCount = contributor?.photos_count || 0;
-  if (currentCount >= maxPhotosPerUser) {
-    throw new Error(
-      `You have reached the maximum of ${maxPhotosPerUser} photos per user`
+    const currentCount = contributor?.total_photos || 0;
+    if (currentCount >= maxPhotosPerUser) {
+      throw new Error(
+        `You have reached the maximum of ${maxPhotosPerUser} photos per user`
+      );
+    }
+  } catch (error) {
+    // If table doesn't exist, skip the check
+    console.warn(
+      'Skipping user photo limit check:',
+      error instanceof Error ? error.message : String(error)
     );
   }
 }

@@ -92,9 +92,8 @@ export default function DesignSystemPage() {
             </div>
             <p className="text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed">
               A comprehensive design system for capturing and sharing precious
-              moments from celebrations and events. Built with
-              accessibility, mobile-first design, and vibrant celebration-inspired
-              colors.
+              moments from celebrations and events. Built with accessibility,
+              mobile-first design, and vibrant celebration-inspired colors.
             </p>
             <div className="flex flex-wrap justify-center gap-2 pt-4">
               <Badge
@@ -146,8 +145,8 @@ export default function DesignSystemPage() {
                 <h2 className="text-3xl font-bold">Design System Overview</h2>
                 <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
                   InstaMoments uses a comprehensive design system built for
-                  celebrations, with accessibility and mobile-first
-                  principles at its core.
+                  celebrations, with accessibility and mobile-first principles
+                  at its core.
                 </p>
               </div>
 
@@ -778,7 +777,8 @@ export default function DesignSystemPage() {
                   </CardHeader>
                   <CardContent>
                     <p className="text-muted-foreground">
-                      Currently supporting English with plans for multi-language support.
+                      Currently supporting English with plans for multi-language
+                      support.
                     </p>
                   </CardContent>
                 </Card>
@@ -812,8 +812,8 @@ export default function DesignSystemPage() {
                   Celebration Fiesta Color Palette
                 </h2>
                 <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                  A vibrant, modern color system inspired by
-                  celebrations, designed for accessibility and visual impact.
+                  A vibrant, modern color system inspired by celebrations,
+                  designed for accessibility and visual impact.
                 </p>
               </div>
 

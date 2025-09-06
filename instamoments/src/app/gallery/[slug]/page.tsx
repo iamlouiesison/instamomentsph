@@ -2,26 +2,29 @@ import { Suspense } from 'react';
 import { notFound } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { Event } from '@/types/database';
-import { GalleryPage } from '@/components/features/gallery/GalleryPage';
+// import { GalleryPage } from '@/components/features/gallery/GalleryPage';
 import { LoadingStates } from '@/components/instamoments/loading-states';
+import { PublicGalleryWrapper } from '@/components/features/gallery/PublicGalleryWrapper';
 
 interface GalleryPageProps {
-  params: { slug: string };
-  searchParams: { [key: string]: string | string[] | undefined };
+  params: Promise<{ slug: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
 // Generate metadata for the gallery page
 export async function generateMetadata({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) {
   const supabase = await createClient();
   const { slug } = await params;
 
   const { data: event } = await supabase
     .from('events')
-    .select('name, description, event_type, event_date, location, custom_message')
+    .select(
+      'name, description, event_type, event_date, location, custom_message'
+    )
     .eq('gallery_slug', slug)
     .eq('status', 'active')
     .single();
@@ -112,7 +115,7 @@ export default async function GalleryPageRoute({ params }: GalleryPageProps) {
 
   return (
     <Suspense fallback={<LoadingStates.GalleryPageLoading />}>
-      <GalleryPage event={event} />
+      <PublicGalleryWrapper event={event} />
     </Suspense>
   );
 }

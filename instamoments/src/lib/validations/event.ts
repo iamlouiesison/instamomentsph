@@ -1,16 +1,16 @@
 import { z } from 'zod';
-import { 
-  Heart, 
-  Cake, 
-  Crown, 
-  Baby, 
-  GraduationCap, 
-  HeartHandshake, 
-  Building2, 
-  Music, 
-  Building, 
-  Users, 
-  PartyPopper 
+import {
+  Heart,
+  Cake,
+  Crown,
+  Baby,
+  GraduationCap,
+  HeartHandshake,
+  Building2,
+  Music,
+  Building,
+  Users,
+  PartyPopper,
 } from 'lucide-react';
 
 // Event types for celebrations and gatherings

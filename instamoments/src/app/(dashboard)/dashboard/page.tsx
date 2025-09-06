@@ -18,14 +18,7 @@ import {
   EmptyEvents,
 } from '@/components/instamoments';
 import { CalendarIcon } from '@/components/ui/calendar-icon';
-import {
-  Camera,
-  Search,
-  Filter,
-  Users,
-  Video,
-  User,
-} from 'lucide-react';
+import { Camera, Search, Filter, Users, Video, User } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
@@ -70,7 +63,12 @@ export default function DashboardPage() {
         params.append('status', statusFilter);
       }
 
-      const response = await fetch(`/api/events?${params.toString()}`);
+      const response = await fetch(`/api/events?${params.toString()}`, {
+        credentials: 'include', // Include cookies in the request
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
       const result = await response.json();
 
       if (!result.success) {

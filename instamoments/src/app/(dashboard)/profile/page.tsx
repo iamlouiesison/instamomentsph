@@ -27,6 +27,7 @@ export default function ProfilePage() {
     setIsCreatingProfile(true);
     try {
       const response = await fetch('/api/profile/create', {
+        credentials: 'include',
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

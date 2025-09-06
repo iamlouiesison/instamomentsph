@@ -244,7 +244,7 @@ export function CompactQRCode({
               How guests can use this:
             </h4>
             <ol className="space-y-1 text-xs text-muted-foreground">
-              <li>1. Open your phone's camera</li>
+              <li>1. Open your phone&apos;s camera</li>
               <li>2. Point the camera at this QR code</li>
               <li>3. Tap the link that appears on screen</li>
               <li>4. Upload photos for the event!</li>

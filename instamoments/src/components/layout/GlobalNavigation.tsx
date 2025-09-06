@@ -52,11 +52,12 @@ export function GlobalNavigation({ className }: GlobalNavigationProps) {
   };
 
   // Determine if we're on a public page (landing, auth pages) - memoized for performance
-  const isPublicPage = useMemo(() => 
-    pathname === '/' ||
-    pathname.startsWith('/signin') ||
-    pathname.startsWith('/signup') ||
-    pathname.startsWith('/reset-password'),
+  const isPublicPage = useMemo(
+    () =>
+      pathname === '/' ||
+      pathname.startsWith('/signin') ||
+      pathname.startsWith('/signup') ||
+      pathname.startsWith('/reset-password'),
     [pathname]
   );
 

@@ -12,13 +12,6 @@ const compat = new FlatCompat({
 const eslintConfig = [
   ...compat.extends('next/core-web-vitals', 'next/typescript', 'prettier'),
   {
-    plugins: {
-      prettier: (await import('eslint-plugin-prettier')).default,
-    },
-    rules: {
-      'prettier/prettier': 'error',
-      '@typescript-eslint/no-explicit-any': 'warn',
-    },
     ignores: [
       'node_modules/**',
       '.next/**',
@@ -31,7 +24,19 @@ const eslintConfig = [
       '**/.next/**',
       '**/build/**',
       '**/dist/**',
+      'scripts/**',
+      '**/*.js',
     ],
+  },
+  {
+    files: ['src/**/*.{ts,tsx}'],
+    plugins: {
+      prettier: (await import('eslint-plugin-prettier')).default,
+    },
+    rules: {
+      'prettier/prettier': 'error',
+      '@typescript-eslint/no-explicit-any': 'warn',
+    },
   },
   {
     files: ['next-env.d.ts'],

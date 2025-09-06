@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase/client';
-import { PhotoUploadData, VideoUploadData } from '@/types/database';
+// import { PhotoUploadData, VideoUploadData } from '@/types/database';
 
 interface UploadPhotoParams {
   file: File;
@@ -33,7 +33,7 @@ export async function uploadPhoto({
     const filePath = `events/${eventId}/photos/${fileName}`;
 
     // Upload file to Supabase Storage
-    const { data: uploadData, error: uploadError } = await supabase.storage
+    const { error: uploadError } = await supabase.storage
       .from('photos')
       .upload(filePath, file, {
         cacheControl: '3600',
@@ -51,16 +51,17 @@ export async function uploadPhoto({
 
     // Create thumbnail (simplified - in production, use a proper image processing service)
     const thumbnailPath = `events/${eventId}/thumbnails/${fileName}`;
-    const { data: thumbnailData, error: thumbnailError } = await supabase.storage
+    const { error: thumbnailError } = await supabase.storage
       .from('thumbnails')
       .upload(thumbnailPath, file, {
         cacheControl: '3600',
         upsert: false,
       });
 
-    const thumbnailUrl = thumbnailError 
-      ? null 
-      : supabase.storage.from('thumbnails').getPublicUrl(thumbnailPath).data.publicUrl;
+    const thumbnailUrl = thumbnailError
+      ? null
+      : supabase.storage.from('thumbnails').getPublicUrl(thumbnailPath).data
+          .publicUrl;
 
     // Save photo record to database
     const { data: photoData, error: dbError } = await supabase
@@ -100,7 +101,6 @@ export async function uploadVideo({
   file,
   eventId,
   contributorName,
-  contributorEmail,
   message,
 }: UploadVideoParams) {
   const supabase = createClient();
@@ -112,7 +112,7 @@ export async function uploadVideo({
     const filePath = `events/${eventId}/videos/${fileName}`;
 
     // Upload file to Supabase Storage
-    const { data: uploadData, error: uploadError } = await supabase.storage
+    const { error: uploadError } = await supabase.storage
       .from('videos')
       .upload(filePath, file, {
         cacheControl: '3600',
@@ -139,17 +139,15 @@ export async function uploadVideo({
       .from('videos')
       .insert({
         event_id: eventId,
-        contributor_name: contributorName,
-        contributor_email: contributorEmail,
+        uploaded_by: contributorName,
         file_name: file.name,
         file_url: urlData.publicUrl,
         thumbnail_url: null, // Will be generated later
         file_size: file.size,
-        duration_seconds: duration,
+        duration: duration,
         mime_type: file.type,
-        message: message || null,
-        is_approved: true, // For now, auto-approve
-        processing_status: 'completed', // For now, skip processing
+        caption: message || null,
+        status: 'completed', // For now, skip processing
       })
       .select()
       .single();
@@ -172,23 +170,26 @@ async function getVideoDuration(file: File): Promise<number> {
   return new Promise((resolve) => {
     const video = document.createElement('video');
     video.preload = 'metadata';
-    
+
     video.onloadedmetadata = () => {
       window.URL.revokeObjectURL(video.src);
       resolve(Math.round(video.duration));
     };
-    
+
     video.onerror = () => {
       window.URL.revokeObjectURL(video.src);
       resolve(0); // Default duration if we can't determine it
     };
-    
+
     video.src = URL.createObjectURL(file);
   });
 }
 
 // Helper function to validate file before upload
-export function validateFile(file: File, type: 'photo' | 'video'): { valid: boolean; error?: string } {
+export function validateFile(
+  file: File,
+  type: 'photo' | 'video'
+): { valid: boolean; error?: string } {
   // Check file size
   const maxSize = type === 'photo' ? 10 * 1024 * 1024 : 50 * 1024 * 1024; // 10MB for photos, 50MB for videos
   if (file.size > maxSize) {
@@ -200,7 +201,12 @@ export function validateFile(file: File, type: 'photo' | 'video'): { valid: bool
 
   // Check file type
   if (type === 'photo') {
-    const validImageTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+    const validImageTypes = [
+      'image/jpeg',
+      'image/jpg',
+      'image/png',
+      'image/webp',
+    ];
     if (!validImageTypes.includes(file.type)) {
       return {
         valid: false,
@@ -219,4 +225,3 @@ export function validateFile(file: File, type: 'photo' | 'video'): { valid: bool
 
   return { valid: true };
 }
-

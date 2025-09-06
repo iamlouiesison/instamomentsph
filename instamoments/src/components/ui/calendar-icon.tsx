@@ -24,18 +24,14 @@ const variantClasses = {
   destructive: 'text-destructive',
 };
 
-export function CalendarIcon({ 
-  size = 'sm', 
-  className, 
-  variant = 'default' 
+export function CalendarIcon({
+  size = 'sm',
+  className,
+  variant = 'default',
 }: CalendarIconProps) {
   return (
-    <Calendar 
-      className={cn(
-        sizeClasses[size],
-        variantClasses[variant],
-        className
-      )} 
+    <Calendar
+      className={cn(sizeClasses[size], variantClasses[variant], className)}
     />
   );
 }

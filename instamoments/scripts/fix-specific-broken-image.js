@@ -7,10 +7,12 @@ const supabase = createClient(
 );
 
 // The specific broken image URL
-const brokenImageUrl = 'https://images.unsplash.com/photo-1465495976277-4387d4b0e4a6?w=800&h=600&fit=crop&crop=faces';
+const brokenImageUrl =
+  'https://images.unsplash.com/photo-1465495976277-4387d4b0e4a6?w=800&h=600&fit=crop&crop=faces';
 
 // Working replacement image
-const workingImageUrl = 'https://images.unsplash.com/photo-1519741497674-611481863552?w=800&h=600&fit=crop&crop=faces';
+const workingImageUrl =
+  'https://images.unsplash.com/photo-1519741497674-611481863552?w=800&h=600&fit=crop&crop=faces';
 
 async function fixSpecificBrokenImage() {
   try {
@@ -51,11 +53,11 @@ async function fixSpecificBrokenImage() {
     let updatedCount = 0;
     for (const photo of photos) {
       const updateData = {};
-      
+
       if (photo.file_url === brokenImageUrl) {
         updateData.file_url = workingImageUrl;
       }
-      
+
       if (photo.thumbnail_url === brokenImageUrl) {
         updateData.thumbnail_url = workingImageUrl;
       }
@@ -75,7 +77,9 @@ async function fixSpecificBrokenImage() {
       }
     }
 
-    console.log(`✅ Successfully updated ${updatedCount} photos with working image URL.`);
+    console.log(
+      `✅ Successfully updated ${updatedCount} photos with working image URL.`
+    );
   } catch (error) {
     console.error('An unexpected error occurred:', error);
   } finally {

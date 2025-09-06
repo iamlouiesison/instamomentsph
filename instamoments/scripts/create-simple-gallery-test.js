@@ -11,11 +11,12 @@ async function createGalleryTestEvent() {
     console.log('🧪 Creating gallery test event...');
 
     // Create a test user first
-    const { data: userData, error: userError } = await supabase.auth.admin.createUser({
-      email: 'gallery-test@instamoments.ph',
-      password: 'testpassword123',
-      email_confirm: true,
-    });
+    const { data: userData, error: userError } =
+      await supabase.auth.admin.createUser({
+        email: 'gallery-test@instamoments.ph',
+        password: 'testpassword123',
+        email_confirm: true,
+      });
 
     if (userError && userError.code !== 'email_exists') {
       console.error('❌ Error creating test user:', userError);
@@ -66,7 +67,8 @@ async function createGalleryTestEvent() {
       requires_moderation: false,
       allow_downloads: true,
       is_public: true,
-      custom_message: 'Welcome to our gallery test! Upload your photos and videos.',
+      custom_message:
+        'Welcome to our gallery test! Upload your photos and videos.',
       qr_code_url: '',
       status: 'active',
       max_photos: 100,
@@ -93,13 +95,17 @@ async function createGalleryTestEvent() {
     console.log('   Status:', event.status);
     console.log('');
     console.log('🔗 Test URLs:');
-    console.log('   Gallery URL:', `http://localhost:3000/gallery/${event.gallery_slug}`);
-    console.log('   QR Code API:', `http://localhost:3000/api/qr/${event.id}?format=png&size=256&branded=true`);
-    
+    console.log(
+      '   Gallery URL:',
+      `http://localhost:3000/gallery/${event.gallery_slug}`
+    );
+    console.log(
+      '   QR Code API:',
+      `http://localhost:3000/api/qr/${event.id}?format=png&size=256&branded=true`
+    );
   } catch (error) {
     console.error('❌ Unexpected error:', error);
   }
 }
 
 createGalleryTestEvent();
-

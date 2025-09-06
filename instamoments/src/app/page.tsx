@@ -116,8 +116,8 @@ export default function Home() {
               Why Families Love InstaMoments
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Designed specifically for celebration culture with
-              features that make sharing memories effortless.
+              Designed specifically for celebration culture with features that
+              make sharing memories effortless.
             </p>
           </div>
 
@@ -168,8 +168,8 @@ export default function Home() {
                 </div>
                 <CardTitle>Mobile-First Design</CardTitle>
                 <CardDescription>
-                  Built for celebration culture with local payment
-                  methods and cultural considerations.
+                  Built for celebration culture with local payment methods and
+                  cultural considerations.
                 </CardDescription>
               </CardHeader>
             </Card>
@@ -181,8 +181,8 @@ export default function Home() {
                 </div>
                 <CardTitle>Mobile Optimized</CardTitle>
                 <CardDescription>
-                  Perfect for mobile-first users. Works seamlessly on
-                  all Android and iOS devices.
+                  Perfect for mobile-first users. Works seamlessly on all
+                  Android and iOS devices.
                 </CardDescription>
               </CardHeader>
             </Card>
@@ -638,8 +638,8 @@ export default function Home() {
               Ready to Create Amazing Celebration Memories?
             </h2>
             <p className="text-xl text-muted-foreground">
-              Join thousands of families who trust InstaMoments for
-              their special moments. Start your first event in minutes.
+              Join thousands of families who trust InstaMoments for their
+              special moments. Start your first event in minutes.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button asChild size="lg" className="h-12 px-8">
@@ -668,8 +668,8 @@ export default function Home() {
                 <span className="text-xl font-bold">InstaMoments</span>
               </div>
               <p className="text-sm text-muted-foreground">
-                Creating instant photo galleries for celebrations. No
-                app downloads, just scan and share.
+                Creating instant photo galleries for celebrations. No app
+                downloads, just scan and share.
               </p>
               <div className="flex space-x-4">
                 <Link

@@ -43,11 +43,9 @@ async function checkEvent() {
     } else {
       console.log('\n✅ Specific event found:', specificEvent);
     }
-
   } catch (error) {
     console.error('❌ Unexpected error:', error);
   }
 }
 
 checkEvent();
-

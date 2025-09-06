@@ -168,9 +168,7 @@ export default function SignUpPage() {
                   {'Join InstaMoments!'}
                 </CardTitle>
                 <CardDescription className="text-muted-foreground">
-                  {
-                    'Create your account to start sharing celebration moments'
-                  }
+                  {'Create your account to start sharing celebration moments'}
                 </CardDescription>
               </div>
             </CardHeader>

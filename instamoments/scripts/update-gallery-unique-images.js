@@ -22,7 +22,7 @@ const uniqueImages = [
   'https://images.unsplash.com/photo-1606800052052-a08af7148866?w=800&h=1000&fit=crop&crop=faces',
   'https://images.unsplash.com/photo-1519741497674-611481863552?w=800&h=1000&fit=crop&crop=faces',
   'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=800&h=1000&fit=crop&crop=faces',
-  'https://images.unsplash.com/photo-1520854221256-17451cc331bf?w=800&h=1000&fit=crop&crop=faces'
+  'https://images.unsplash.com/photo-1520854221256-17451cc331bf?w=800&h=1000&fit=crop&crop=faces',
 ];
 
 const captions = [
@@ -40,7 +40,7 @@ const captions = [
   'Dancing with family and friends',
   'Wedding ceremony highlights',
   'Beautiful wedding decorations',
-  'Memorable wedding moments'
+  'Memorable wedding moments',
 ];
 
 const contributors = [
@@ -58,7 +58,7 @@ const contributors = [
   'Sebastian Herrera',
   'Natalia Jimenez',
   'Gabriel Ruiz',
-  'Daniela Castro'
+  'Daniela Castro',
 ];
 
 async function updateGalleryWithUniqueImages() {
@@ -102,8 +102,10 @@ async function updateGalleryWithUniqueImages() {
       mime_type: 'image/jpeg',
       caption: captions[index],
       contributor_name: contributors[index],
-      uploaded_at: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000).toISOString(), // Random date within last week
-      is_approved: true
+      uploaded_at: new Date(
+        Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000
+      ).toISOString(), // Random date within last week
+      is_approved: true,
     }));
 
     const { data: photos, error: insertError } = await supabase
@@ -124,7 +126,7 @@ async function updateGalleryWithUniqueImages() {
       .update({
         total_photos: photos.length,
         total_contributors: new Set(contributors).size,
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       })
       .eq('id', event.id);
 
@@ -137,7 +139,6 @@ async function updateGalleryWithUniqueImages() {
     console.log('🎉 Gallery updated with unique images!');
     console.log(`📸 Total photos: ${photos.length}`);
     console.log(`👥 Unique contributors: ${new Set(contributors).size}`);
-
   } catch (error) {
     console.error('❌ Error updating gallery:', error);
   }

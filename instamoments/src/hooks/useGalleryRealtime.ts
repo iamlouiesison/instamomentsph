@@ -62,97 +62,120 @@ export function useGalleryRealtime(
   const channelRef = useRef<RealtimeChannel | null>(null);
   const currentPageRef = useRef(0);
   const isLoadingRef = useRef(false);
+  const fetchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Fetch initial data
+  // Fetch initial data with debouncing
   const fetchData = useCallback(
     async (page = 0, reset = false) => {
       if (isLoadingRef.current) return;
 
-      isLoadingRef.current = true;
-      setLoading(page === 0);
-
-      try {
-        // Get the gallery slug from the eventId (assuming eventId is the gallery slug)
-        const gallerySlug = eventId;
-        
-        // Build query parameters
-        const params = new URLSearchParams({
-          page: page.toString(),
-          limit: limit.toString(),
-          sortBy: sortBy,
-          type: 'photos' // Only fetch photos for now
-        });
-
-        // Add search and contributor filters if provided
-        if (options.search) {
-          params.set('search', options.search);
-        }
-        if (options.contributor) {
-          params.set('contributor', options.contributor);
-        }
-
-        // Fetch data from API endpoint
-        const response = await fetch(`/api/gallery/${gallerySlug}/photos?${params.toString()}`);
-        
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const result = await response.json();
-
-        if (!result.success) {
-          throw new Error(result.error?.message || 'Failed to fetch gallery data');
-        }
-
-        const { items, pagination } = result.data;
-
-        // Map API response to MediaItem format
-        const mediaItems: MediaItem[] = items.map((item: any) => ({
-          id: item.id,
-          event_id: eventId,
-          contributor_name: item.uploaded_by || 'Unknown',
-          contributor_email: '',
-          file_name: item.url.split('/').pop() || '',
-          file_url: item.url,
-          thumbnail_url: item.thumbnail_url,
-          file_size: item.file_size || 0,
-          mime_type: 'image/jpeg', // Default for now
-          caption: item.caption || '',
-          uploaded_at: item.created_at,
-          is_approved: true,
-          exif_data: null,
-          type: item.type,
-          message: item.type === 'video' ? item.caption : undefined
-        }));
-
-        if (reset) {
-          setItems(mediaItems);
-          currentPageRef.current = 0;
-        } else {
-          setItems((prev) => [...prev, ...mediaItems]);
-        }
-
-        setHasMore(pagination.hasMore);
-        setError(null);
-
-        // Extract contributors from items
-        const uniqueContributors = [...new Set(mediaItems.map(item => item.contributor_name))].sort();
-        setContributors(uniqueContributors);
-
-        // Set stats from pagination
-        setStats({
-          totalPhotos: pagination.total,
-          totalVideos: 0, // We'll need to update this if we have videos
-          totalContributors: uniqueContributors.length,
-        });
-
-      } catch (err) {
-        console.error('Error fetching gallery data:', err);
-        setError(err instanceof Error ? err.message : 'Failed to load gallery');
-      } finally {
-        setLoading(false);
-        isLoadingRef.current = false;
+      // Clear any pending fetch
+      if (fetchTimeoutRef.current) {
+        clearTimeout(fetchTimeoutRef.current);
+        fetchTimeoutRef.current = null;
       }
+
+      // Debounce fetch calls
+      fetchTimeoutRef.current = setTimeout(async () => {
+        isLoadingRef.current = true;
+        setLoading(page === 0);
+
+        try {
+          // Get the gallery slug from the eventId (assuming eventId is the gallery slug)
+          const gallerySlug = eventId;
+
+          // Build query parameters
+          const params = new URLSearchParams({
+            page: page.toString(),
+            limit: limit.toString(),
+            sortBy: sortBy,
+            type: 'photos', // Only fetch photos for now
+          });
+
+          // Add search and contributor filters if provided
+          if (options.search) {
+            params.set('search', options.search);
+          }
+          if (options.contributor) {
+            params.set('contributor', options.contributor);
+          }
+
+          // Fetch data from API endpoint
+          const response = await fetch(
+            `/api/gallery/${gallerySlug}/photos?${params.toString()}`,
+            {
+              credentials: 'include',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            }
+          );
+
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+
+          const result = await response.json();
+
+          if (!result.success) {
+            throw new Error(
+              result.error?.message || 'Failed to fetch gallery data'
+            );
+          }
+
+          const { items, pagination } = result.data;
+
+          // Map API response to MediaItem format
+          const mediaItems: MediaItem[] = items.map((item: any) => ({
+            id: item.id,
+            event_id: eventId,
+            contributor_name: item.uploaded_by || 'Unknown',
+            contributor_email: '',
+            file_name: item.url.split('/').pop() || '',
+            file_url: item.url,
+            thumbnail_url: item.thumbnail_url,
+            file_size: item.file_size || 0,
+            mime_type: 'image/jpeg', // Default for now
+            caption: item.caption || '',
+            uploaded_at: item.created_at,
+            is_approved: true,
+            exif_data: null,
+            type: item.type,
+            message: item.type === 'video' ? item.caption : undefined,
+          }));
+
+          if (reset) {
+            setItems(mediaItems);
+            currentPageRef.current = 0;
+          } else {
+            setItems((prev) => [...prev, ...mediaItems]);
+          }
+
+          setHasMore(pagination.hasMore);
+          setError(null);
+
+          // Extract contributors from items
+          const uniqueContributors = [
+            ...new Set(mediaItems.map((item) => item.contributor_name)),
+          ].sort();
+          setContributors(uniqueContributors);
+
+          // Set stats from pagination
+          setStats({
+            totalPhotos: pagination.total,
+            totalVideos: 0, // We'll need to update this if we have videos
+            totalContributors: uniqueContributors.length,
+          });
+        } catch (err) {
+          console.error('Error fetching gallery data:', err);
+          setError(
+            err instanceof Error ? err.message : 'Failed to load gallery'
+          );
+        } finally {
+          setLoading(false);
+          isLoadingRef.current = false;
+        }
+      }, 100); // 100ms debounce
     },
     [eventId, limit, sortBy, options.search, options.contributor]
   );
@@ -192,7 +215,6 @@ export function useGalleryRealtime(
           filter: `event_id=eq.${eventId}`,
         },
         (payload) => {
-          console.log('New photo uploaded:', payload);
           const newPhoto: GalleryItem = {
             ...(payload.new as Photo),
             type: 'photo' as const,
@@ -235,7 +257,6 @@ export function useGalleryRealtime(
           filter: `event_id=eq.${eventId}`,
         },
         (payload) => {
-          console.log('New video uploaded:', payload);
           const newVideo: VideoItem = {
             ...(payload.new as Video),
             type: 'video' as const,
@@ -279,7 +300,6 @@ export function useGalleryRealtime(
           filter: `event_id=eq.${eventId}`,
         },
         (payload) => {
-          console.log('Photo updated:', payload);
           const updatedPhoto: GalleryItem = {
             ...(payload.new as Photo),
             type: 'photo' as const,
@@ -301,7 +321,6 @@ export function useGalleryRealtime(
           filter: `event_id=eq.${eventId}`,
         },
         (payload) => {
-          console.log('Video updated:', payload);
           const updatedVideo: VideoItem = {
             ...(payload.new as Video),
             type: 'video' as const,
@@ -324,7 +343,6 @@ export function useGalleryRealtime(
           filter: `event_id=eq.${eventId}`,
         },
         (payload) => {
-          console.log('Photo deleted:', payload);
           setItems((prev) => prev.filter((item) => item.id !== payload.old.id));
 
           // Update stats
@@ -343,7 +361,6 @@ export function useGalleryRealtime(
           filter: `event_id=eq.${eventId}`,
         },
         (payload) => {
-          console.log('Video deleted:', payload);
           setItems((prev) => prev.filter((item) => item.id !== payload.old.id));
 
           // Update stats
@@ -354,12 +371,9 @@ export function useGalleryRealtime(
         }
       )
       .subscribe((status) => {
-        console.log('Realtime subscription status:', status);
         setIsConnected(status === 'SUBSCRIBED');
 
-        if (status === 'SUBSCRIBED') {
-          console.log('Successfully connected to real-time updates');
-        } else if (status === 'CHANNEL_ERROR') {
+        if (status === 'CHANNEL_ERROR') {
           console.error('Realtime channel error');
           setError('Connection error. Please refresh the page.');
         }
@@ -376,13 +390,16 @@ export function useGalleryRealtime(
         channelRef.current.unsubscribe();
         channelRef.current = null;
       }
+      if (fetchTimeoutRef.current) {
+        clearTimeout(fetchTimeoutRef.current);
+        fetchTimeoutRef.current = null;
+      }
     };
   }, [eventId, fetchData, sortBy, supabase]);
 
   // Handle connection status changes
   useEffect(() => {
     const handleOnline = () => {
-      console.log('Connection restored');
       setIsConnected(true);
       if (channelRef.current) {
         channelRef.current.unsubscribe();
@@ -395,7 +412,6 @@ export function useGalleryRealtime(
     };
 
     const handleOffline = () => {
-      console.log('Connection lost');
       setIsConnected(false);
     };
 
@@ -405,6 +421,10 @@ export function useGalleryRealtime(
     return () => {
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
+      if (fetchTimeoutRef.current) {
+        clearTimeout(fetchTimeoutRef.current);
+        fetchTimeoutRef.current = null;
+      }
     };
   }, [fetchData]);
 

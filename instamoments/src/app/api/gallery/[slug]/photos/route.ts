@@ -180,42 +180,38 @@ export async function GET(
           `
           id,
           event_id,
-          contributor_name,
-          contributor_email,
+          uploaded_by,
           file_name,
           file_url,
           thumbnail_url,
           file_size,
-          duration_seconds,
+          duration,
           mime_type,
-          message,
-          uploaded_at,
-          processing_status
+          caption,
+          created_at,
+          status
         `
         )
         .eq('event_id', event.id)
-        .eq('is_approved', true)
-        .eq('processing_status', 'completed');
+        .eq('status', 'completed');
 
       // Apply search filter
       if (query.search) {
-        videosQuery = videosQuery.or(
-          `message.ilike.%${query.search}%,contributor_name.ilike.%${query.search}%`
-        );
+        videosQuery = videosQuery.or(`caption.ilike.%${query.search}%`);
       }
 
       // Apply contributor filter
       if (query.contributor && query.contributor !== 'all') {
-        videosQuery = videosQuery.eq('contributor_name', query.contributor);
+        videosQuery = videosQuery.eq('uploaded_by', query.contributor);
       }
 
       // Apply sorting
       if (query.sortBy === 'newest') {
-        videosQuery = videosQuery.order('uploaded_at', { ascending: false });
+        videosQuery = videosQuery.order('created_at', { ascending: false });
       } else if (query.sortBy === 'oldest') {
-        videosQuery = videosQuery.order('uploaded_at', { ascending: true });
+        videosQuery = videosQuery.order('created_at', { ascending: true });
       } else if (query.sortBy === 'contributor') {
-        videosQuery = videosQuery.order('contributor_name', {
+        videosQuery = videosQuery.order('uploaded_by', {
           ascending: true,
         });
       }
@@ -246,11 +242,11 @@ export async function GET(
           type: 'video' as const,
           url: video.file_url,
           thumbnail_url: video.thumbnail_url,
-          caption: video.message,
-          uploaded_by: video.contributor_name,
-          created_at: video.uploaded_at,
+          caption: video.caption,
+          uploaded_by: video.uploaded_by,
+          created_at: video.created_at,
           file_size: video.file_size,
-          duration: video.duration_seconds,
+          duration: video.duration,
         })) || [];
 
       results.push(...videosWithType);
@@ -293,8 +289,7 @@ export async function GET(
         .from('videos')
         .select('*', { count: 'exact', head: true })
         .eq('event_id', event.id)
-        .eq('is_approved', true)
-        .eq('processing_status', 'completed');
+        .eq('status', 'completed');
 
       totalCount += videosCount || 0;
     }

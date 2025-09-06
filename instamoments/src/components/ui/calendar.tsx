@@ -5,7 +5,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { DayPicker } from 'react-day-picker';
 
 import { cn } from '@/lib/utils';
-import { buttonVariants } from '@/components/ui/button';
+// import { buttonVariants } from '@/components/ui/button';
 
 export type CalendarProps = React.ComponentProps<typeof DayPicker>;
 
@@ -17,8 +17,9 @@ function Calendar({
 }: CalendarProps) {
   return (
     <div className={cn('p-3', className)}>
-      <style dangerouslySetInnerHTML={{
-        __html: `
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
           .rdp {
             --rdp-cell-size: 2.25rem;
             --rdp-accent-color: hsl(var(--primary));
@@ -164,8 +165,9 @@ function Calendar({
             position: absolute !important;
             right: 0.25rem !important;
           }
-        `
-      }} />
+        `,
+        }}
+      />
       <DayPicker
         showOutsideDays={showOutsideDays}
         className="rdp"
@@ -189,13 +191,18 @@ function Calendar({
           day_today: 'rdp-day_today',
           day_outside: 'rdp-day_outside',
           day_disabled: 'rdp-day_disabled',
-          day_range_middle: 'aria-selected:bg-accent aria-selected:text-accent-foreground',
+          day_range_middle:
+            'aria-selected:bg-accent aria-selected:text-accent-foreground',
           day_hidden: 'invisible',
           ...classNames,
         }}
         components={{
-          IconLeft: ({ ...props }) => <ChevronLeft className="h-4 w-4" />,
-          IconRight: ({ ...props }) => <ChevronRight className="h-4 w-4" />,
+          Chevron: ({ ...props }) => {
+            if (props.orientation === 'left') {
+              return <ChevronLeft className="h-4 w-4" />;
+            }
+            return <ChevronRight className="h-4 w-4" />;
+          },
         }}
         {...props}
       />

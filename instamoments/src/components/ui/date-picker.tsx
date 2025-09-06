@@ -24,7 +24,9 @@ export function DatePicker({
   id,
   name,
 }: DatePickerProps) {
-  const [selectedDate, setSelectedDate] = React.useState<Date | undefined>(value);
+  const [selectedDate, setSelectedDate] = React.useState<Date | undefined>(
+    value
+  );
   const [isOpen, setIsOpen] = React.useState(false);
   const buttonRef = React.useRef<HTMLButtonElement>(null);
   const popoverRef = React.useRef<HTMLDivElement>(null);
@@ -103,17 +105,19 @@ export function DatePicker({
         <CalendarIcon className="mr-2 h-4 w-4" />
         {selectedDate ? formatDate(selectedDate) : <span>{placeholder}</span>}
       </button>
-      
+
       {/* Calendar popover positioned below the button */}
       {isOpen && (
-        <div 
+        <div
           ref={popoverRef}
           className="absolute top-full left-0 z-50 mt-2 w-full"
         >
           <div className="rounded-md border bg-popover p-3 shadow-lg">
             <Input
               type="date"
-              value={selectedDate ? selectedDate.toISOString().split('T')[0] : ''}
+              value={
+                selectedDate ? selectedDate.toISOString().split('T')[0] : ''
+              }
               onChange={handleDateChange}
               onClick={handleInputClick}
               className="w-full h-11 text-base [color-scheme:light]"

@@ -26,54 +26,76 @@ async function testGalleryUpload() {
 
     // Test photo upload API
     console.log('\n📸 Testing photo upload API...');
-    const photoUploadResponse = await fetch('http://localhost:3000/api/upload/photo', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        eventId: event.id,
-        contributorName: 'Test User',
-        contributorEmail: 'test@example.com',
-        caption: 'Test photo upload',
-        // Note: In a real test, you'd need to provide actual file data
-        // This is just testing the API endpoint structure
-      }),
-    });
+    
+    // Create a simple test image (1x1 pixel PNG)
+    const testImageData = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==';
+    const testImageBuffer = Buffer.from(testImageData, 'base64');
+    
+    // Create form data
+    const formData = new FormData();
+    formData.append('eventId', event.id);
+    formData.append('contributorName', 'Test User');
+    formData.append('contributorEmail', 'test@example.com');
+    formData.append('caption', 'Test photo upload');
+    formData.append('file', new Blob([testImageBuffer], { type: 'image/png' }), 'test.png');
+    formData.append('thumbnail', new Blob([testImageBuffer], { type: 'image/png' }), 'thumb.png');
+    
+    console.log('Using event ID:', event.id);
+    
+    const photoUploadResponse = await fetch(
+      'http://localhost:3000/api/upload/photo',
+      {
+        method: 'POST',
+        body: formData,
+      }
+    );
 
     if (photoUploadResponse.ok) {
       console.log('✅ Photo upload API endpoint is accessible');
     } else {
       const errorText = await photoUploadResponse.text();
-      console.log('⚠️  Photo upload API response:', photoUploadResponse.status, errorText);
+      console.log(
+        '⚠️  Photo upload API response:',
+        photoUploadResponse.status,
+        errorText
+      );
     }
 
     // Test video upload API
     console.log('\n🎥 Testing video upload API...');
-    const videoUploadResponse = await fetch('http://localhost:3000/api/upload/video', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        eventId: event.id,
-        contributorName: 'Test User',
-        contributorEmail: 'test@example.com',
-        message: 'Test video upload',
-      }),
-    });
+    const videoUploadResponse = await fetch(
+      'http://localhost:3000/api/upload/video',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          eventId: event.id,
+          contributorName: 'Test User',
+          contributorEmail: 'test@example.com',
+          message: 'Test video upload',
+        }),
+      }
+    );
 
     if (videoUploadResponse.ok) {
       console.log('✅ Video upload API endpoint is accessible');
     } else {
       const errorText = await videoUploadResponse.text();
-      console.log('⚠️  Video upload API response:', videoUploadResponse.status, errorText);
+      console.log(
+        '⚠️  Video upload API response:',
+        videoUploadResponse.status,
+        errorText
+      );
     }
 
     // Test gallery stats API
     console.log('\n📊 Testing gallery stats API...');
-    const statsResponse = await fetch(`http://localhost:3000/api/gallery/${event.gallery_slug}/stats`);
-    
+    const statsResponse = await fetch(
+      `http://localhost:3000/api/gallery/${event.gallery_slug}/stats`
+    );
+
     if (statsResponse.ok) {
       const stats = await statsResponse.json();
       console.log('✅ Gallery stats API working:', stats);
@@ -83,8 +105,10 @@ async function testGalleryUpload() {
 
     // Test gallery photos API
     console.log('\n🖼️  Testing gallery photos API...');
-    const photosResponse = await fetch(`http://localhost:3000/api/gallery/${event.gallery_slug}/photos`);
-    
+    const photosResponse = await fetch(
+      `http://localhost:3000/api/gallery/${event.gallery_slug}/photos`
+    );
+
     if (photosResponse.ok) {
       const photos = await photosResponse.json();
       console.log('✅ Gallery photos API working:', photos);
@@ -99,11 +123,9 @@ async function testGalleryUpload() {
     console.log('3. Try uploading a test photo or video');
     console.log('4. Test the QR code scanner functionality');
     console.log('5. Verify real-time updates work');
-
   } catch (error) {
     console.error('❌ Test failed:', error);
   }
 }
 
 testGalleryUpload();
-

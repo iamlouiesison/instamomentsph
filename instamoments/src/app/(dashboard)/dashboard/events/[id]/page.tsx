@@ -85,8 +85,7 @@ import { EVENT_TYPES } from '@/lib/validations/event';
 
 const getEventTypeConfig = (eventType: string) => {
   return (
-    EVENT_TYPES[eventType as keyof typeof EVENT_TYPES] ||
-    EVENT_TYPES.other
+    EVENT_TYPES[eventType as keyof typeof EVENT_TYPES] || EVENT_TYPES.other
   );
 };
 
@@ -163,7 +162,12 @@ export default function EventManagementPage() {
   const fetchEvent = useCallback(async () => {
     try {
       setIsLoading(true);
-      const response = await fetch(`/api/events/${eventId}`);
+      const response = await fetch(`/api/events/${eventId}`, {
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
       const result = await response.json();
 
       if (!result.success) {
@@ -204,6 +208,7 @@ export default function EventManagementPage() {
       setIsSaving(true);
       const response = await fetch(`/api/events/${eventId}`, {
         method: 'PUT',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -250,6 +255,10 @@ export default function EventManagementPage() {
       setIsDeleting(true);
       const response = await fetch(`/api/events/${eventId}`, {
         method: 'DELETE',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
       });
 
       const result = await response.json();
@@ -269,7 +278,6 @@ export default function EventManagementPage() {
       setIsDeleting(false);
     }
   };
-
 
   const handleDuplicate = () => {
     if (!event) return;
@@ -380,7 +388,6 @@ export default function EventManagementPage() {
                 })}
               </p>
             </div>
-
           </div>
         </div>
 
@@ -407,7 +414,6 @@ export default function EventManagementPage() {
             </AlertDescription>
           </Alert>
         )}
-
 
         {/* Main Content Tabs */}
         <Tabs
@@ -438,7 +444,11 @@ export default function EventManagementPage() {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {event.event_date && (
                       <div className="flex items-center gap-3">
-                        <CalendarIcon size="sm" variant="muted" className="flex-shrink-0" />
+                        <CalendarIcon
+                          size="sm"
+                          variant="muted"
+                          className="flex-shrink-0"
+                        />
                         <div className="min-w-0">
                           <p className="text-xs text-gray-600">Event Date</p>
                           <p className="font-medium text-sm">
@@ -659,13 +669,11 @@ export default function EventManagementPage() {
                       }
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
-                      {Object.entries(EVENT_TYPES).map(
-                        ([key, config]) => (
-                          <option key={key} value={key}>
-                            {config.label}
-                          </option>
-                        )
-                      )}
+                      {Object.entries(EVENT_TYPES).map(([key, config]) => (
+                        <option key={key} value={key}>
+                          {config.label}
+                        </option>
+                      ))}
                     </select>
                   </div>
                 </div>
@@ -701,10 +709,17 @@ export default function EventManagementPage() {
                     <DatePicker
                       id="eventDate"
                       placeholder="Select event date"
-                      value={formData.eventDate ? new Date(formData.eventDate) : undefined}
+                      value={
+                        formData.eventDate
+                          ? new Date(formData.eventDate)
+                          : undefined
+                      }
                       onChange={(date) => {
                         if (date) {
-                          setFormData({ ...formData, eventDate: date.toISOString().split('T')[0] });
+                          setFormData({
+                            ...formData,
+                            eventDate: date.toISOString().split('T')[0],
+                          });
                         }
                       }}
                       className="w-full"
@@ -853,21 +868,26 @@ export default function EventManagementPage() {
                         readOnly
                         className="bg-gray-50"
                       />
-                      <Button 
-                        variant="outline" 
-                        size="sm" 
+                      <Button
+                        variant="outline"
+                        size="sm"
                         onClick={() => {
-                          navigator.clipboard.writeText(`${window.location.origin}/gallery/${event.gallery_slug}`);
+                          navigator.clipboard.writeText(
+                            `${window.location.origin}/gallery/${event.gallery_slug}`
+                          );
                           toast.success('Gallery link copied to clipboard!');
                         }}
                       >
                         <Copy className="w-4 h-4" />
                       </Button>
-                      <Button 
-                        variant="default" 
-                        size="sm" 
+                      <Button
+                        variant="default"
+                        size="sm"
                         onClick={() => {
-                          window.open(`/gallery/${event.gallery_slug}`, '_blank');
+                          window.open(
+                            `/gallery/${event.gallery_slug}`,
+                            '_blank'
+                          );
                         }}
                       >
                         <Eye className="w-4 h-4 mr-1" />
@@ -905,7 +925,6 @@ export default function EventManagementPage() {
               </CardContent>
             </Card>
           </TabsContent>
-
 
           {/* Actions Tab */}
           <TabsContent value="actions" className="space-y-6">
@@ -946,11 +965,7 @@ export default function EventManagementPage() {
                         </p>
                       </div>
                     </div>
-                    <Button
-                      onClick={handleExport}
-                      variant="outline"
-                      size="sm"
-                    >
+                    <Button onClick={handleExport} variant="outline" size="sm">
                       <DownloadIcon className="w-4 h-4 mr-2" />
                       Export
                     </Button>
@@ -970,11 +985,7 @@ export default function EventManagementPage() {
                         </p>
                       </div>
                     </div>
-                    <Button
-                      onClick={handleArchive}
-                      variant="outline"
-                      size="sm"
-                    >
+                    <Button onClick={handleArchive} variant="outline" size="sm">
                       <Archive className="w-4 h-4 mr-2" />
                       Archive
                     </Button>
@@ -988,7 +999,9 @@ export default function EventManagementPage() {
                     <div className="flex items-center gap-3">
                       <AlertTriangle className="w-5 h-5 text-red-600" />
                       <div>
-                        <h3 className="font-medium text-red-600">Delete Event</h3>
+                        <h3 className="font-medium text-red-600">
+                          Delete Event
+                        </h3>
                         <p className="text-sm text-gray-600">
                           Permanently delete this event and all its data
                           {event.total_photos > 0 || event.total_videos > 0 ? (
@@ -1026,7 +1039,6 @@ export default function EventManagementPage() {
                 </CardContent>
               </Card>
             </div>
-
           </TabsContent>
         </Tabs>
       </div>

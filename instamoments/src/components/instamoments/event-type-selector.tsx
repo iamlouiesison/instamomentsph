@@ -52,10 +52,7 @@ export const EventTypeSelector: React.FC<EventTypeSelectorProps> = ({
                 {eventType.description}
               </p>
               {isSelected && (
-                <Badge 
-                  variant="default" 
-                  className="mt-3 text-xs px-3 py-1"
-                >
+                <Badge variant="default" className="mt-3 text-xs px-3 py-1">
                   Selected
                 </Badge>
               )}

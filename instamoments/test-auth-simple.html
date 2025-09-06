@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Auth Test</title>
+</head>
+<body>
+    <h1>Authentication Test</h1>
+    <div id="status">Loading...</div>
+    <button onclick="testAuth()">Test Auth</button>
+    <button onclick="testAPI()">Test API</button>
+    
+    <script>
+        async function testAuth() {
+            const status = document.getElementById('status');
+            status.innerHTML = 'Testing authentication...';
+            
+            try {
+                // Test if we can access localStorage
+                const authData = localStorage.getItem('instamoments_auth_user');
+                status.innerHTML = `Auth data in localStorage: ${authData ? 'Present' : 'Not found'}`;
+                
+                if (authData) {
+                    const parsed = JSON.parse(authData);
+                    status.innerHTML += `<br>User ID: ${parsed.user?.id || 'No user ID'}`;
+                    status.innerHTML += `<br>Email: ${parsed.user?.email || 'No email'}`;
+                }
+            } catch (error) {
+                status.innerHTML = `Error: ${error.message}`;
+            }
+        }
+        
+        async function testAPI() {
+            const status = document.getElementById('status');
+            status.innerHTML = 'Testing API call...';
+            
+            try {
+                const response = await fetch('/api/events', {
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+                
+                const result = await response.json();
+                status.innerHTML = `API Response: ${JSON.stringify(result, null, 2)}`;
+            } catch (error) {
+                status.innerHTML = `API Error: ${error.message}`;
+            }
+        }
+        
+        // Auto-test on load
+        window.onload = testAuth;
+    </script>
+</body>
+</html>

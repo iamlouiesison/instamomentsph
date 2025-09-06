@@ -191,6 +191,52 @@ CREATE POLICY "Contributors can insert videos to active events" ON videos
 ALTER TABLE events ADD COLUMN IF NOT EXISTS video_limit INTEGER DEFAULT 20;
 ALTER TABLE events ADD COLUMN IF NOT EXISTS max_videos_per_user INTEGER DEFAULT 5;
 
+-- Create event_contributors table
+CREATE TABLE IF NOT EXISTS event_contributors (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  event_id UUID REFERENCES events(id) ON DELETE CASCADE NOT NULL,
+  contributor_id UUID REFERENCES auth.users(id) ON DELETE SET NULL,
+  contributor_name TEXT NOT NULL,
+  contributor_email TEXT,
+  joined_at TIMESTAMPTZ DEFAULT NOW(),
+  total_photos INTEGER DEFAULT 0,
+  total_videos INTEGER DEFAULT 0,
+  last_contribution_at TIMESTAMPTZ,
+  UNIQUE(event_id, contributor_email)
+);
+
+-- Enable RLS on event_contributors
+ALTER TABLE event_contributors ENABLE ROW LEVEL SECURITY;
+
+-- Create RLS policies for event_contributors
+CREATE POLICY "Event contributors viewable by all for public events" ON event_contributors
+  FOR SELECT USING (
+    EXISTS (
+      SELECT 1 FROM events 
+      WHERE events.id = event_contributors.event_id 
+      AND events.is_public = TRUE
+      AND events.status = 'active'
+    )
+  );
+
+CREATE POLICY "Event hosts can view contributors in their events" ON event_contributors
+  FOR SELECT USING (
+    EXISTS (
+      SELECT 1 FROM events 
+      WHERE events.id = event_contributors.event_id 
+      AND events.host_id = auth.uid()
+    )
+  );
+
+CREATE POLICY "Anyone can insert contributors to active events" ON event_contributors
+  FOR INSERT WITH CHECK (
+    EXISTS (
+      SELECT 1 FROM events 
+      WHERE events.id = event_contributors.event_id 
+      AND events.status = 'active'
+    )
+  );
+
 -- Create indexes for performance
 CREATE INDEX IF NOT EXISTS idx_events_host_id ON events(host_id);
 CREATE INDEX IF NOT EXISTS idx_events_gallery_slug ON events(gallery_slug);
@@ -200,3 +246,5 @@ CREATE INDEX IF NOT EXISTS idx_videos_event_id ON videos(event_id);
 CREATE INDEX IF NOT EXISTS idx_videos_uploaded_by ON videos(uploaded_by);
 CREATE INDEX IF NOT EXISTS idx_videos_created_at ON videos(created_at);
 CREATE INDEX IF NOT EXISTS idx_videos_status ON videos(status);
+CREATE INDEX IF NOT EXISTS idx_event_contributors_event_id ON event_contributors(event_id);
+CREATE INDEX IF NOT EXISTS idx_event_contributors_contributor_email ON event_contributors(contributor_email);

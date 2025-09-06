@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { ABeeZee, Lora, Fira_Code } from 'next/font/google';
 import './globals.css';
 import { AuthProvider } from '@/components/providers/AuthProvider';
+import { AuthStateInitializer } from '@/components/providers/AuthStateInitializer';
 import { GlobalNavigation } from '@/components/layout';
 import { Toaster } from '@/components/ui/sonner';
 
@@ -113,9 +114,11 @@ export default function RootLayout({
         className={`${abeeZee.variable} ${lora.variable} ${firaCode.variable} antialiased`}
       >
         <AuthProvider>
-          <GlobalNavigation />
-          {children}
-          <Toaster />
+          <AuthStateInitializer>
+            <GlobalNavigation />
+            {children}
+            <Toaster />
+          </AuthStateInitializer>
         </AuthProvider>
       </body>
     </html>

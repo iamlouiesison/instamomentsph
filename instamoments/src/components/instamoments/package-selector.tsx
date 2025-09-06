@@ -101,11 +101,15 @@ export const PackageSelector: React.FC<PackageSelectorProps> = ({
                     </div>
                     <div className="flex justify-between">
                       <span>Per person:</span>
-                      <span className="font-medium">{tier.maxPhotosPerUser}</span>
+                      <span className="font-medium">
+                        {tier.maxPhotosPerUser}
+                      </span>
                     </div>
                     <div className="flex justify-between">
                       <span>Storage:</span>
-                      <span className="font-medium">{tier.storageDays} days</span>
+                      <span className="font-medium">
+                        {tier.storageDays} days
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -161,7 +165,9 @@ export const PackageSelector: React.FC<PackageSelectorProps> = ({
         <Card className="bg-primary/10 border-2 border-primary/30 shadow-lg">
           <CardContent className="p-6">
             <div className="flex justify-between items-center">
-              <span className="font-bold text-lg text-foreground">Total Price:</span>
+              <span className="font-bold text-lg text-foreground">
+                Total Price:
+              </span>
               <span className="text-3xl font-bold text-primary">
                 {formatPrice(calculateEventPrice(selectedTier, hasVideoAddon))}
               </span>

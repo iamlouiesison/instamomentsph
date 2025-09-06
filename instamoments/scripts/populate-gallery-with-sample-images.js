@@ -12,92 +12,92 @@ const sampleImages = [
     url: 'https://images.unsplash.com/photo-1519741497674-611481863552?w=800&h=600&fit=crop&crop=faces',
     caption: 'Beautiful wedding ceremony moment',
     contributor: 'Maria Santos',
-    type: 'photo'
+    type: 'photo',
   },
   {
     url: 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=800&h=600&fit=crop&crop=faces',
     caption: 'Cake cutting ceremony',
     contributor: 'Juan Dela Cruz',
-    type: 'photo'
+    type: 'photo',
   },
   {
     url: 'https://images.unsplash.com/photo-1465495976277-4387d4b0e4a6?w=800&h=600&fit=crop&crop=faces',
     caption: 'First dance as married couple',
     contributor: 'Ana Rodriguez',
-    type: 'photo'
+    type: 'photo',
   },
   {
     url: 'https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=800&h=600&fit=crop&crop=faces',
     caption: 'Wedding reception decorations',
     contributor: 'Carlos Mendoza',
-    type: 'photo'
+    type: 'photo',
   },
   {
     url: 'https://images.unsplash.com/photo-1606800052052-a08af7148866?w=800&h=600&fit=crop&crop=faces',
     caption: 'Bouquet toss moment',
     contributor: 'Sofia Garcia',
-    type: 'photo'
+    type: 'photo',
   },
   {
     url: 'https://images.unsplash.com/photo-1519741497674-611481863552?w=800&h=1000&fit=crop&crop=faces',
     caption: 'Bride and groom portrait',
     contributor: 'Miguel Torres',
-    type: 'photo'
+    type: 'photo',
   },
   {
     url: 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=600&h=800&fit=crop&crop=faces',
     caption: 'Wedding cake close-up',
     contributor: 'Isabella Cruz',
-    type: 'photo'
+    type: 'photo',
   },
   {
     url: 'https://images.unsplash.com/photo-1465495976277-4387d4b0e4a6?w=1000&h=600&fit=crop&crop=faces',
     caption: 'Dancing with family',
     contributor: 'Roberto Silva',
-    type: 'photo'
+    type: 'photo',
   },
   {
     url: 'https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=800&h=1200&fit=crop&crop=faces',
     caption: 'Wedding venue setup',
     contributor: 'Carmen Lopez',
-    type: 'photo'
+    type: 'photo',
   },
   {
     url: 'https://images.unsplash.com/photo-1606800052052-a08af7148866?w=1200&h=800&fit=crop&crop=faces',
     caption: 'Group photo with guests',
     contributor: 'Diego Martinez',
-    type: 'photo'
+    type: 'photo',
   },
   {
     url: 'https://images.unsplash.com/photo-1519741497674-611481863552?w=900&h=600&fit=crop&crop=faces',
     caption: 'Wedding rings exchange',
     contributor: 'Patricia Ramos',
-    type: 'photo'
+    type: 'photo',
   },
   {
     url: 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=700&h=900&fit=crop&crop=faces',
     caption: 'Wedding reception dinner',
     contributor: 'Fernando Reyes',
-    type: 'photo'
+    type: 'photo',
   },
   {
     url: 'https://images.unsplash.com/photo-1465495976277-4387d4b0e4a6?w=800&h=1000&fit=crop&crop=faces',
     caption: 'Wedding party dancing',
     contributor: 'Valentina Morales',
-    type: 'photo'
+    type: 'photo',
   },
   {
     url: 'https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=1000&h=800&fit=crop&crop=faces',
     caption: 'Wedding ceremony venue',
     contributor: 'Alejandro Vega',
-    type: 'photo'
+    type: 'photo',
   },
   {
     url: 'https://images.unsplash.com/photo-1606800052052-a08af7148866?w=800&h=1100&fit=crop&crop=faces',
     caption: 'Wedding toast moment',
     contributor: 'Gabriela Herrera',
-    type: 'photo'
-  }
+    type: 'photo',
+  },
 ];
 
 async function populateGalleryWithSampleImages() {
@@ -119,26 +119,34 @@ async function populateGalleryWithSampleImages() {
     console.log('✅ Found test event:', event.name);
 
     // Create contributors first
-    const contributors = [...new Set(sampleImages.map(img => img.contributor))];
+    const contributors = [
+      ...new Set(sampleImages.map((img) => img.contributor)),
+    ];
     console.log('👥 Creating contributors...');
 
     for (const contributorName of contributors) {
       const { error: contributorError } = await supabase
         .from('event_contributors')
-        .upsert({
-          event_id: event.id,
-          contributor_name: contributorName,
-          contributor_email: `${contributorName.toLowerCase().replace(' ', '.')}@example.com`,
-          photos_count: 0,
-          videos_count: 0,
-          first_upload_at: new Date().toISOString(),
-          last_upload_at: new Date().toISOString(),
-        }, {
-          onConflict: 'event_id,contributor_email'
-        });
+        .upsert(
+          {
+            event_id: event.id,
+            contributor_name: contributorName,
+            contributor_email: `${contributorName.toLowerCase().replace(' ', '.')}@example.com`,
+            photos_count: 0,
+            videos_count: 0,
+            first_upload_at: new Date().toISOString(),
+            last_upload_at: new Date().toISOString(),
+          },
+          {
+            onConflict: 'event_id,contributor_email',
+          }
+        );
 
       if (contributorError) {
-        console.log('⚠️  Contributor already exists or error:', contributorName);
+        console.log(
+          '⚠️  Contributor already exists or error:',
+          contributorName
+        );
       } else {
         console.log('✅ Created contributor:', contributorName);
       }
@@ -146,31 +154,31 @@ async function populateGalleryWithSampleImages() {
 
     // Add sample photos
     console.log('📸 Adding sample photos...');
-    
+
     for (let i = 0; i < sampleImages.length; i++) {
       const image = sampleImages[i];
-      const uploadTime = new Date(Date.now() - (i * 30 * 60 * 1000)); // Spread over time
-      
-      const { error: photoError } = await supabase
-        .from('photos')
-        .insert({
-          event_id: event.id,
-          file_url: image.url,
-          thumbnail_url: image.url, // Using same URL for thumbnail
-          file_name: `wedding-photo-${i + 1}.jpg`,
-          file_size: Math.floor(Math.random() * 2000000) + 500000, // Random size between 500KB-2.5MB
-          mime_type: 'image/jpeg',
-          caption: image.caption,
-          contributor_name: image.contributor,
-          contributor_email: `${image.contributor.toLowerCase().replace(' ', '.')}@example.com`,
-          is_approved: true,
-          uploaded_at: uploadTime.toISOString(),
-        });
+      const uploadTime = new Date(Date.now() - i * 30 * 60 * 1000); // Spread over time
+
+      const { error: photoError } = await supabase.from('photos').insert({
+        event_id: event.id,
+        file_url: image.url,
+        thumbnail_url: image.url, // Using same URL for thumbnail
+        file_name: `wedding-photo-${i + 1}.jpg`,
+        file_size: Math.floor(Math.random() * 2000000) + 500000, // Random size between 500KB-2.5MB
+        mime_type: 'image/jpeg',
+        caption: image.caption,
+        contributor_name: image.contributor,
+        contributor_email: `${image.contributor.toLowerCase().replace(' ', '.')}@example.com`,
+        is_approved: true,
+        uploaded_at: uploadTime.toISOString(),
+      });
 
       if (photoError) {
         console.error('❌ Error adding photo:', photoError);
       } else {
-        console.log(`✅ Added photo ${i + 1}/${sampleImages.length}: ${image.caption}`);
+        console.log(
+          `✅ Added photo ${i + 1}/${sampleImages.length}: ${image.caption}`
+        );
       }
     }
 
@@ -194,8 +202,9 @@ async function populateGalleryWithSampleImages() {
     console.log('\n🎉 Gallery populated successfully!');
     console.log(`📸 Added ${sampleImages.length} sample photos`);
     console.log(`👥 Created ${contributors.length} contributors`);
-    console.log('\n🌐 Visit: http://localhost:3000/gallery/gallery-test-mf71oc3a');
-
+    console.log(
+      '\n🌐 Visit: http://localhost:3000/gallery/gallery-test-mf71oc3a'
+    );
   } catch (error) {
     console.error('❌ Error populating gallery:', error);
   }

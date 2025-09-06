@@ -6,12 +6,21 @@ import { Button } from '@/components/ui/button';
 import { Clock } from 'lucide-react';
 import { Event } from '@/types/database';
 import { PhotoGallery } from './PhotoGallery';
+import { User as SupabaseUser } from '@supabase/supabase-js';
 
 interface GalleryPageProps {
   event: Event & { host?: Record<string, unknown> };
+  currentUser?: SupabaseUser | null;
+  isAuthenticated?: boolean;
+  isLoadingAuth?: boolean;
 }
 
-export function GalleryPage({ event }: GalleryPageProps) {
+export function GalleryPage({
+  event,
+  currentUser,
+  isAuthenticated = false,
+  // isLoadingAuth = false,
+}: GalleryPageProps) {
   const router = useRouter();
 
   // Check if event is still active
@@ -28,9 +37,7 @@ export function GalleryPage({ event }: GalleryPageProps) {
           <p className="text-muted-foreground mb-4">
             This event gallery is no longer active or has expired.
           </p>
-          <Button onClick={() => router.push('/')}>
-            Go to Homepage
-          </Button>
+          <Button onClick={() => router.push('/')}>Go to Homepage</Button>
         </div>
       </div>
     );
@@ -38,21 +45,25 @@ export function GalleryPage({ event }: GalleryPageProps) {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Simple Header */}
-      <div className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 py-4">
-          <h1 className="text-xl font-bold text-gray-900">
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto px-4 py-6">
+        {/* Event Title */}
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
             {event.name}
           </h1>
+          {event.description && (
+            <p className="text-lg text-gray-600">{event.description}</p>
+          )}
         </div>
-      </div>
 
-      {/* Gallery Only */}
-      <div className="max-w-7xl mx-auto px-4 py-6">
+        {/* Gallery */}
         <PhotoGallery
           eventId={event.gallery_slug}
           allowDownloads={event.allow_downloads}
           maxPhotos={event.max_photos}
+          currentUser={currentUser}
+          isAuthenticated={isAuthenticated}
         />
       </div>
     </div>

@@ -2,16 +2,17 @@
 
 import React, { useState, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
+// import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Progress } from '@/components/ui/progress';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+// import { Alert, AlertDescription } from '@/components/ui/alert';
 import {
   Upload,
   X,
-  Image,
+  Image as ImageIcon,
   Video,
   FileText,
   CheckCircle,
@@ -61,41 +62,42 @@ export function UploadForm({
 
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
-      const newFiles: UploadFile[] = acceptedFiles.map((file) => {
-        const isVideo = file.type.startsWith('video/');
-        const isImage = file.type.startsWith('image/');
+      const newFiles: UploadFile[] = acceptedFiles
+        .map((file) => {
+          const isVideo = file.type.startsWith('video/');
+          const isImage = file.type.startsWith('image/');
 
-        if (!isVideo && !isImage) {
-          toast.error('Please upload only images or videos');
-          return null;
-        }
+          if (!isVideo && !isImage) {
+            toast.error('Please upload only images or videos');
+            return null;
+          }
 
-        if (isVideo && !allowVideos) {
-          toast.error('Video uploads are not allowed for this event');
-          return null;
-        }
+          if (isVideo && !allowVideos) {
+            toast.error('Video uploads are not allowed for this event');
+            return null;
+          }
 
-        if (file.size > maxFileSize * 1024 * 1024) {
-          toast.error(`File size must be less than ${maxFileSize}MB`);
-          return null;
-        }
+          if (file.size > maxFileSize * 1024 * 1024) {
+            toast.error(`File size must be less than ${maxFileSize}MB`);
+            return null;
+          }
 
-        if (files.length >= maxPhotosPerUser) {
-          toast.error(`Maximum ${maxPhotosPerUser} files allowed per user`);
-          return null;
-        }
+          if (files.length >= maxPhotosPerUser) {
+            toast.error(`Maximum ${maxPhotosPerUser} files allowed per user`);
+            return null;
+          }
 
-        return {
-          file,
-          preview: URL.createObjectURL(file),
-          type: isVideo ? 'video' : 'photo',
-          uploading: false,
-          progress: 0,
-        };
-      });
+          return {
+            file,
+            preview: URL.createObjectURL(file),
+            type: isVideo ? 'video' : 'photo',
+            uploading: false,
+            progress: 0,
+          };
+        })
+        .filter((file): file is UploadFile => file !== null);
 
-      const validFiles = newFiles.filter((file): file is UploadFile => file !== null);
-      setFiles((prev) => [...prev, ...validFiles]);
+      setFiles((prev) => [...prev, ...newFiles]);
     },
     [allowVideos, maxFileSize, maxPhotosPerUser, files.length]
   );
@@ -138,7 +140,7 @@ export function UploadForm({
 
       for (let i = 0; i < files.length; i++) {
         const fileData = files[i];
-        
+
         // Update file status to uploading
         setFiles((prev) =>
           prev.map((file, index) =>
@@ -147,7 +149,7 @@ export function UploadForm({
         );
 
         try {
-          let uploadResult;
+          // let uploadResult;
 
           if (fileData.type === 'photo') {
             // Compress image before upload
@@ -157,15 +159,15 @@ export function UploadForm({
               useWebWorker: true,
             });
 
-            uploadResult = await uploadPhoto({
-              file: compressedFile,
+            await uploadPhoto({
+              file: compressedFile.file,
               eventId,
               contributorName,
               contributorEmail,
               caption: fileData.caption,
             });
           } else {
-            uploadResult = await uploadVideo({
+            await uploadVideo({
               file: fileData.file,
               eventId,
               contributorName,
@@ -186,23 +188,28 @@ export function UploadForm({
           completedUploads++;
           setUploadProgress((completedUploads / files.length) * 100);
 
-          toast.success(`${fileData.type === 'photo' ? 'Photo' : 'Video'} uploaded successfully!`);
+          toast.success(
+            `${fileData.type === 'photo' ? 'Photo' : 'Video'} uploaded successfully!`
+          );
         } catch (error) {
           console.error(`Upload error for file ${i}:`, error);
-          
+
           setFiles((prev) =>
             prev.map((file, index) =>
               index === i
                 ? {
                     ...file,
                     uploading: false,
-                    error: error instanceof Error ? error.message : 'Upload failed',
+                    error:
+                      error instanceof Error ? error.message : 'Upload failed',
                   }
                 : file
             )
           );
 
-          toast.error(`Failed to upload ${fileData.type}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+          toast.error(
+            `Failed to upload ${fileData.type}: ${error instanceof Error ? error.message : 'Unknown error'}`
+          );
         }
       }
 
@@ -293,9 +300,11 @@ export function UploadForm({
                   {/* Preview */}
                   <div className="w-16 h-16 bg-muted rounded-lg overflow-hidden flex-shrink-0">
                     {fileData.type === 'photo' ? (
-                      <img
+                      <Image
                         src={fileData.preview}
-                        alt="Preview"
+                        alt={`Preview of ${fileData.file.name}`}
+                        width={64}
+                        height={64}
                         className="w-full h-full object-cover"
                       />
                     ) : (
@@ -309,7 +318,7 @@ export function UploadForm({
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-2">
                       {fileData.type === 'photo' ? (
-                        <Image className="h-4 w-4 text-blue-500" />
+                        <ImageIcon className="h-4 w-4 text-blue-500" />
                       ) : (
                         <Video className="h-4 w-4 text-purple-500" />
                       )}
@@ -398,7 +407,9 @@ export function UploadForm({
           className="flex-1"
         >
           <Upload className="h-4 w-4 mr-2" />
-          {isUploading ? 'Uploading...' : `Upload ${files.length} file${files.length !== 1 ? 's' : ''}`}
+          {isUploading
+            ? 'Uploading...'
+            : `Upload ${files.length} file${files.length !== 1 ? 's' : ''}`}
         </Button>
         <Button variant="outline" onClick={onCancel} disabled={isUploading}>
           Cancel
@@ -407,4 +418,3 @@ export function UploadForm({
     </div>
   );
 }
-
