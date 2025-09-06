@@ -5,6 +5,7 @@ import { Event } from '@/types/database';
 // import { GalleryPage } from '@/components/features/gallery/GalleryPage';
 import { LoadingStates } from '@/components/instamoments/loading-states';
 import { PublicGalleryWrapper } from '@/components/features/gallery/PublicGalleryWrapper';
+import { PrivateGalleryNotification } from '@/components/instamoments/private-gallery-notification';
 
 interface GalleryPageProps {
   params: Promise<{ slug: string }>;
@@ -56,6 +57,40 @@ export async function generateMetadata({
   };
 }
 
+
+// Check if event exists (for private gallery detection)
+async function checkEventExists(slug: string): Promise<{ exists: boolean; isPrivate?: boolean; eventName?: string; hostName?: string }> {
+  const supabase = await createClient();
+
+  // First, try to get the event with a query that bypasses RLS for existence check
+  // We'll use a simple count query that should work even for private events
+  const { data: countData, error: countError } = await supabase
+    .from('events')
+    .select('id, name, is_public, host_id', { count: 'exact' })
+    .eq('gallery_slug', slug)
+    .eq('status', 'active');
+
+  if (countError || !countData || countData.length === 0) {
+    return { exists: false };
+  }
+
+  const event = countData[0];
+  
+  // If we can see the event, it means it's public
+  if (event.is_public) {
+    return { exists: true, isPrivate: false };
+  }
+
+  // If we can't see the full event data but the count query worked,
+  // it means the event exists but is private
+  return { 
+    exists: true, 
+    isPrivate: true,
+    eventName: event.name,
+    hostName: 'Event Host' // We can't get host name due to RLS
+  };
+}
+
 // Fetch event data
 async function getEventData(slug: string): Promise<Event | null> {
   const supabase = await createClient();
@@ -103,11 +138,39 @@ async function trackGalleryView(
 export default async function GalleryPageRoute({ params }: GalleryPageProps) {
   const { slug } = await params;
 
-  // Get event data
+  // First check if the event exists and if it's private
+  const eventCheck = await checkEventExists(slug);
+
+  if (!eventCheck.exists) {
+    // Event doesn't exist at all
+    return (
+      <PrivateGalleryNotification 
+        isPrivate={false} // This will show the "Gallery Not Found" message
+      />
+    );
+  }
+
+  if (eventCheck.isPrivate) {
+    // Event exists but is private
+    return (
+      <PrivateGalleryNotification 
+        isPrivate={true}
+        eventName={eventCheck.eventName}
+        hostName={eventCheck.hostName}
+      />
+    );
+  }
+
+  // Event exists and is public, get full event data
   const event = await getEventData(slug);
 
   if (!event) {
-    notFound();
+    // This shouldn't happen if checkEventExists returned exists: true and isPrivate: false
+    return (
+      <PrivateGalleryNotification 
+        isPrivate={false} // This will show the "Gallery Not Found" message
+      />
+    );
   }
 
   // Track gallery view (don't await to avoid blocking page load)
