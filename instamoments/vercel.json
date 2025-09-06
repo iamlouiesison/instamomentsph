@@ -1,7 +1,0 @@
-{
-  "buildCommand": "cd instamoments && npm install && npm run build",
-  "devCommand": "cd instamoments && npm run dev",
-  "installCommand": "cd instamoments && npm install",
-  "framework": "nextjs",
-  "outputDirectory": "instamoments/.next"
-}
