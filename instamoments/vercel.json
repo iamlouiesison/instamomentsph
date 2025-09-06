@@ -3,10 +3,5 @@
   "devCommand": "cd instamoments && npm run dev",
   "installCommand": "cd instamoments && npm install",
   "framework": "nextjs",
-  "outputDirectory": "instamoments/.next",
-  "functions": {
-    "instamoments/app/api/**/*.ts": {
-      "maxDuration": 30
-    }
-  }
+  "outputDirectory": "instamoments/.next"
 }
