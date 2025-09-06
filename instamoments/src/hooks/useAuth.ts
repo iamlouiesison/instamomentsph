@@ -168,7 +168,10 @@ export function useAuth() {
         } else {
           console.log('🔐 Storage event ignored - no actual change detected');
         }
-      } else if (e.key === 'instamoments_auth_user' && isProcessingRef.current) {
+      } else if (
+        e.key === 'instamoments_auth_user' &&
+        isProcessingRef.current
+      ) {
         console.log('🔐 Ignoring storage event - already processing');
       }
     };

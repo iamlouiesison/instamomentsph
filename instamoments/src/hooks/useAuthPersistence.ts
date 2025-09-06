@@ -39,27 +39,33 @@ export function useAuthPersistence() {
             email: session.user.email,
             timestamp: Date.now(),
           };
-          
+
           // Check if the data has actually changed (excluding timestamp) to prevent unnecessary updates
           const existingData = localStorage.getItem('instamoments_auth_user');
           let shouldUpdate = true;
-          
+
           if (existingData) {
             try {
               const existing = JSON.parse(existingData);
               // Compare only the meaningful data, not the timestamp
-              if (existing.id === authData.id && existing.email === authData.email) {
+              if (
+                existing.id === authData.id &&
+                existing.email === authData.email
+              ) {
                 shouldUpdate = false;
               }
-            } catch (e) {
+            } catch {
               // If parsing fails, update anyway
               shouldUpdate = true;
             }
           }
-          
+
           if (shouldUpdate) {
             isWritingRef.current = true;
-            localStorage.setItem('instamoments_auth_user', JSON.stringify(authData));
+            localStorage.setItem(
+              'instamoments_auth_user',
+              JSON.stringify(authData)
+            );
             console.log('✅ Auth state synced to localStorage:', {
               userId: authData.id,
               email: authData.email,
@@ -69,7 +75,9 @@ export function useAuthPersistence() {
               isWritingRef.current = false;
             }, 100);
           } else {
-            console.log('🔄 Auth state unchanged, skipping localStorage update');
+            console.log(
+              '🔄 Auth state unchanged, skipping localStorage update'
+            );
           }
         } else {
           // Clear auth state if no session

@@ -52,7 +52,10 @@ export default function DashboardPage() {
     userId: null,
     statusFilter: 'all',
   });
-  const lastAuthStateRef = useRef<{ userId: string | null; profileId: string | null }>({
+  const lastAuthStateRef = useRef<{
+    userId: string | null;
+    profileId: string | null;
+  }>({
     userId: null,
     profileId: null,
   });
@@ -122,7 +125,7 @@ export default function DashboardPage() {
       );
 
       setStats(totalStats);
-      
+
       // Update the ref to track what we've fetched
       lastFetchRef.current = {
         userId: user.id,
@@ -139,17 +142,17 @@ export default function DashboardPage() {
   useEffect(() => {
     const currentUserId = user?.id || null;
     const currentProfileId = profile?.id || null;
-    
+
     // Check if auth state has actually changed
-    const authStateChanged = 
+    const authStateChanged =
       lastAuthStateRef.current.userId !== currentUserId ||
       lastAuthStateRef.current.profileId !== currentProfileId;
-    
+
     if (!authStateChanged && user) {
       console.log('Dashboard - Auth state unchanged, skipping effect');
       return;
     }
-    
+
     console.log('Dashboard useEffect - Auth state:', {
       hasUser: !!user,
       userId: currentUserId,
