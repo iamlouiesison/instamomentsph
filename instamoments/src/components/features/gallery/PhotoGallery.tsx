@@ -8,6 +8,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
@@ -408,6 +409,7 @@ export function PhotoGallery({
                     height={300}
                     className="w-full h-auto object-cover transition-transform group-hover:scale-105"
                     sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, (max-width: 1280px) 25vw, 20vw"
+                    priority={index === 0}
                   />
 
                   {/* Video Play Button Overlay */}
@@ -482,6 +484,12 @@ export function PhotoGallery({
             <DialogTitle className="sr-only">
               Photo Gallery - {selectedItem?.type === 'photo' ? 'Photo' : 'Video'} Viewer
             </DialogTitle>
+            <DialogDescription className="sr-only">
+              {selectedItem?.type === 'photo' 
+                ? `Viewing photo: ${selectedItem.caption || 'Untitled photo'}`
+                : `Viewing video: ${(selectedItem as VideoItem)?.message || 'Untitled video'}`
+              }
+            </DialogDescription>
             <div className="flex items-center justify-center">
               <div className="flex items-center gap-3">
                 <Button
